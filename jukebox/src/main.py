@@ -134,7 +134,12 @@ def move_track():
         if index is None:
             # app.logger.warning("Track {} not found".format(randomid))
             return "nok"
-        if action == "up":
+        if action == "top":
+            if index < 2:
+                app.logger.warning("Track {} has index".format(index))
+                return "nok"
+            app.playlist.insert(1, app.playlist.pop(index))
+        elif action == "up":
             if index < 2:
                 app.logger.warning("Track {} has index".format(index))
                 return "nok"
@@ -284,3 +289,13 @@ def search():
     else:
         app.logger.error("Error: no search module found")
     return jsonify(results)
+
+@main.route('/pause_play', methods=['POST'])
+def pause_test():
+    app.mpv.command('cycle', 'pause', None)
+    return "ok"
+
+@main.route('/rewind', methods=['POST'])
+def rewind():
+    app.mpv.command('seek', 0, 'absolute', None)
+    return "ok"

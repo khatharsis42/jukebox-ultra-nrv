@@ -23,7 +23,7 @@
     background-color: lightgrey;
 }
 
-.btn-remove, .btn-add, .btn-back, .btn-more, .btn-up, .btn-down, .btn-refresh {
+.btn-remove, .btn-add, .btn-back, .btn-more, .btn-top, .btn-up, .btn-down, .btn-refresh {
     position: relative;
     top: 2px;
 }
@@ -97,6 +97,10 @@ iframe#YT {
 }
 .icon.btn-more {
     background-image: url("/static/images/icons/ellipsis-h-solid.svg");
+}
+.icon.btn-top{
+    background-image: url("/static/images/icons/angle-double-up.svg");
+    height: 30px;
 }
 .icon.btn-up{
     background-image: url("/static/images/icons/chevron-up-solid.svg");
