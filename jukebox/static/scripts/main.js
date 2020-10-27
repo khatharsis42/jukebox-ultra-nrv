@@ -47,6 +47,9 @@ function generate_track_html(t) {
     track_html.find(".verso").hide();
     track_html.find(".btn-more").click(toggle_recto_verso);
     track_html.find(".btn-back").click(toggle_recto_verso);
+    track_html.find(".btn-top").click(function() {
+        $.post("/move-track", {"action": "top", "randomid": t["randomid"]});
+    });
     track_html.find(".btn-up").click(function() {
         $.post("/move-track", {"action": "up", "randomid": t["randomid"]});
     });
@@ -75,6 +78,7 @@ function generate_track_html_suggest(t) {
     track_html.find(".btn-remove").remove();
     track_html.find(".btn-up").remove();
     track_html.find(".btn-down").remove();
+    track_html.find(".btn-top").remove();
     return track_html;
 }
 
@@ -112,6 +116,7 @@ track_template = `
         <div class="col-1">
             <button class="icon btn-more" alt="More"></button>
             <button class="icon btn-add" alt="Play"></button>
+            <button class="icon btn-top" alt="Top"></button>
             <button class="icon btn-up" alt="Up"></button>
             <button class="icon btn-down" alt="Down"></button>
             <button class="icon btn-remove" alt="Enlever"></button>
@@ -219,6 +224,7 @@ function updates_playlist(data) {
             playlistHTML.prepend(generate_track_html_queue(track));
             playlistHTML.find(".track:first .btn-down").hide();
             playlistHTML.find(".track:first .btn-up").hide();
+            playlistHTML.find(".track:first .btn-top").hide();
 
             // then we manage the Youtube iframe
             if (yt.ready && $("#YT").is(":visible") && track["source"] === "youtube") {

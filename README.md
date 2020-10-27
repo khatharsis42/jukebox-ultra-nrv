@@ -11,7 +11,7 @@ Also from pip, get `pyalsaaudio`, `youtube_dl`, `passlib`, `flask-WTF` and `flas
 ## Installation
 
  - Clone the repo
- - Move config.py.example to config.py and edit it 😎
+ - Copy config.py.example to config.py and edit it 😎 (gitignore will make sure it is not gitted, cause you have a youtube api key in this)
  - To add a favicon, place it in the `jukebox/static` folder
  - Install requirements using `pip install -r requirements.txt`
  
