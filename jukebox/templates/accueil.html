@@ -6,6 +6,7 @@
 	    <link rel="stylesheet" href="{{ url_for('static', filename='styles/bootstrap.min.css') }}">
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/custom/') }}{{ stylesheet }}">
         <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <title>{{ jk_name }}</title>
     </head>
 
@@ -60,6 +61,16 @@
                 </div>
                 <div class="col-xl-4">
                     <div id="YT"></div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-3">
+                                <button id="pause" type="submit" class="btn btn-outline-primary"><i class="fa fa-play"></i>  /  <i class="fa fa-pause"></i></button>
+                            </div>
+                            <div class="col-3">
+                                <button id="rewind" type="submit" class="btn btn-outline-primary"><i class="fa fa-fast-backward"></i></button>
+                            </div>
+                        </div>
+                    </div>
                     <div class="clearfix">
                         <p class="display-4 float-left">Suggestions</p>
                         <p class="float-right lead py-4">

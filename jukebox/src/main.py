@@ -284,3 +284,13 @@ def search():
     else:
         app.logger.error("Error: no search module found")
     return jsonify(results)
+
+@main.route('/pause_play', methods=['POST'])
+def pause_test():
+    app.mpv.command('cycle', 'pause', None)
+    return "ok"
+
+@main.route('/rewind', methods=['POST'])
+def rewind():
+    app.mpv.command('seek', 0, 'absolute', None)
+    return "ok"

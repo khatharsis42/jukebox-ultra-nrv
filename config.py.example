@@ -11,10 +11,10 @@ SECRET_KEY=""
 # Path to your sqlite database. Will be created on first run
 DATABASE_PATH = "jukebox.sqlite3"
 # Your YouTube API Key. Needed for YouTube searches
-YOUTUBE_KEY=""
+YOUTUBE_KEY="AIzaSyCUwyGojJIbNEftj_hoCXF0mCvU479xk4A"
 # Enabled search backends
 SEARCH_BACKENDS=[
   "youtube"
 ]
 # Name of the app
-JK_NAME="Jukebox Ultra NRV MkIII"
+JK_NAME="Jukebox Ultra NRV MkIV"

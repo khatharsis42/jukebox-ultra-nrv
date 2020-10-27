@@ -138,6 +138,7 @@ tag.src = "https://www.youtube.com/iframe_api";
 const firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
+let pause = false;
 let yt = 0;
 function onYouTubeIframeAPIReady() {
     yt = new YT.Player('YT', {
@@ -147,10 +148,22 @@ function onYouTubeIframeAPIReady() {
             'onReady': function() {
                 console.log("YT ready");
                 yt.mute();
-                yt.ready = true;
-
+                yt.ready = true; 
+                $('#pause').on("click", function() {
+                    if (pause) {yt.playVideo();} else {yt.pauseVideo();}
+                    pause = ! pause;
+                    $.post('/pause_play');
+                    return true;
+                });
+                
+                $('#rewind').on("click", function() {
+                    yt.seekTo(0);
+                    $.post('rewind');
+                    return true;
+                });
             }
         }
+
     });
 }
 
@@ -160,20 +173,17 @@ function onYouTubeIframeAPIReady() {
  * @param mpv_time : float : timestamp of mpv
  */
 function syncVideo(mpv_time) {
-    console.log(mpv_time);
     if (mpv_time === 0) {
         yt.pauseVideo();
     } else {
         let ytTime = yt.getCurrentTime();
-        yt.playVideo();
+        if (! pause) {yt.playVideo();}
         let delta = ytTime - mpv_time;
         if (Math.abs(delta) > 0.1) {
-            console.log("catching up");
             yt.seekTo(mpv_time);
         }
     }
 }
-
 
 /**
  * Updates the playlist
@@ -363,3 +373,5 @@ $('#search_results').hide();
 $(document).ready(function() {
     suggest();
 });
+
+

@@ -5,27 +5,29 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='styles/bootstrap.min.css') }}">
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/custom/') }}{{ stylesheet }}">
         <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <title>Jukebox Ultra NRV mkIII</title>
+    <title>Jukebox Ultra NRV mkIV</title>
 </head>
   <body class="text-center">
-    <form class="form-signin" action="/auth" method="post">
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    {% for message in messages %}
-		<div class="alert alert-warning" role="alert">
-			{{ message }}
-		</div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-      <h1 class="h3 mb-3 font-weight-normal">C koi ton p'tit nom ?</h1>
-      <label for="inputUser" class="sr-only">Pseudo</label>
-      <input type="text" id="inputUser" name="user" class="form-control" placeholder="Pseudo" required autofocus>
-      <label for="inputPassword" class="sr-only">Mot de passe</label>
-      <input type="password" id="inputPassword" name="pass" class="form-control" placeholder="Mot de passe" required>
-      <button class="btn btn-lg btn-primary btn-block" name="action" type="submit" value="login">Connexion</button>
-	  <p class="mt-1 mb-1 text-muted">- ou -</p>
-	  <button class="btn btn-lg btn-primary btn-block" name="action" type="submit" value="new">S'enregistrer</button>
-    </form>
+    <div class="container">
+        <form class="form-signin" action="/auth" method="post">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-warning" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+          <h1 class="h3 mb-3 font-weight-normal">C koi ton p'tit nom ?</h1>
+          <label for="inputUser" class="sr-only">Pseudo</label>
+          <input type="text" id="inputUser" name="user" class="form-control" placeholder="Pseudo" required autofocus>
+          <label for="inputPassword" class="sr-only">Mot de passe</label>
+          <input type="password" id="inputPassword" name="pass" class="form-control" placeholder="Mot de passe" required>
+          <button class="btn btn-lg btn-primary btn-block" name="action" type="submit" value="login">Connexion</button>
+          <p class="mt-1 mb-1 text-muted">- ou -</p>
+          <button class="btn btn-lg btn-primary btn-block" name="action" type="submit" value="new">S'enregistrer</button>
+        </form>
+    </div>
   </body>
 </html>
