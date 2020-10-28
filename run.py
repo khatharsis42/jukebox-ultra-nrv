@@ -26,5 +26,5 @@ if __name__ == "__main__":
             conn.close()
 
     # run the flask app
-    app.secret_key = "ThisMightBeThePlaceToSetTheSecretKey"
+    app.secret_key = "ThisIsThePlaceToSetYourSecretKey"
     app.run(host=app.config["LISTEN_ADDR"], port=app.config["LISTEN_PORT"])

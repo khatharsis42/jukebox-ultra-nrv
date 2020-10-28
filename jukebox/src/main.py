@@ -134,11 +134,11 @@ def move_track():
         if index is None:
             # app.logger.warning("Track {} not found".format(randomid))
             return "nok"
-        if action == "top":
+        if action == "move":
             if index < 2:
                 app.logger.warning("Track {} has index".format(index))
                 return "nok"
-            app.playlist.insert(1, app.playlist.pop(index))
+            app.playlist.insert(reqeust.form["newPosition"], app.playlist.pop(index))
         elif action == "up":
             if index < 2:
                 app.logger.warning("Track {} has index".format(index))

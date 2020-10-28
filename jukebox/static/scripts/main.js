@@ -48,7 +48,7 @@ function generate_track_html(t) {
     track_html.find(".btn-more").click(toggle_recto_verso);
     track_html.find(".btn-back").click(toggle_recto_verso);
     track_html.find(".btn-top").click(function() {
-        $.post("/move-track", {"action": "top", "randomid": t["randomid"]});
+        $.post("/move-track", {"action": "move", "randomid": t["randomid"], "newPosition": 1});
     });
     track_html.find(".btn-up").click(function() {
         $.post("/move-track", {"action": "up", "randomid": t["randomid"]});
