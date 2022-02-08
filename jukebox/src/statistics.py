@@ -1,19 +1,25 @@
 import datetime
 from typing import List
 
-from flask_table import Table, Col
+from flask_table import Table, Col, LinkCol
 
 from jukebox.src.User import User
 from jukebox.src.Track import Track
 
 
 class StatsUsersTable(Table):
-    name = Col('User')
+    name = LinkCol(name='User',
+                   attr='name',
+                   endpoint='main.user_stats',
+                   url_kwargs=(dict(username="name")))
     description = Col('Count')
 
 
 class StatsTracksTable(Table):
-    name = Col('Track')
+    name = LinkCol(name='Track',
+                   attr='name',
+                   endpoint='main.track_stats',
+                   url_kwargs=(dict(track="name")))
     description = Col('Count')
 
 
@@ -29,9 +35,9 @@ class StatsTracksItem(object):
         self.description = count
 
 
-def create_html_users(database, date=0, nbr=10):
+def create_html_users(database, date=0, nbr=10, track=False):
     items = []
-    usercounts = User.getUserCounts(database, nbr, date=date)
+    usercounts = User.getUserCounts(database, nbr, date=date, track=track)
     for couple in usercounts:
         # we get user, count
         user = couple[0]
@@ -41,9 +47,9 @@ def create_html_users(database, date=0, nbr=10):
     return StatsUsersTable(items).__html__()
 
 
-def create_html_tracks(database, date=0, nbr=10):
+def create_html_tracks(database, date=0, nbr=10, user=False):
     items = []
-    trackcounts = Track.getTrackCounts(database, nbr, date=date)
+    trackcounts = Track.getTrackCounts(database, nbr, date=date, user=user)
     for couple in trackcounts:
         # we get user, count
         track = couple[0]

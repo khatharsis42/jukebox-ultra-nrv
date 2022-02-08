@@ -72,6 +72,7 @@ def settings():
     class SettingsForm(FlaskForm):
         style = SelectField("Styles", choices=styles)
         submit = SubmitField("Send")
+
     form = SettingsForm()
 
     if request.method == 'POST':
@@ -143,15 +144,15 @@ def move_track():
             if index < 2:
                 app.logger.warning("Track {} has index".format(index))
                 return "nok"
-            track_temp = app.playlist[index-1]
-            app.playlist[index-1] = app.playlist[index]
+            track_temp = app.playlist[index - 1]
+            app.playlist[index - 1] = app.playlist[index]
             app.playlist[index] = track_temp
         elif action == "down":
-            if len(app.playlist)-2 < index or index < 1:
+            if len(app.playlist) - 2 < index or index < 1:
                 # app.logger.warning("Track {} has index".format(index))
                 return "nok"
-            track_temp = app.playlist[index+1]
-            app.playlist[index+1] = app.playlist[index]
+            track_temp = app.playlist[index + 1]
+            app.playlist[index + 1] = app.playlist[index]
             app.playlist[index] = track_temp
         else:
             return "nok"
@@ -166,7 +167,7 @@ def statistics():
                            table_users_count_all=create_html_users(app.config["DATABASE_PATH"], nbr=-1),
                            table_users_count_week=create_html_users(app.config["DATABASE_PATH"], nbr=10,
                                                                     date=datetime.datetime.now()
-                                                                        - datetime.timedelta(weeks=1)),
+                                                                         - datetime.timedelta(weeks=1)),
                            table_users_count_day=create_html_users(app.config["DATABASE_PATH"], nbr=10,
                                                                    date=datetime.datetime.now()
                                                                         - datetime.timedelta(days=1)),
@@ -179,6 +180,35 @@ def statistics():
                                                                           - datetime.timedelta(days=1)),
 
                            stylesheet=get_style(), navlinks=get_nav_links())
+
+
+@main.route("/statistics/user/<username>", methods=['GET'])
+@requires_auth
+def user_stats(username: str):
+    return render_template('user.html', user=session['user'],
+                           jk_name=app.config["JK_NAME"],
+                           user_name=username,
+                           table_tracks_count_all=create_html_tracks(
+                               app.config["DATABASE_PATH"], nbr=20, user=username),
+                           table_tracks_count_week=create_html_tracks(
+                               app.config["DATABASE_PATH"], nbr=10,
+                               date=datetime.datetime.now() - datetime.timedelta(weeks=1),
+                               user=username),
+                           stylesheet=get_style(), navlinks=get_nav_links()
+                           )
+
+
+@main.route("/statistics/track/<track>", methods=['GET'])
+@requires_auth
+def track_stats(track: str):
+    return render_template('track.html', user=session['user'],
+                           jk_name=app.config["JK_NAME"],
+                           track=track,
+                           table_users_count_all=create_html_users(
+                               app.config["DATABASE_PATH"], nbr=20,
+                               track=track),
+                           stylesheet=get_style(), navlinks=get_nav_links()
+                           )
 
 
 @main.route("/status", methods=['GET'])
@@ -232,34 +262,34 @@ def search():
     # print('jukebox.src.backends.search.jamendo' in sys.modules)
     # Bandcamp
     if re.match(regex_bandcamp, query) is not None \
-    and 'jukebox.src.backends.search.bandcamp' in sys.modules:
+            and 'jukebox.src.backends.search.bandcamp' in sys.modules:
         for bandcamp in app.search_backends:
             if bandcamp.__name__ == 'jukebox.src.backends.search.bandcamp':
                 break
         results += bandcamp.search_engine(query)
     # Soundcloud
     elif re.match(regex_soundcloud, query) is not None \
-    and 'jukebox.src.backends.search.soundcloud' in sys.modules:
+            and 'jukebox.src.backends.search.soundcloud' in sys.modules:
         for soundcloud in app.search_backends:
             if soundcloud.__name__ == 'jukebox.src.backends.search.soundcloud':
                 break
         results += soundcloud.search_engine(query)
     elif re.match(regex_jamendo, query) is not None \
-    and 'jukebox.src.backends.search.jamendo' in sys.modules:
+            and 'jukebox.src.backends.search.jamendo' in sys.modules:
         for jamendo in app.search_backends:
             if jamendo.__name__ == 'jukebox.src.backends.search.jamendo':
                 break
         results += jamendo.search_engine(query)
     # Soundcloud search
     elif re.match(regex_search_soundcloud, query) is not None \
-    and 'jukebox.src.backends.search.soundcloud' in sys.modules:
+            and 'jukebox.src.backends.search.soundcloud' in sys.modules:
         for soundcloud in app.search_backends:
             if soundcloud.__name__ == 'jukebox.src.backends.search.soundcloud':
                 break
         results += soundcloud.search_multiples(re.sub("\!sc", "", query))
     # Twitch
     if re.match(regex_twitch, query) is not None \
-    and 'jukebox.src.backends.search.twitch' in sys.modules:
+            and 'jukebox.src.backends.search.twitch' in sys.modules:
         for twitch in app.search_backends:
             if twitch.__name__ == 'jukebox.src.backends.search.twitch':
                 break
@@ -267,7 +297,7 @@ def search():
 
     # Youtube search (explicit)
     elif re.match(regex_search_youtube, query) is not None \
-    and 'jukebox.src.backends.search.youtube' in sys.modules:
+            and 'jukebox.src.backends.search.youtube' in sys.modules:
         for youtube in app.search_backends:
             if youtube.__name__ == 'jukebox.src.backends.search.youtube':
                 break
@@ -275,7 +305,7 @@ def search():
 
     # Generic extractor
     elif re.match(regex_generic, query) is not None \
-    and 'jukebox.src.backends.search.generic' in sys.modules:
+            and 'jukebox.src.backends.search.generic' in sys.modules:
         for generic in app.search_backends:
             if generic.__name__ == 'jukebox.src.backends.search.generic':
                 break
@@ -290,10 +320,12 @@ def search():
         app.logger.error("Error: no search module found")
     return jsonify(results)
 
+
 @main.route('/pause_play', methods=['POST'])
 def pause_test():
     app.mpv.command('cycle', 'pause', None)
     return "ok"
+
 
 @main.route('/rewind', methods=['POST'])
 def rewind():

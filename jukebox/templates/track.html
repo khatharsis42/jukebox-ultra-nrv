@@ -1,0 +1,19 @@
+{% extends "page_template.html" %}
+
+{% block content %}
+<div class="container">
+	<div style="text-align:center">
+		<h1>
+			Statistiques de {{track}}
+		</h1>
+	</div>
+	<div class="statistics" style="padding:30px;">
+		<div class="col statcol" style="margin: auto;">
+			<div class="statdisplay">
+				<h3 style="text-align:center">All time</h3>
+				{{ table_users_count_all|safe }}
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

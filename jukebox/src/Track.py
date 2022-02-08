@@ -172,10 +172,10 @@ LIMIT 1;",
         if track is None:
             return
         # check if source is loaded
-        if 'jukebox.src.backends.search.'+track.source not in sys.modules:
+        if 'jukebox.src.backends.search.' + track.source not in sys.modules:
             return
         for search in app.search_backends:
-            if search.__name__ == 'jukebox.src.backends.search.'+track.source:
+            if search.__name__ == 'jukebox.src.backends.search.' + track.source:
                 break
         if track.source == "youtube":
             try:
@@ -259,7 +259,7 @@ WHERE url = ?;""", (track.track, track.artist, track.albumart_url, track.album, 
         }
 
     @classmethod
-    def getTrackCounts(cls, database, nbr, date=0):
+    def getTrackCounts(cls, database, nbr, date=0, user=False):
         """
         Returns at most the nbr users with most listening count.
         Tracks are sorted first by count (number of times the track has been added since `date`, and second by most
@@ -272,10 +272,24 @@ WHERE url = ?;""", (track.track, track.artist, track.albumart_url, track.album, 
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()
-        c.execute(
-            """SELECT track, count(track) FROM  track_info, log
-WHERE log.trackid = track_info.id and log.time > ? group by trackid order by count(trackid) DESC, log.id DESC""",
-            (date,))
+        if user:
+            command = """
+                SELECT track, count(track) \
+                FROM  track_info, log, users \
+                WHERE log.trackid = track_info.id \
+                    and log.userid = users.id \
+                    and log.time > ? and users.user = ?\
+                GROUP BY track_info.track order by count(trackid) DESC, log.id DESC \
+                """
+            c.execute(command, (date, user,))
+        else:
+            command = """
+                SELECT track, count(track) \
+                FROM  track_info, log \
+                WHERE log.trackid = track_info.id and log.time > ? \
+                GROUP BY track_info.track order by count(trackid) DESC, log.id DESC \
+                """
+            c.execute(command, (date,))
         r = c.fetchall()
         if r is None:
             return None

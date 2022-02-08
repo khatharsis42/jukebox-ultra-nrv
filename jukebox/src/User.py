@@ -57,7 +57,7 @@ class User:
         conn.commit()
 
     @classmethod
-    def getUserCounts(cls, database, nbr, date=0):
+    def getUserCounts(cls, database, nbr, date=0, track=False):
         """
         Returns at most the nbr users with most listening count
 
@@ -68,10 +68,26 @@ class User:
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()
-        c.execute(
-            """SELECT user, count(user) FROM  users, log
-WHERE log.userid = users.id and log.time > ? group by user order by count(user) DESC""",
-            (date,))
+        if (track):
+            c.execute("""
+                          SELECT user, count(user)\
+                          FROM  users, log, track_info\
+                          WHERE log.userid = users.id\
+                          and log.trackid = track_info.id\
+                          and log.time > ?\
+                          and track_info.track = ?
+                          GROUP BY user order by count(user) DESC\
+                          """,
+                      (date, track,))
+        else:
+            c.execute("""
+                          SELECT user, count(user)\
+                          FROM  users, log\
+                          WHERE log.userid = users.id\
+                          and log.time > ?\
+                          GROUP BY user order by count(user) DESC\
+                          """,
+                      (date,))
         r = c.fetchall()
         if r is None:
             return None
