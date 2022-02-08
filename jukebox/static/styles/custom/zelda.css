@@ -1,0 +1,369 @@
+@font-face {
+    font-family: "ZeldaBOTW";
+    src: url("/static/zelda/zeldaBOTW.otf");
+}
+
+@font-face {
+    font-family: "Zelda";
+    src: url("/static/zelda/zelda.otf");
+}
+
+@font-face {
+    font-family: "Pixel";
+    src: url("/static/zelda/pixel.ttf");
+}
+
+body {
+    background: url(https://images.alphacoders.com/789/thumb-1920-789452.jpg);
+    /*url(https://i.imgur.com/YlC6hYM.jpeg);*/
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    font-family: "Pixel";
+    font-weight: bold;
+}
+
+@media only screen and (orientation: portrait) {
+    body {
+        background: url(https://i.pinimg.com/originals/49/a1/9c/49a19c0808863a8301e6a507383ee271.jpg);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+}
+
+.container-fluid {
+    background-color: rgba(0, 0, 0, 0.3);
+    font-variant: small-caps;
+}
+
+.display-3, .display-4 {
+    text-shadow: -2px -2px 0 #000, -1px -1px 0 #000, 0px 0px 0 #000, 1px 1px 0 #000, 2px 2px 0 #000, -2px -2px 0 #000, -1px -1px 0 #000, 0px 0px 0 #000, 1px 1px 0 #000, 2px 2px 0 #000, -1px -1px 0 #000, 0px 0px 0 #000, 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000, 0px 0px 0 #000, 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000, 4px 4px 0 #000, 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000, 4px 4px 0 #000, 5px 5px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000, 4px 4px 0 #000, 5px 5px 0 #000, 6px 6px 0 #000;
+    color: #c32130;
+    font-weight: normal;
+}
+
+.display-3 {
+    font-family: "ZeldaBOTW", serif;
+    visibility: hidden;
+    font-size: 0;
+    color: #C1A564
+}
+
+.display-3:after {
+    content: "The Legend Of The Jukebox";
+    visibility: visible;
+    font-size: 5rem;
+    color: #C1A564
+}
+
+.display-4 {
+    font-family: "Zelda", serif;
+    text-align: center;
+    float: none !important;
+}
+
+.nav-link {
+    font-family: "Zelda";
+    font-size: 1.25rem;
+}
+
+iframe {
+    /* display:none; */
+    /*Pas envie d'afficher ça dans mon skin*/
+    width: 100%;
+    /* Pour avoir un truc youtube centré un peu quand même */
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+a {
+    color: white;
+    text-shadow: -1px -1px 0 #000, -1px 0px 0 #000, -1px 1px 0 #000, 0px -1px 0 #000, 0px 0px 0 #000, 0px 1px 0 #000, 1px -1px 0 #000, 1px 0px 0 #000, 1px 1px 0 #000;
+}
+
+.float-right.lead.py-4>a {
+    text-shadow: -1px -1px 0 #000, -1px 0px 0 #000, -1px 1px 0 #000, -1px 2px 0 #000, 0px -1px 0 #000, 0px 0px 0 #000, 0px 1px 0 #000, 0px 2px 0 #000, 1px -1px 0 #000, 1px 0px 0 #000, 1px 1px 0 #000, 1px 2px 0 #000, 2px -1px 0 #000, 2px 0px 0 #000, 2px 1px 0 #000, 2px 2px 0 #000;
+    margin-right: 5px;
+}
+
+.float-right.lead.py-4 {
+    margin-right: 5px;
+    float: none !important;
+    text-align: center;
+}
+
+a:hover {
+    color: white;
+}
+
+a:active {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+input[type="text"] {
+    text-align: left;
+    direction: ltr;
+    border-radius: 0;
+    border: solid 1px;
+    border-color: white;
+    box-shadow: 0px 0px 10px 2px #2596be;
+    background-color: #1887b5;
+    color: #dcf5f7;
+    border-radius: 25px;
+    /* border-image: url(/static/zelda/temp.jpg) 15 / 15px round; */
+}
+
+.form-control:focus {
+    box-shadow: 0px 0px 20px 8px #2596be;
+    outline: none;
+    background-color: #1887b5;
+    color: #dcf5f7;
+}
+
+.form-control::placeholder {
+    color: #4bb1db;
+}
+
+.form-group:focus {
+    border-color: red;
+    box-shadow: 0px 0px 10px 3px #2596be;
+}
+
+iframe, .list-group, .container {
+    box-shadow: 1px 1px 0 0 #000, 2px 2px 0 0 #000, 3px 3px 0 0 #000, 4px 4px 0 0 #000, 5px 5px 0 0 #000, 6px 6px 0 0 #000, 7px 7px 0 0 #000, 8px 8px 0 0 #000, 9px 9px 0 0 #000, 10px 10px 0 0 #000;
+    margin-left: -5px;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 15px;
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.85);
+}
+
+.statistics .statcol {
+    display: inline-block;
+    max-width: 48%;
+    vertical-align: top;
+    margin: 5px;
+}
+
+.statistics .statcol .statdisplay {
+    padding: 5px 5px 30px;
+}
+
+.statistics .statcol thead {
+    background-color: rgba(255, 0, 0, 0.4);
+    border-bottom: 1px solid grey;
+}
+
+.statistics .statcol th, .statistics .statcol td {
+    padding: 5px;
+}
+
+.statistics .statcol tbody tr:nth-child(even) {
+    background-color: rgba(0, 255, 0, 0.4);
+}
+
+.statistics .statcol tbody tr:nth-child(odd) {
+    background-color: rgba(244, 161, 44, 0.4);
+}
+
+.list-group {
+    margin-right: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.list-group-item.track {
+    background-color: transparent;
+}
+
+.col-1>.btn-remove, .col-1>.btn-add, .col-1>.btn-back, .col-1>.btn-more, .col-1>.btn-up, .col-1>.btn-down, .col-1>.btn-refresh {
+    right: 5px;
+}
+
+.albumart {
+    border-radius: 0.5em;
+    border-bottom-left-radius: 70px;
+    border-top-left-radius: 70px;
+    margin-top: -7px;
+    margin-left: -7px;
+    box-shadow: 10px 10px 0 0 black;
+    object-fit: cover;
+    max-width: 280px;
+    max-height: 140px;
+    width: 100%;
+    height: auto;
+}
+
+.track-duration, .track-user, .track-source, .track-url, .track-album, .track-source, .track-title, .track-artist {
+    color: white;
+    display: block;
+    font-size: 1rem;
+}
+
+.track-title, .track-artist {
+    display: block;
+}
+
+.track-user, .track-duration {
+    display: inline-block;
+}
+
+#search_results .track-user {
+    visibility: hidden;
+}
+
+.icon {
+    background-image: none;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    background-size: 20px;
+    background-size: auto 100%;
+    padding-left: 20px;
+    background-position: center;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin: 6px;
+    display: block;
+}
+
+.icon.btn-more, .icon.btn-back {
+    /* background-image: url('/static/zelda/yellowRupee.png'); */
+    /* background-image: url("/static/zelda/eyeAlternative.png") */
+    background-image: url('/static/zelda/navy.png');
+}
+
+.icon.btn-up {
+    background-image: url('/static/zelda/greenRupee.png');
+}
+
+.icon.btn-down {
+    background-image: url('/static/zelda/redRupee.png');
+}
+
+.icon.btn-remove {
+    background-image: url("/static/zelda/bomb.png")
+}
+
+.icon.btn-add {
+    background-image: url("/static/zelda/triforce.png")
+}
+
+.icon.btn-refresh {
+    background-image: url('/static/zelda/yellowRupee.png');
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+    /*nécessaire pour Chrome */
+    padding: 0;
+    /* nécessaire pour IE */
+    font: inherit;
+    /* même rendu suivant font document */
+    outline: none;
+    color: #069;
+    /* sert pour couleur de référence, via currentColor, pour le curseur */
+    box-sizing: border-box;
+    /* même modèle de boîte pour tous */
+    transition: opacity .2s;
+    cursor: pointer;
+    height: 20px;
+    border-radius: 0;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+input[type=range]:focus, input[type=range]::-webkit-slider-runnable-track {
+    border-radius: 0;
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+}
+
+input[type='range'] {
+    width: 600px;
+    background-color: none;
+}
+
+input[type='range'],
+input[type='range']::-webkit-slider-runnable-track,
+input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+    height: 3px;
+    background: linear-gradient(to right, #293043, #293043), #D7D7D7;
+    background-size: var(--background-size, 0%) 100%;
+    background-repeat: no-repeat;
+    border-radius: 5px;
+    background-color: red;
+}
+
+input[type='range']::-webkit-slider-thumb {
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    background: red;
+    border: solid red 1px;
+    border-radius: 50%;
+    margin-top: -6px;
+    background-color: none;
+}
+
+input[type="range"]::-moz-range-progress {
+    height: 10px;
+    border-radius: 5px;
+    background-color: #1887b5;
+}
+
+input[type="range"]::-moz-range-track {
+    background-color: #D7D7D7;
+    border-radius: 5px;
+    background-color: none;
+    height: 10px;
+    width: 100%
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    border: none;
+    background: none;
+    /* background: url("/static/zelda/eye.svg");
+    background-size:contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-position-x:-50%; */
+}
+
+.container-fluid::after {
+    content: "Theme by Khâtharsis (Nya)";
+    text-align: center;
+    width: 50%;
+    position: relative;
+    left: 50%;
+    margin-left: -25%;
+    display: block;
+    animation: spin;
+    animation-duration: 4s;
+    animation-delay: 60s;
+    animation-iteration-count: 1;
+    color: white;
+    font-size: larger;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+@keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
