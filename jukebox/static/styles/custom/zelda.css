@@ -24,6 +24,10 @@ body {
     font-weight: bold;
 }
 
+h1, h2, h3, tr, td, p, li{
+    color:rgb(0,0,0);
+}
+
 @media only screen and (orientation: portrait) {
     body {
         background: url(https://i.pinimg.com/originals/49/a1/9c/49a19c0808863a8301e6a507383ee271.jpg);
@@ -142,6 +146,7 @@ iframe, .list-group, .container {
 .container {
     background-color: none;
     box-shadow:0 0 0 0;
+    max-width:100%;
 }
 
 .statistics .statcol {
