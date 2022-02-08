@@ -1,11 +1,10 @@
-# Jukebox Ultra NRV mkIV
-
+# Jukebox Ultra NRV mkV
 ## Prerequisites
 
 This application assumes it runs on Linux using Alsa.
 
 `python3, python-flask, python-requests,  mpv, youtube-dl, alsa-utils,
-python3-pip` have to be installed.
+python3-pip` and `libmpv-dev` have to be installed.
 Also from pip, get `pyalsaaudio`, `youtube_dl`, `passlib`, `flask-WTF` and `flask-table`.
 
 ## Installation
@@ -35,6 +34,15 @@ or with a systemd service jukebox (currently very buggy)
 
 ```bash
 $ systemctl start jukebox.service
+```
+
+Should you have screen, you can also use
+```bash
+$ ./start.sh
+```
+And if you have tmux, you can do
+```bash
+$ ./tmux.sh
 ```
 
 ## Security
