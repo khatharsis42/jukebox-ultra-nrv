@@ -184,7 +184,7 @@ function syncVideo(mpv_time) {
         let ytTime = yt.getCurrentTime();
         if (! pause) {yt.playVideo();}
         let delta = ytTime - mpv_time;
-        if (Math.abs(delta) > 0.1) {
+        if (Math.abs(delta) > 1) {
             yt.seekTo(mpv_time);
         }
     }
