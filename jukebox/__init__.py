@@ -57,16 +57,13 @@ class Jukebox(Flask):
                 if hasattr(self, 'mpv') and self.mpv:
                     del self.mpv
                 self.mpv = MyMPV(None)  # we start the track
-            start = time.time()
-            end = start
             with self.database_lock:
                 track = Track.import_from_url(app.config["DATABASE_PATH"], url)
-            max_count = 5
-            min_duration = 2
+            max_count = 10
             counter = 0
             # this while is a little hack, as sometimes, mpv fails mysteriously but work fine on a second or third track
             # so we check that enough time has passed between play start and end
-            while counter < max_count and track.duration is not None and end - start < min(track.duration, min_duration): # 1 is not enough
+            while counter < max_count and track.duration is not None: # 1 is not enough
                 # note for the future : what if track is passed with a timestamp ? It could be nice to allow it.
                 start = time.time()
                 with app.mpv_lock:
@@ -76,7 +73,7 @@ class Jukebox(Flask):
                 # I fear fixing it may be dirty
                 # we could switch to mpv playlists though
                 self.mpv.wait_for_playback()  # it's stuck here while it's playing
-                end = time.time()
+                time.sleep(100)
                 counter += 1
             """
             if counter == max_count and end - start < min(track.duration, min_duration) and track.source == "youtube":
