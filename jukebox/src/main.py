@@ -337,3 +337,18 @@ def rewind():
 def advance():
     app.mpv.command('seek', app.mpv.time_pos + 10, 'absolute', None)
     return "ok"
+
+@main.route('/jump', methods=['POST'])
+def jump():
+    timestamp = request.form["jump"]
+    if (timestamp.count(':') == 0):
+        app.mpv.command('seek', int(timestamp), 'absolute', None)
+    elif (timestamp.count(':') == 1):
+        minutes, secondes = [int(t) for t in timestamp.split(":")]
+        app.mpv.command('seek', int(60 * minutes + secondes), 'absolute', None)
+    elif (timestamp.count(':') == 2):
+        hours, minutes, secondes = [int(t) for t in timestamp.split(":")]
+        app.mpv.command('seek', int(60 * (60 * hours + minutes) + secondes), 'absolute', None)
+    else:
+        return "nok"
+    return "ok"

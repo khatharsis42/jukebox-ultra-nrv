@@ -194,6 +194,10 @@ iframe, .list-group, .container {
     margin:auto;
 }
 
+#jump {
+    font-size:.9em;
+}
+
 .albumart {
     border-radius: 0.5em;
     border-bottom-left-radius: 70px;
@@ -207,7 +211,7 @@ iframe, .list-group, .container {
     width: 100%;
     height: auto;
 }
-#pause, #rewind {
+#pause, #rewind, #advance {
     width:100%;
     font-family:"Segoe UI";
     background-color:rgba(255,255,255, 50);

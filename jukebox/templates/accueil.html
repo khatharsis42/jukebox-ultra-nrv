@@ -2,11 +2,11 @@
 <html lang="fr">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	    <link rel="stylesheet" href="{{ url_for('static', filename='styles/bootstrap.min.css') }}">
-        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/custom/') }}{{ stylesheet }}">
-        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+	    <link href="{{ url_for('static', filename='styles/bootstrap.min.css') }}" rel="stylesheet">
+        <link href= "{{ url_for('static',filename='styles/custom/') }}{{ stylesheet }}" rel= "stylesheet" type= "text/css">
+        <link href="{{ url_for('static', filename='favicon.ico') }}" rel="shortcut icon">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
         <title>{{ jk_name }}</title>
     </head>
 
@@ -48,13 +48,21 @@
                         </ul>
                     </div>
                     <div class="form-group">
-                        <input class="form-control form-control-lg" name="query" id="query" type="text" placeholder="Recherchez un morceau ou collez une url"
-                                                                                                        spellcheck="false" dir="ltr" style="text-align: left; direction: ltr;" autocomplete="off"
-                                                                                                                                                                               aria-expanded="false" autofocus/>
+                        <input aria-expanded="false"
+                               autocomplete="off"
+                               autofocus
+                               class="form-control form-control-lg"
+                               dir="ltr"
+                               id="query"
+                               name="query"
+                               placeholder="Recherchez un morceau ou collez une url"
+                               spellcheck="false"
+                               style="text-align: left; direction: ltr;"
+                               type="text"/>
                     </div>
                     <div class="form-group form-inline">
-                        <img src="/static/images/icons/volume.svg" class="icon btn-volume">
-                        <input type="range" class="volume-slider form-control" id="volume-slider" min="0" max="100">
+                        <img class="icon btn-volume" src="/static/images/icons/volume.svg">
+                        <input class="volume-slider form-control" id="volume-slider" max="100" min="0" type="range">
                     </div>
                     <ul class="list-group" id="search_results"></ul>
                     <ul class="list-group" id="playlist"></ul>
@@ -64,13 +72,26 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-3">
-                                <button id="pause" type="submit" class="btn btn-outline-primary"><i class="fa fa-play"></i>  /  <i class="fa fa-pause"></i></button>
+                                <button class="btn btn-outline-primary" id="pause" type="submit"><i class="fa fa-play"></i>  /  <i class="fa fa-pause"></i></button>
                             </div>
                             <div class="col-3">
-                                <button id="rewind" type="submit" class="btn btn-outline-primary"><i class="fa fa-fast-backward"></i></button>
+                                <button class="btn btn-outline-primary" id="rewind" type="submit"><i class="fa fa-fast-backward"></i></button>
                             </div>
                             <div class="col-3">
-                                <button id="advance" type="submit" class="btn btn-outline-primary"><i class="fa fa-fast-forward"></i></button>
+                                <button class="btn btn-outline-primary" id="advance" type="submit"><i class="fa fa-fast-forward"></i></button>
+                            </div>
+                            <div class="col-3">
+                                <input aria-expanded="false"
+                                   autocomplete="off"
+                                   autofocus
+                                   class="form-control form-control-lg"
+                                   dir="ltr"
+                                   id="jump"
+                                   name="jump"
+                                   placeholder="00:00"
+                                   spellcheck="false"
+                                   style="text-align: right; direction: ltr;"
+                                   type="text"/>
                             </div>
                         </div>
                     </div>
@@ -87,7 +108,7 @@
 
 
 	    <script src="{{ url_for('static',filename='scripts/jquery-3.3.1.min.js') }}"></script>
-            <script src="{{ url_for('static',filename='scripts/jquery.loadTemplate.min.js') }}" crossorigin="anonymous"></script>
+            <script crossorigin="anonymous" src="{{ url_for('static',filename='scripts/jquery.loadTemplate.min.js') }}"></script>
             <script src="{{ url_for('static',filename='scripts/main.js') }}"></script>
 	    <script src="{{ url_for('static',filename='scripts/popper.min.js') }}"></script>
 	    <script src="{{ url_for('static',filename='scripts/bootstrap.min.js') }}"></script>

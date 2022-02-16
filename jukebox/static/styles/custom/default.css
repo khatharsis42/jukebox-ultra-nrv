@@ -28,6 +28,10 @@
     top: 2px;
 }
 
+.col-3 {
+    margin:auto;
+}
+
 #search_results .btn-remove, #search_results .track-user, #suggestions .btn-remove {
     display: none;
 }

@@ -348,6 +348,24 @@ $('#query').focus(function () {
         $('#search_results').show();
 });
 
+
+$('#jump').keyup(function(e) {
+    let code = e.which;
+    // We make a search **only** if the enter key has been pressed
+    if (code != 13) {
+        return;
+    }
+    let jump = $('#jump').val().trim();
+    if (jump == "") {
+        return;
+    }
+    delay(function() {
+        console.log("jumping to "+$('#jump').val());
+        $.post("/jump", {"jump": jump})
+    },250);
+});
+
+
 /**
  * Get the suggested tracks
  */
