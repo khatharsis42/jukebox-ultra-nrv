@@ -58,7 +58,7 @@ class Jukebox(Flask):
             with app.mpv_lock:
                 if hasattr(self, 'mpv') and self.mpv:
                     del self.mpv
-                self.mpv = MyMPV(None)  # we start the track
+                self.mpv = MyMPV(None, log_handler=app.logger.info)  # we start the track
             url = self.playlist[0]["url"]
             self.currently_played = url
             with app.mpv_lock:
@@ -77,6 +77,8 @@ class Jukebox(Flask):
             while counter < max_count and track.duration is not None and end - start < min(track.duration,
                                                                                            min_duration):  # 1 is not enough
                 # note for the future : what if track is passed with a timestamp ? It could be nice to allow it.
+                # note from the future : Rather than parsing for a timestamp, I've made it possible to
+                # go to a timestamp in the Web UI, so it's actually pretty close.
                 start = time.time()
                 with app.mpv_lock:
                     self.mpv.play(self.currently_played)
