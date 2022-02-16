@@ -20,6 +20,7 @@ class Jukebox(Flask):
     """
     Flask application for the Jukebox
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         log = logging.getLogger('werkzeug')
@@ -63,7 +64,7 @@ class Jukebox(Flask):
             with app.mpv_lock:
                 if hasattr(self, 'mpv') and self.mpv:
                     del self.mpv
-                self.mpv = MyMPV(None)  # we start the track
+                self.mpv = MyMPV(None, log_handler=app.logger.info)  # we start the track
             start = time.time()
             end = start
             with self.database_lock:
@@ -73,7 +74,8 @@ class Jukebox(Flask):
             counter = 0
             # this while is a little hack, as sometimes, mpv fails mysteriously but work fine on a second or third track
             # so we check that enough time has passed between play start and end
-            while counter < max_count and track.duration is not None and end - start < min(track.duration, min_duration): # 1 is not enough
+            while counter < max_count and track.duration is not None and end - start < min(track.duration,
+                                                                                           min_duration):  # 1 is not enough
                 # note for the future : what if track is passed with a timestamp ? It could be nice to allow it.
                 start = time.time()
                 with app.mpv_lock:
@@ -85,11 +87,11 @@ class Jukebox(Flask):
                 try:
                     self.mpv.wait_for_playback()  # it's stuck here while it's playing
                 except mpv.ShutdownError:
-                    print("MPV got shutdown, relaunching the core")
+                    app.logger.info("MPV got shutdown, relaunching the core")
                     # Sometimes the core crashes, so we gotta relaunch it
                     # I have no idea where it comes from
                     self.mpv.stop()
-                    self.mpv = MyMPV(None)
+                    self.mpv = MyMPV(None, log_handler=app.logger.info)
                 end = time.time()
                 counter += 1
             """
