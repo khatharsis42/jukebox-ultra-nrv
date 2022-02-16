@@ -6,3 +6,4 @@ passlib
 pyalsaaudio >= 0.8
 flask-table
 isodate
+requests >= 2.27
