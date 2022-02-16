@@ -32,12 +32,12 @@ def get_volume():
     """
     Example of amixer output :
     Simple mixer control 'Master',0
-  Capabilities: pvolume pswitch pswitch-joined
-  Playback channels: Front Left - Front Right
-  Limits: Playback 0 - 65536
-  Mono:
-  Front Left: Playback 40634 [62%] [on]
-  Front Right: Playback 40634 [62%] [on]
+    Capabilities: pvolume pswitch pswitch-joined
+    Playback channels: Front Left - Front Right
+    Limits: Playback 0 - 65536
+    Mono:
+    Front Left: Playback 40634 [62%] [on]
+    Front Right: Playback 40634 [62%] [on]
     """
     m = alsaaudio.Mixer(get_mixer_name())
     return int(m.getvolume()[0])
