@@ -4,6 +4,7 @@ import time
 
 import logging
 
+import mpv
 from flask import Flask
 
 from jukebox.src.MyMPV import MyMPV
@@ -57,13 +58,22 @@ class Jukebox(Flask):
                 if hasattr(self, 'mpv') and self.mpv:
                     del self.mpv
                 self.mpv = MyMPV(None)  # we start the track
+            url = self.playlist[0]["url"]
+            self.currently_played = url
+            with app.mpv_lock:
+                if hasattr(self, 'mpv') and self.mpv:
+                    del self.mpv
+                self.mpv = MyMPV(None)  # we start the track
+            start = time.time()
+            end = start
             with self.database_lock:
                 track = Track.import_from_url(app.config["DATABASE_PATH"], url)
             max_count = 10
+            min_duration = 2
             counter = 0
             # this while is a little hack, as sometimes, mpv fails mysteriously but work fine on a second or third track
             # so we check that enough time has passed between play start and end
-            while counter < max_count and track.duration is not None: # 1 is not enough
+            while counter < max_count and track.duration is not None and end - start < min(track.duration, min_duration): # 1 is not enough
                 # note for the future : what if track is passed with a timestamp ? It could be nice to allow it.
                 start = time.time()
                 with app.mpv_lock:
@@ -72,8 +82,15 @@ class Jukebox(Flask):
                 # but it causes a segfault when there is a lock
                 # I fear fixing it may be dirty
                 # we could switch to mpv playlists though
-                self.mpv.wait_for_playback()  # it's stuck here while it's playing
-                time.sleep(100)
+                try:
+                    self.mpv.wait_for_playback()  # it's stuck here while it's playing
+                except mpv.ShutdownError:
+                    print("MPV got shutdown, relaunching the core")
+                    # Sometimes the core crashes, so we gotta relaunch it
+                    # I have no idea where it comes from
+                    self.mpv.stop()
+                    self.mpv = MyMPV(None)
+                end = time.time()
                 counter += 1
             """
             if counter == max_count and end - start < min(track.duration, min_duration) and track.source == "youtube":
