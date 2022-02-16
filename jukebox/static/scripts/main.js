@@ -162,8 +162,12 @@ function onYouTubeIframeAPIReady() {
                 });
                 
                 $('#rewind').on("click", function() {
-                    yt.seekTo(0);
                     $.post('rewind');
+                    return true;
+                });
+
+                $('#advance').on("click", function() {
+                    $.post('advance');
                     return true;
                 });
             }

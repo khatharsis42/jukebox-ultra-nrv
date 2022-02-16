@@ -27,4 +27,5 @@ if __name__ == "__main__":
 
     # run the flask app
     app.secret_key = "ThisMightBeThePlaceToSetTheSecretKey"
+    # It's actually not used at all, so who cares
     app.run(host=app.config["LISTEN_ADDR"], port=app.config["LISTEN_PORT"])

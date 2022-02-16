@@ -329,5 +329,11 @@ def pause_test():
 
 @main.route('/rewind', methods=['POST'])
 def rewind():
-    app.mpv.command('seek', 0, 'absolute', None)
+    app.mpv.command('seek', max(0, app.mpv.time_pos - 10), 'absolute', None)
+    return "ok"
+
+
+@main.route('/advance', methods=['POST'])
+def advance():
+    app.mpv.command('seek', app.mpv.time_pos + 10, 'absolute', None)
     return "ok"
