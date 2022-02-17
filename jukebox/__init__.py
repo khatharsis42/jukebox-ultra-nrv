@@ -59,12 +59,6 @@ class Jukebox(Flask):
                 if hasattr(self, 'mpv') and self.mpv:
                     del self.mpv
                 self.mpv = MyMPV(None, log_handler=app.logger.info)  # we start the track
-            url = self.playlist[0]["url"]
-            self.currently_played = url
-            with app.mpv_lock:
-                if hasattr(self, 'mpv') and self.mpv:
-                    del self.mpv
-                self.mpv = MyMPV(None, log_handler=app.logger.info)  # we start the track
             start = time.time()
             end = start
             with self.database_lock:
