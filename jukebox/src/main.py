@@ -66,7 +66,8 @@ def settings():
     # display which search functions are available
 
     style_path = "jukebox/static/styles/custom/"
-    styles = [(f, f) for f in listdir(style_path) if isfile(join(style_path, f)) and f[-4:] == ".css"]
+    styles = [(f, f) for f in listdir(style_path) if isfile(
+        join(style_path, f)) and f[-4:] == ".css"]
     app.logger.info(styles)
 
     class SettingsForm(FlaskForm):
@@ -103,7 +104,9 @@ def sync():
     volume = get_volume()
     # segfault was here
     with app.mpv_lock:
-        if hasattr(app, 'mpv') and app.mpv is not None and hasattr(app.mpv, 'time_pos') \
+        if hasattr(app, 'mpv') \
+                and app.mpv is not None \
+                and hasattr(app.mpv, 'time_pos') \
                 and app.mpv.time_pos is not None:
             time_pos = app.mpv.time_pos  # when track is finished, continues augmenting time_pos
         else:
@@ -164,20 +167,22 @@ def move_track():
 def statistics():
     return render_template('statistics.html', user=session["user"],
                            jk_name=app.config["JK_NAME"],
-                           table_users_count_all=create_html_users(app.config["DATABASE_PATH"], nbr=-1),
+                           table_users_count_all=create_html_users(
+                               app.config["DATABASE_PATH"], nbr=-1),
                            table_users_count_week=create_html_users(app.config["DATABASE_PATH"], nbr=10,
                                                                     date=datetime.datetime.now()
-                                                                         - datetime.timedelta(weeks=1)),
+                                                                    - datetime.timedelta(weeks=1)),
                            table_users_count_day=create_html_users(app.config["DATABASE_PATH"], nbr=10,
                                                                    date=datetime.datetime.now()
-                                                                        - datetime.timedelta(days=1)),
-                           table_tracks_count_all=create_html_tracks(app.config["DATABASE_PATH"], nbr=20),
+                                                                   - datetime.timedelta(days=1)),
+                           table_tracks_count_all=create_html_tracks(
+                               app.config["DATABASE_PATH"], nbr=20),
                            table_tracks_count_week=create_html_tracks(app.config["DATABASE_PATH"], nbr=10,
                                                                       date=datetime.datetime.now()
-                                                                           - datetime.timedelta(weeks=1)),
+                                                                      - datetime.timedelta(weeks=1)),
                            table_tracks_count_day=create_html_tracks(app.config["DATABASE_PATH"], nbr=10,
                                                                      date=datetime.datetime.now()
-                                                                          - datetime.timedelta(days=1)),
+                                                                     - datetime.timedelta(days=1)),
 
                            stylesheet=get_style(), navlinks=get_nav_links())
 
@@ -255,7 +260,8 @@ def search():
     regex_jamendo = re.compile('^(https?://)?(www.)?jamendo.com')
     regex_search_soundcloud = re.compile('(\!sc\s)|(.*\s\!sc\s)|(.*\s\!sc$)')
     regex_search_youtube = re.compile('(\!yt\s)|(.*\s\!yt\s)|(.*\s\!yt$)')
-    regex_generic = re.compile('(\!url\s)|(.*\s\!url\s)|(.*\s\!url$)|(\!g\s)|(.*\s\!g\s)|(.*\s\!g$)')
+    regex_generic = re.compile(
+        '(\!url\s)|(.*\s\!url\s)|(.*\s\!url$)|(\!g\s)|(.*\s\!g\s)|(.*\s\!g$)')
 
     # print("Query : \"" + query + "\"")
     # print("Regex match :", re.match(regex_generic, query))
@@ -301,7 +307,8 @@ def search():
         for youtube in app.search_backends:
             if youtube.__name__ == 'jukebox.src.backends.search.youtube':
                 break
-        results += youtube.search_engine(re.sub("\!yt", "", query), use_youtube_dl=True)
+        results += youtube.search_engine(re.sub("\!yt",
+                                         "", query), use_youtube_dl=True)
 
     # Generic extractor
     elif re.match(regex_generic, query) is not None \

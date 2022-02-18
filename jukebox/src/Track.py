@@ -8,7 +8,9 @@ from jukebox.src.util import *
 
 
 class Track:
-    def __init__(self, ident, url, track, artist, source, albumart_url, album=None, duration=None, blacklisted=False,
+    def __init__(self,
+                 ident, url, track, artist, source, albumart_url,
+                 album=None, duration=None, blacklisted=False,
                  obsolete=0, user=None):
         """
 
@@ -57,11 +59,9 @@ class Track:
         conn = sqlite3.connect(database)
         c = conn.cursor()
         # check if track not in track_info i.e. if url no already there
-        c.execute("""select id
-                     from track_info
-                     where url = ?;
-                  """,
-                  (url,))
+        c.execute("SELECT id FROM track_info WHERE url = ?;",
+                  (url,)
+                  )
         r = c.fetchall()
         return len(r) > 0
         # the following block is used to manage cases http and https
@@ -97,23 +97,22 @@ class Track:
         if r is None:
             return None
         assert r[0] == ident
-        return Track(ident=r[0], url=r[1], track=r[2], artist=r[3], album=r[4], duration=r[5], albumart_url=r[6],
+        return Track(ident=r[0], url=r[1], track=r[2], artist=r[3],
+                     album=r[4], duration=r[5], albumart_url=r[6],
                      source=r[7], blacklisted=r[8], obsolete=r[9])
 
     @classmethod
     def import_from_url(cls, database, url):
         conn = sqlite3.connect(database)
         c = conn.cursor()
-        c.execute("""select *
-                     from track_info
-                     where url = ?;
-                  """,
+        c.execute("SELECT * FROM track_info WHERE url = ?;",
                   (url,))
         r = c.fetchone()
         if r is None:
             return None
-        return Track(ident=r[0], url=r[1], track=r[2], artist=r[3], album=r[4], duration=r[5],
-                     albumart_url=r[6], source=r[7], blacklisted=r[8], obsolete=r[9])
+        return Track(ident=r[0], url=r[1], track=r[2], artist=r[3],
+                     album=r[4], duration=r[5], albumart_url=r[6],
+                     source=r[7], blacklisted=r[8], obsolete=r[9])
 
     @classmethod
     def get_random_track(cls, database):
@@ -128,10 +127,16 @@ class Track:
         r = c.fetchone()
         if r is None:  # no track in database
             return None
-        track = Track(ident=r[0], url=r[1], track=r[2], artist=r[3], album=r[4], duration=r[5], albumart_url=r[6],
+        track = Track(ident=r[0], url=r[1], track=r[2], artist=r[3],
+                      album=r[4], duration=r[5], albumart_url=r[6],
                       source=r[7], blacklisted=r[8], obsolete=r[9])
-        c.execute("SELECT user from users, log where users.id = log.userid and log.trackid = ? ORDER BY RANDOM() \
-LIMIT 1;",
+        c.execute("""
+            SELECT user \
+            FROM users, log \
+            WHERE users.id = log.userid \
+                AND log.trackid = ? \
+            ORDER BY RANDOM() \
+            LIMIT 1;""",
                   (track.ident,))
         r = c.fetchone()
         if r is not None:
@@ -148,12 +153,12 @@ LIMIT 1;",
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()
-        c.execute("""INSERT INTO track_info
-                            (url, track, artist, album, duration, albumart_url,
-                            source) VALUES
-                            (?,   ?,     ?,      ?,     ?,        ?,
-                            ?)
-                            ;""",
+        c.execute("""
+            INSERT INTO track_info \
+            (url, track, artist, album, duration, albumart_url, source) \
+            VALUES \
+            (?  ,     ?,      ?,     ?,        ?,            ?,      ?); \
+            """,
                   (track_form["url"], track_form["title"], track_form["artist"],
                    track_form["album"], track_form["duration"],
                    track_form["albumart_url"], track_form["source"]))
@@ -179,13 +184,15 @@ LIMIT 1;",
                 break
         if track.source == "youtube":
             try:
-                track_dict = search.search_engine(url, use_youtube_dl=True, search_multiple=False)[0]
+                track_dict = search.search_engine(
+                    url, use_youtube_dl=True, search_multiple=False)[0]
             except DownloadError as e:  # We mark the track as obsolete
                 app.logger.info(e.exc_info[1])
                 if e.args[0] == "ERROR: This video is unavailable.":
                     track.obsolete = 1
                     track.set_obsolete_value(database, track.obsolete)
-                    app.logger.warning("Marking track {} as obsolete".format(url))
+                    app.logger.warning(
+                        "Marking track {} as obsolete".format(url))
                 return
         else:
             track_dict = search.search_engine(url, use_youtube_dl=True)[0]
@@ -194,9 +201,25 @@ LIMIT 1;",
                       track_dict["albumart_url"], album=track_dict["album"], duration=track_dict["duration"])
         conn = sqlite3.connect(database)
         c = conn.cursor()
-        c.execute("""UPDATE track_info
-SET track = ?, artist = ?, albumart_url = ?, album = ?, duration = ?, obsolete = ?
-WHERE url = ?;""", (track.track, track.artist, track.albumart_url, track.album, track.duration, obsolete, url))
+        c.execute("""
+            UPDATE track_info
+            SET
+                track = ?, \
+                artist = ?, \
+                albumart_url = ?, \
+                album = ?, \
+                duration = ?, \
+                obsolete = ? \
+            WHERE url = ?;
+            """,
+                  (track.track,
+                   track.artist,
+                   track.albumart_url,
+                   track.album,
+                   track.duration,
+                   obsolete,
+                   url)
+                  )
         conn.commit()
         track = cls.import_from_url(database, url)
         return track
@@ -210,10 +233,10 @@ WHERE url = ?;""", (track.track, track.artist, track.albumart_url, track.album, 
         self.obsolete = bool
         conn = sqlite3.connect(database)
         c = conn.cursor()
-        c.execute("""UPDATE track_info
-        SET obsolete = ?
-        WHERE id = ?
-                          """,
+        c.execute("""
+            UPDATE track_info \
+            SET obsolete = ? \
+            WHERE id = ?""",
                   (self.obsolete, self.ident))
         conn.commit()
 
@@ -228,12 +251,8 @@ WHERE url = ?;""", (track.track, track.artist, track.albumart_url, track.album, 
         conn = sqlite3.connect(database)
         c = conn.cursor()
         self.user = user
-        c.execute("""select id
-                             from users
-                             where user = ?;
-                          """,
+        c.execute("SELECT id FROM users WHERE user = ?;",
                   (user,))
-
         r = c.fetchall()
         # print(r)
         user_id = r[0][0]
@@ -254,7 +273,8 @@ WHERE url = ?;""", (track.track, track.artist, track.albumart_url, track.album, 
             'blacklisted': self.blacklisted,
             'obsolete': self.obsolete,
             'user': self.user,
-            'randomid': random.randint(1, 999_999_999_999)  # to identify each track in the playlist
+            # to identify each track in the playlist
+            'randomid': random.randint(1, 999_999_999_999)
             # even if they have the same url
         }
 

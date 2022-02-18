@@ -26,7 +26,10 @@ def auth_page():
         # we must first check if the username isn't aleady taken
         # then we do as usual
         # if it is, display a notification
-        user = User.init_from_username(app.config["DATABASE_PATH"], request.form["user"])
+        user = User.init_from_username(
+            app.config["DATABASE_PATH"],
+            request.form["user"]
+        )
         if user is not None:
             flash("Account already exists")
             return render_template("auth.html")
@@ -38,9 +41,15 @@ def auth_page():
         return redirect("/app")
 
     else:  # handle login
-        user = User.init_from_username(app.config["DATABASE_PATH"], request.form["user"])
+        user = User.init_from_username(
+            app.config["DATABASE_PATH"],
+            request.form["user"]
+        )
         try:
-            if user is not None and pbkdf2_sha256.verify(request.form["pass"], user.password):
+            if (user is not None
+                    and pbkdf2_sha256.verify(
+                        request.form["pass"],
+                        user.password)):
                 app.logger.info("Logging in {}".format(request.form["user"]))
                 session['user'] = request.form['user']
                 return redirect("/app")

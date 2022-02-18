@@ -70,23 +70,25 @@ class User:
         c = conn.cursor()
         if (track):
             c.execute("""
-                          SELECT user, count(user)\
-                          FROM  users, log, track_info\
-                          WHERE log.userid = users.id\
-                          and log.trackid = track_info.id\
-                          and log.time > ?\
-                          and track_info.track = ?
-                          GROUP BY user order by count(user) DESC\
-                          """,
+                SELECT user, count(user)\
+                FROM  users, log, track_info\
+                WHERE log.userid = users.id\
+                    AND log.trackid = track_info.id\
+                    AND log.time > ?\
+                    AND track_info.track = ? \
+                GROUP BY user \
+                ORDER BY count(user) DESC\
+                """,
                       (date, track,))
         else:
             c.execute("""
-                          SELECT user, count(user)\
-                          FROM  users, log\
-                          WHERE log.userid = users.id\
-                          and log.time > ?\
-                          GROUP BY user order by count(user) DESC\
-                          """,
+                SELECT user, count(user)\
+                FROM  users, log\
+                WHERE log.userid = users.id\
+                    AND log.time > ?\
+                GROUP BY user \
+                ORDER BY count(user) DESC\
+                """,
                       (date,))
         r = c.fetchall()
         if r is None:
