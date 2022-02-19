@@ -129,7 +129,7 @@ track_template = `
         <div class="col-1">
             <button class="icon btn-back" alt="Back"></button>
             <button class="icon btn-refresh" alt="Refresh"></button>
-            <a href="/statistics/track/{title}">
+            <a href="/statistics/track/{id}">
                 <button class="icon btn-stats" alt="Stats"></button>
             </a>
         </div>

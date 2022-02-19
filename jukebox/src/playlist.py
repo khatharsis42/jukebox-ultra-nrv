@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, url_for
 
 from jukebox.src.Track import Track
 from jukebox.src.util import *
@@ -8,13 +8,17 @@ playlist = Blueprint('playlist', __name__)
 
 
 @playlist.route("/add", methods=['POST'])
+@playlist.route("/add/<ident>", methods=["POST"])
 @requires_auth
-def add():
+def add(ident:int = None):
     """
     Adds a song to the playlist. Song information are stored in request.form.to_dict(). This dict generally comes from
     the search.
     """
-    track_dict = request.form.to_dict()
+    if (ident):
+        track_dict = Track.import_from_id(app.config["DATABASE_PATH"], ident).serialize()
+    else:
+        track_dict = request.form.to_dict()
     app.logger.info("Adding track %s", track_dict["url"])
     # track["user"] = session["user"]
     with app.database_lock:
@@ -34,6 +38,8 @@ def add():
         app.playlist.append(track.serialize())
         if len(app.playlist) == 1:
             threading.Thread(target=app.player_worker).start()
+    if (ident):
+        return redirect(f"/statistics/track/{ident}")
     return "ok"
 
 

@@ -92,14 +92,35 @@ class Track:
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()
+        app.logger.info(f"Getting the stats for {ident}")
         c.execute("SELECT * FROM track_info WHERE id = ?;", (ident,))
         r = c.fetchone()
         if r is None:
             return None
-        assert r[0] == ident
+        # assert r[0] == ident
         return Track(ident=r[0], url=r[1], track=r[2], artist=r[3],
                      album=r[4], duration=r[5], albumart_url=r[6],
                      source=r[7], blacklisted=r[8], obsolete=r[9])
+
+    @classmethod
+    def import_from_name(cls, database, ident):
+        """
+
+        :param database:
+        :param ident:
+        :return:
+        """
+        conn = sqlite3.connect(database)
+        c = conn.cursor()
+        app.logger.info(f"Getting the stats for {ident}")
+        c.execute("SELECT * FROM track_info WHERE track = ?;", (ident,))
+        table = c.fetchall()
+        if table is None:
+            return None
+        # assert r[0] == ident
+        return [Track(ident=r[0], url=r[1], track=r[2], artist=r[3],
+                     album=r[4], duration=r[5], albumart_url=r[6],
+                     source=r[7], blacklisted=r[8], obsolete=r[9]) for r in table]
 
     @classmethod
     def import_from_url(cls, database, url):

@@ -4,6 +4,7 @@ import sys
 from flask import Blueprint, render_template, redirect, session, jsonify, request, flash
 from flask import current_app as app
 from flask_wtf import FlaskForm
+from typing import List
 from wtforms import SelectField, SubmitField
 from os import listdir
 from os.path import isfile, join
@@ -205,13 +206,15 @@ def user_stats(username: str):
 
 @main.route("/statistics/track/<track>", methods=['GET'])
 @requires_auth
-def track_stats(track: str):
+def track_stats(track: int):
+    t : Track = Track.import_from_id(app.config["DATABASE_PATH"], track)
     return render_template('track.html', user=session['user'],
                            jk_name=app.config["JK_NAME"],
-                           track=track,
+                           track=t.track,
+                           ident=t.ident,
                            table_users_count_all=create_html_users(
                                app.config["DATABASE_PATH"], nbr=20,
-                               track=track),
+                               track=t.track),
                            stylesheet=get_style(), navlinks=get_nav_links()
                            )
 
