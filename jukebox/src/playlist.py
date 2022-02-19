@@ -10,13 +10,19 @@ playlist = Blueprint('playlist', __name__)
 @playlist.route("/add", methods=['POST'])
 @playlist.route("/add/<ident>", methods=["POST"])
 @requires_auth
-def add(ident:int = None):
+def add(ident: int = None):
     """
     Adds a song to the playlist. Song information are stored in request.form.to_dict(). This dict generally comes from
     the search.
+    In the special case of adding a song to the queue from the stats page, I couldn't find the way to store the
+    information in a form, so the optional parameter ident is thus used.
+
+    :param ident: Optional, used iff it isn't None. The id of a song.
     """
-    if (ident):
+    track_dict: dict
+    if ident is not None:
         track_dict = Track.import_from_id(app.config["DATABASE_PATH"], ident).serialize()
+        # Gotta serialize it for it to be a dict
     else:
         track_dict = request.form.to_dict()
     app.logger.info("Adding track %s", track_dict["url"])
@@ -38,7 +44,7 @@ def add(ident:int = None):
         app.playlist.append(track.serialize())
         if len(app.playlist) == 1:
             threading.Thread(target=app.player_worker).start()
-    if (ident):
+    if ident is not None:
         return redirect(f"/statistics/track/{ident}")
     return "ok"
 
