@@ -315,7 +315,7 @@ class Track:
         c = conn.cursor()
         if user:
             command = """
-                SELECT track, count(track) \
+                SELECT track, count(track), track_info.id\
                 FROM  track_info, log, users \
                 WHERE log.trackid = track_info.id \
                     and log.userid = users.id \
@@ -325,7 +325,7 @@ class Track:
             c.execute(command, (date, user,))
         else:
             command = """
-                SELECT track, count(track) \
+                SELECT track, count(track), track_info.id \
                 FROM  track_info, log \
                 WHERE log.trackid = track_info.id and log.time > ? \
                 GROUP BY track_info.track order by count(trackid) DESC, log.id DESC \

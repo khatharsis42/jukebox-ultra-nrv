@@ -19,7 +19,7 @@ class StatsTracksTable(Table):
     name = LinkCol(name='Track',
                    attr='name',
                    endpoint='main.track_stats',
-                   url_kwargs=(dict(track="name")))
+                   url_kwargs=(dict(track='id')))
     description = Col('Count')
 
 
@@ -30,9 +30,12 @@ class StatsUsersItem(object):
 
 
 class StatsTracksItem(object):
-    def __init__(self, name, count):
+    def __init__(self, name, count, id = None):
         self.name = name
         self.description = count
+        self.id = id
+        # NB: Cet id est choisi purement au hasard dans le cas de
+        # plusieurs musiques ayant le même nom
 
 
 def create_html_users(database, date=0, nbr=10, track=False):
@@ -54,5 +57,6 @@ def create_html_tracks(database, date=0, nbr=10, user=False):
         # we get user, count
         track = couple[0]
         count = couple[1]
-        items.append(StatsTracksItem(name=track, count=count))
+        id = couple[2]
+        items.append(StatsTracksItem(name=track, count=count, id=id))
     return StatsTracksTable(items).__html__()
