@@ -102,10 +102,6 @@ iframe#YT {
 .icon.btn-more {
     background-image: url("/static/images/icons/ellipsis-h-solid.svg");
 }
-.icon.btn-top{
-    background-image: url("/static/images/icons/angle-double-up.svg");
-    height: 30px;
-}
 .icon.btn-up{
     background-image: url("/static/images/icons/chevron-up-solid.svg");
 }
@@ -120,4 +116,11 @@ iframe#YT {
 }
 .icon.btn-refresh {
     background-image: url("/static/images/icons/sync-solid.svg");
+}
+.icon.btn-stats {
+    background-image: url("/static/images/icons/stats.svg");
+}
+.icon.btn-top{
+    background-image: url("/static/images/icons/angle-double-up.svg");
+    height: 30px;
 }

@@ -14,10 +14,7 @@ It is used to load the Youtube iframe, refresh the playlist and suggestion colum
 function template(html, d) {
     let r = html;
     for (let i in d) {
-        if (i=="title") { // track title appears both on verso and recto, so we replace in the if and after
-            r=r.replace("{"+i+"}", d[i]);
-        }
-        r=r.replace("{"+i+"}", d[i]);
+        r=r.replaceAll("{"+i+"}", d[i]);
     }
     r=r.replace(/{\w+}/g, "");
     return r;
@@ -132,6 +129,9 @@ track_template = `
         <div class="col-1">
             <button class="icon btn-back" alt="Back"></button>
             <button class="icon btn-refresh" alt="Refresh"></button>
+            <a href="/statistics/track/{title}">
+                <button class="icon btn-stats" alt="Stats"></button>
+            </a>
         </div>
     </div>
 </li>

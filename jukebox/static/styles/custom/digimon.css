@@ -53,7 +53,7 @@ body{
     color: #fac700;
 }
 
-.display-3:after{ 
+.display-3:after{
     content: "Digimon World";
     visibility: visible;
     font-size: 3.7rem;
@@ -270,4 +270,10 @@ input[type=range]::-moz-range-thumb {
     color: #fac700;
     -webkit-text-stroke: 1px #65b5ff; /*may not work with every browser*/
 }
+.icon.btn-stats {
+    background-image: url("/static/images/icons/stats.svg");
+}
+.icon.btn-top{
+    background-image: url("/static/images/icons/angle-double-up.svg");
+    height: 30px;
 }

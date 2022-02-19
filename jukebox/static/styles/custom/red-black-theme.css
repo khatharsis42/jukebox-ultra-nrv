@@ -247,6 +247,13 @@ a:hover
 .icon.btn-refresh {
     background-image: url("/static/images/icons/sync-solid.svg");
 }
+.icon.btn-stats {
+    background-image: url("/static/images/icons/stats.svg");
+}
+.icon.btn-top{
+    background-image: url("/static/images/icons/angle-double-up.svg");
+    height: 30px;
+}
 
 .btn-remove, .btn-add, .btn-back, .btn-more, .btn-up, .btn-down, .btn-refresh {
     position: relative;
