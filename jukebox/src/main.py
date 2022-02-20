@@ -95,7 +95,7 @@ def settings():
         resp = flask.make_response(
             render_template('settings.html', user=session["user"],
                                jk_name=app.config["JK_NAME"], form=form,
-                               stylesheet=get_style(), navlinks=get_nav_links()))
+                               stylesheet=style, navlinks=get_nav_links()))
         resp.set_cookie('style', style)
         return resp
     elif request.method == 'GET':
