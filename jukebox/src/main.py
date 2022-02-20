@@ -1,6 +1,8 @@
 import re
 import datetime
 import sys
+
+import flask
 from flask import Blueprint, render_template, redirect, session, jsonify, request, flash
 from flask import current_app as app
 from flask_wtf import FlaskForm
@@ -17,6 +19,9 @@ main = Blueprint('main', __name__)
 
 
 def get_style():
+    cookie = request.cookies.get('style')
+    if cookie is not None:
+        return cookie
     try:
         if session["stylesheet"] is not None:
             stylesheet = session["stylesheet"]
@@ -87,10 +92,12 @@ def settings():
         # app.logger.info(request.form)
         style = request.form["style"]
         session["stylesheet"] = style
-        # app.logger.info("Style : " + style)
-        return render_template('settings.html', user=session["user"],
+        resp = flask.make_response(
+            render_template('settings.html', user=session["user"],
                                jk_name=app.config["JK_NAME"], form=form,
-                               stylesheet=get_style(), navlinks=get_nav_links())
+                               stylesheet=get_style(), navlinks=get_nav_links()))
+        resp.set_cookie('style', style)
+        return resp
     elif request.method == 'GET':
         return render_template('settings.html', user=session["user"],
                                jk_name=app.config["JK_NAME"], form=form,
