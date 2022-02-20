@@ -13,7 +13,7 @@ from os.path import isfile, join
 
 from jukebox.src.util import *
 from jukebox.src.Track import Track
-from jukebox.src.statistics import create_html_users, create_html_tracks
+from jukebox.src.statistics import create_html_users, create_html_tracks, create_history_tracks
 
 main = Blueprint('main', __name__)
 
@@ -207,6 +207,20 @@ def user_stats(username: str):
                                app.config["DATABASE_PATH"], nbr=10,
                                date=datetime.datetime.now() - datetime.timedelta(weeks=1),
                                user=username),
+                           stylesheet=get_style(), navlinks=get_nav_links()
+                           )
+
+
+@main.route("/history/<number>", methods=['GET'])
+@requires_auth
+def history(number: int):
+    number = int(number)
+    # Je déteste python
+    return render_template('history.html', user=session['user'],
+                           jk_name=app.config["JK_NAME"],
+                           n=number,
+                           table_last_tracks=create_history_tracks(
+                               app.config["DATABASE_PATH"], nbr=number),
                            stylesheet=get_style(), navlinks=get_nav_links()
                            )
 

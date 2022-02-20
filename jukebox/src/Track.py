@@ -119,8 +119,8 @@ class Track:
             return None
         # assert r[0] == ident
         return [Track(ident=r[0], url=r[1], track=r[2], artist=r[3],
-                     album=r[4], duration=r[5], albumart_url=r[6],
-                     source=r[7], blacklisted=r[8], obsolete=r[9]) for r in table]
+                      album=r[4], duration=r[5], albumart_url=r[6],
+                      source=r[7], blacklisted=r[8], obsolete=r[9]) for r in table]
 
     @classmethod
     def import_from_url(cls, database, url):
@@ -331,6 +331,34 @@ class Track:
                 GROUP BY track_info.track order by count(trackid) DESC, log.id DESC \
                 """
             c.execute(command, (date,))
+        r = c.fetchall()
+        if r is None:
+            return None
+        if nbr < 0:
+            return r
+        else:
+            return r[:nbr]
+
+    @classmethod
+    def get_history(cls, database, nbr: int):
+        """
+        Returns the history of the last played tracks.
+
+        :param database:
+        :param nbr:
+        :return: list of (Track_name, track_id, user)
+        """
+        conn = sqlite3.connect(database)
+        c = conn.cursor()
+        command = """
+                SELECT track_info.track, track_info.id, users.user \
+                FROM  track_info, log, users \
+                WHERE \
+                    log.userid = users.id \
+                    AND log.trackid = track_info.id \
+                ORDER BY log.time DESC \
+                """
+        c.execute(command)
         r = c.fetchall()
         if r is None:
             return None

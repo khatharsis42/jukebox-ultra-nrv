@@ -1,0 +1,18 @@
+{% extends "page_template.html" %}
+
+{% block content %}
+<div class="container">
+	<div style="text-align:center">
+		<h1>
+			Historique des {{ n }} dernières musiques
+		</h1>
+	</div>
+	<div class="statistics" style="padding:30px;">
+		<div class="col statcol" style="margin: auto;">
+			<div class="statdisplay">
+				{{ table_last_tracks|safe }}
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
