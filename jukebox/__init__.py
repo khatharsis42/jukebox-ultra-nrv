@@ -68,8 +68,9 @@ class Jukebox(Flask):
             counter = 0
             # this while is a little hack, as sometimes, mpv fails mysteriously but work fine on a second or third track
             # so we check that enough time has passed between play start and end
-            while counter < max_count and track.duration is not None and end - start < min(track.duration,
-                                                                                           min_duration):  # 1 is not enough
+            while counter < max_count \
+                    and track.duration is not None \
+                    and end - start < min(track.duration, min_duration):  # 1 is not enough
                 # note for the future : what if track is passed with a timestamp ? It could be nice to allow it.
                 # note from the future : Rather than parsing for a timestamp, I've made it possible to
                 # go to a timestamp in the Web UI, so it's actually pretty close.
