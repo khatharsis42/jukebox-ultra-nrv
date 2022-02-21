@@ -39,9 +39,11 @@ def add(ident: int = None):
             app.logger.info(track)
 
     with app.playlist_lock:
-        app.playlist.append(track.serialize())
+        track : dict = track.serialize()
+        track["user"] = session["user"]
+        app.playlist.append(track)
         if len(app.playlist) == 1:
-            threading.Thread(target=app.player_worker, args=(session['user'],)).start()
+            threading.Thread(target=app.player_worker).start()
     if ident is not None:
         return redirect(f"/statistics/track/{ident}")
     return "ok"

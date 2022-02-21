@@ -49,12 +49,13 @@ class Jukebox(Flask):
         for i in self.config["SEARCH_BACKENDS"]:
             self.search_backends.append(importlib.import_module("jukebox.src.backends.search." + i))
 
-    def player_worker(self, user):
+    def player_worker(self):
         """
         Function called in a separate thread managing the mpv player.
         """
         while len(self.playlist) > 0:
             url = self.playlist[0]["url"]
+            user = self.playlist[0]["user"]
             self.currently_played = url
             with app.mpv_lock:
                 if hasattr(self, 'mpv') and self.mpv:
