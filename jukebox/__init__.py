@@ -49,8 +49,9 @@ class Jukebox(Flask):
         for i in self.config["SEARCH_BACKENDS"]:
             self.search_backends.append(importlib.import_module("jukebox.src.backends.search." + i))
 
-    def player_worker(self):
-        """Function called in a separate thread managing the mpv player.
+    def player_worker(self, user):
+        """
+        Function called in a separate thread managing the mpv player.
         """
         while len(self.playlist) > 0:
             url = self.playlist[0]["url"]
@@ -63,6 +64,7 @@ class Jukebox(Flask):
             end = start
             with self.database_lock:
                 track = Track.import_from_url(app.config["DATABASE_PATH"], url)
+                track.insert_track_log(app.config["DATABASE_PATH"], user)
             max_count = 10
             min_duration = 2
             counter = 0

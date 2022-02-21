@@ -31,10 +31,8 @@ def add(ident: int = None):
         if not Track.does_track_exist(app.config["DATABASE_PATH"], track_dict["url"]):
             Track.insert_track(app.config["DATABASE_PATH"], track_dict)
             track = Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
-            track.insert_track_log(app.config["DATABASE_PATH"], session['user'])
         else:
             track = Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
-            track.insert_track_log(app.config["DATABASE_PATH"], session['user'])
             # we refresh the track in database
             track = Track.refresh_by_url(app.config["DATABASE_PATH"], track_dict["url"], obsolete=0)
             track.user = session['user']
@@ -43,7 +41,7 @@ def add(ident: int = None):
     with app.playlist_lock:
         app.playlist.append(track.serialize())
         if len(app.playlist) == 1:
-            threading.Thread(target=app.player_worker).start()
+            threading.Thread(target=app.player_worker, args=(session['user'],)).start()
     if ident is not None:
         return redirect(f"/statistics/track/{ident}")
     return "ok"
