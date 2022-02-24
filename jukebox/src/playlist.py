@@ -60,7 +60,7 @@ def remove():
                 if app.playlist.index(track_p) == 0:
                     app.logger.info("Removing currently playing track")
                     with app.mpv_lock:
-                        app.current_track["duration"] = 0
+                        app.currently_played["duration"] = 0
                         # Sinon problème
                         app.mpv.quit()
                 else:
