@@ -29,7 +29,10 @@ class Jukebox(Flask):
             self.version = f.read()
 
         self.mpv = None
-        self.currently_played = None
+        self.currently_played : dict = None
+        self.last_played : dict = None
+        self.last_played_start_time = None
+
         self.mpv_lock = threading.Lock()
         self.database_lock = threading.Lock()
         self.stylesheet = "default.css"
@@ -54,46 +57,43 @@ class Jukebox(Flask):
         Function called in a separate thread managing the mpv player.
         """
         while len(self.playlist) > 0:
+            is_repeating = False
+            if self.last_played is not None \
+                    and time.time() - self.last_played_start_time < 0.1 * self.last_played["duration"]:
+                # Basically, if not enough time has passed since the last track
+                # It's because we skipped the music, and we need to put it once again
+                self.playlist.insert(0, app.last_played)
+                is_repeating = True
             url = self.playlist[0]["url"]
             user = self.playlist[0]["user"]
-            self.currently_played = url
+            self.last_played = self.currently_played
+            self.last_played_start_time = time.time()
+            self.currently_played = self.playlist[0]
             with app.mpv_lock:
                 if hasattr(self, 'mpv') and self.mpv:
                     del self.mpv
                 self.mpv = MyMPV(None, log_handler=app.logger.info)  # we start the track
-            start = time.time()
-            end = start
             with self.database_lock:
                 track = Track.import_from_url(app.config["DATABASE_PATH"], url)
-                track.insert_track_log(app.config["DATABASE_PATH"], user)
-            max_count = 10
-            min_duration = 2
-            counter = 0
-            # this while is a little hack, as sometimes, mpv fails mysteriously but work fine on a second or third track
-            # so we check that enough time has passed between play start and end
-            while counter < max_count \
-                    and track.duration is not None \
-                    and end - start < min(track.duration, min_duration):  # 1 is not enough
-                # note for the future : what if track is passed with a timestamp ? It could be nice to allow it.
-                # note from the future : Rather than parsing for a timestamp, I've made it possible to
-                # go to a timestamp in the Web UI, so it's actually pretty close.
-                start = time.time()
-                with app.mpv_lock:
-                    self.mpv.play(self.currently_played)
-                # the next instruction should be the only one without a lock
-                # but it causes a segfault when there is a lock
-                # I fear fixing it may be dirty
-                # we could switch to mpv playlists though
-                try:
-                    self.mpv.wait_for_playback()  # it's stuck here while it's playing
-                except mpv.ShutdownError:
-                    app.logger.info("MPV got shutdown, relaunching the core")
-                    # Sometimes the core crashes, so we gotta relaunch it
-                    # I have no idea where it comes from
-                    self.mpv.stop()
-                    self.mpv = MyMPV(None, log_handler=app.logger.info)
-                end = time.time()
-                counter += 1
+                if not is_repeating:
+                    track.insert_track_log(app.config["DATABASE_PATH"], user)
+            with app.mpv_lock:
+                self.mpv.play(url)
+            # the next instruction should be the only one without a lock
+            # but it causes a segfault when there is a lock
+            # I fear fixing it may be dirty
+            # we could switch to mpv playlists though
+            try:
+                self.mpv.wait_for_playback()  # it's stuck here while it's playing
+            except mpv.ShutdownError:
+                app.logger.info("MPV core crashed, it happens.")
+                # Sometimes the core crashes, so we gotta relaunch it
+                # I have no idea where it comes from
+                # EDIT : Since we know try to play the track again in the next iteration,
+                # These lines do not do anything
+                # So i commented them out
+                # self.mpv.stop()
+                # self.mpv = MyMPV(None, log_handler=app.logger.info)
             """
             if counter == max_count and end - start < min(track.duration, min_duration) and track.source == "youtube":
                 # we mark the track as obsolete
