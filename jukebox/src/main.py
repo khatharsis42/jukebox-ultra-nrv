@@ -92,7 +92,7 @@ def settings():
         # app.logger.info(request.form)
         style = request.form["style"]
         session["stylesheet"] = style
-        resp = flask.make_response(
+        resp : flask.Response = flask.make_response(
             render_template('settings.html', user=session["user"],
                                jk_name=app.config["JK_NAME"], form=form,
                                stylesheet=style, navlinks=get_nav_links()))
@@ -280,7 +280,7 @@ def search():
     # else we search only on youtube (in the future, maybe soundcloud too
     regex_bandcamp = re.compile('^(http://|https://)?\S*\.bandcamp.com')
     regex_soundcloud = re.compile('^(http://|https://)?(www.)?soundcloud.com')
-    regex_twitch = re.compile('^(http://|https://)?(www.)?twitch.tv')
+    regex_twitch = re.compile('^(http://|https://)?(www\.)?twitch.tv')
     regex_jamendo = re.compile('^(https?://)?(www.)?jamendo.com')
     regex_search_soundcloud = re.compile('(\!sc\s)|(.*\s\!sc\s)|(.*\s\!sc$)')
     regex_search_youtube = re.compile('(\!yt\s)|(.*\s\!yt\s)|(.*\s\!yt$)')
@@ -318,7 +318,7 @@ def search():
                 break
         results += soundcloud.search_multiples(re.sub("\!sc", "", query))
     # Twitch
-    if re.match(regex_twitch, query) is not None \
+    elif re.match(regex_twitch, query) is not None \
             and 'jukebox.src.backends.search.twitch' in sys.modules:
         for twitch in app.search_backends:
             if twitch.__name__ == 'jukebox.src.backends.search.twitch':

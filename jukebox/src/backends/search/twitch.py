@@ -45,10 +45,11 @@ def search_unique(query):
         "artist": artist,
         "album": album,
         "url": query,
-        "albumart_url": thumbnail,
+        "albumart_url": thumbnail["url"],
         "duration": 42,
         "id": metadata["id"]
         })
+    app.logger.info(thumbnail)
     # app.logger.info("Results : ")
     # app.logger.info(results)
     return results

@@ -165,7 +165,7 @@ class Track:
         return track
 
     @classmethod
-    def insert_track(cls, database, track_form):
+    def insert_track(cls, database, track_form:dict):
         """
 
         :param database:
