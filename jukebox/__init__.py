@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from distutils.log import debug
 import threading
 import time
 
@@ -66,18 +67,21 @@ class Jukebox(Flask):
             with self.database_lock:
                 track = Track.import_from_url(app.config["DATABASE_PATH"], url)
                 track.insert_track_log(app.config["DATABASE_PATH"], user)
+                app.logger.debug(track)
+                app.logger.debug(track.duration)
             max_count = 10
             min_duration = 2
             counter = 0
             # this while is a little hack, as sometimes, mpv fails mysteriously but work fine on a second or third track
             # so we check that enough time has passed between play start and end
             while counter < max_count \
-                    and track.duration is not None \
-                    and end - start < min(track.duration, min_duration):  # 1 is not enough
+                    and ((track.duration == 0 or track.duration is None) \
+                    or end - start < min(track.duration, min_duration)):  # 1 is not enough
                 # note for the future : what if track is passed with a timestamp ? It could be nice to allow it.
                 # note from the future : Rather than parsing for a timestamp, I've made it possible to
                 # go to a timestamp in the Web UI, so it's actually pretty close.
                 start = time.time()
+                app.logger.debug("Track starting playing...")
                 with app.mpv_lock:
                     self.mpv.play(self.currently_played)
                 # the next instruction should be the only one without a lock
@@ -87,6 +91,8 @@ class Jukebox(Flask):
                 try:
                     self.mpv.wait_for_playback()  # it's stuck here while it's playing
                 except mpv.ShutdownError:
+                    if track.duration == 0 or track.duration is None:
+                        break
                     app.logger.info("MPV got shutdown, relaunching the core")
                     # Sometimes the core crashes, so we gotta relaunch it
                     # I have no idea where it comes from
