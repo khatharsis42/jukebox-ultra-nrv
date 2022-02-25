@@ -1,3 +1,4 @@
+import requests
 from flask import Blueprint, request, jsonify, url_for
 
 from jukebox.src.Track import Track
@@ -32,16 +33,17 @@ def add(ident: int = None):
             Track.insert_track(app.config["DATABASE_PATH"], track_dict)
             track = Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
         else:
+            track: Track = Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
             # we refresh the track in database
-            track = Track.refresh_by_url(app.config["DATABASE_PATH"], track_dict["url"])
-            if track is not None and not track["obsolete"] and not track["blacklisted"]:
+            Track.refresh_by_url(app.config["DATABASE_PATH"], track_dict["url"])
+            if track is not None and not track.obsolete and not track.blacklisted:
                 track.user = session['user']
                 app.logger.info(track)
             else:
                 return "nok"
 
     with app.playlist_lock:
-        track : dict = track.serialize()
+        track: dict = track.serialize()
         track["user"] = session["user"]
         app.playlist.append(track)
         if len(app.playlist) == 1:
@@ -91,14 +93,25 @@ def suggest():
         # we use a while to be able not to add a song
         with app.database_lock:
             track = Track.get_random_track(app.config["DATABASE_PATH"])
-
         if track is None:
             # On voudrais pas ajouter une track qui vaut None
             # Cependant, si elle vaut none, ça veut dire une chose :
             # il y a rien dans la db
             # d'où le nbr ++
             nbr += 1
-        elif track.blacklisted == 0 and track.obsolete == 0 and track.source in app.config["SEARCH_BACKENDS"]:
+        elif track.blacklisted == 0 \
+                and track.obsolete == 0 \
+                and track.source in app.config["SEARCH_BACKENDS"]:
+            # Une tentative de code pour mettre jarter automatiquement les vidéos osbolètes
+            # De facto, ne fonctionne pas et raojute une seconde de chargement par vidéo
+            """
+            r = requests.get(track.url)
+            if "Vidéo non disponible" in r.text or "Cette vidéo a été supprimée" in r.text:
+                app.logger.info("Was going to put an obsolete track in the recommendation")
+                app.logger.info(f"Marking track [id = {track.ident}, url = {track.url}] as obsolete")
+                track.set_obsolete_value(app.config["DATABASE_PATH"], 1)
+            """
+
             result.append(track.serialize())
             nbr += 1
     return jsonify(result)
