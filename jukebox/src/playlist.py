@@ -32,11 +32,13 @@ def add(ident: int = None):
             Track.insert_track(app.config["DATABASE_PATH"], track_dict)
             track = Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
         else:
-            track = Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
             # we refresh the track in database
-            track = Track.refresh_by_url(app.config["DATABASE_PATH"], track_dict["url"], obsolete=0)
-            track.user = session['user']
-            app.logger.info(track)
+            track = Track.refresh_by_url(app.config["DATABASE_PATH"], track_dict["url"])
+            if track is not None and not track["obsolete"] and not track["blacklisted"]:
+                track.user = session['user']
+                app.logger.info(track)
+            else:
+                return "nok"
 
     with app.playlist_lock:
         track : dict = track.serialize()
@@ -85,12 +87,16 @@ def suggest():
         n = int(request.args.get("n"))
     result = []
     nbr = 0
-    while nbr < n:  # we use a while to be able not to add a song
-        # if it is blacklisted
+    while nbr < n:
+        # we use a while to be able not to add a song
         with app.database_lock:
             track = Track.get_random_track(app.config["DATABASE_PATH"])
 
         if track is None:
+            # On voudrais pas ajouter une track qui vaut None
+            # Cependant, si elle vaut none, ça veut dire une chose :
+            # il y a rien dans la db
+            # d'où le nbr ++
             nbr += 1
         elif track.blacklisted == 0 and track.obsolete == 0 and track.source in app.config["SEARCH_BACKENDS"]:
             result.append(track.serialize())

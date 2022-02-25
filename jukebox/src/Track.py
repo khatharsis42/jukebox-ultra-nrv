@@ -59,7 +59,11 @@ class Track:
         conn = sqlite3.connect(database)
         c = conn.cursor()
         # check if track not in track_info i.e. if url no already there
-        c.execute("SELECT id FROM track_info WHERE url = ?;",
+        c.execute("""
+            SELECT id 
+            FROM track_info 
+            WHERE url = ?
+            ;""",
                   (url,)
                   )
         r = c.fetchall()
@@ -144,7 +148,13 @@ class Track:
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()
-        c.execute("SELECT * FROM track_info ORDER BY RANDOM() LIMIT 1")
+        c.execute("""
+            SELECT * \
+            FROM track_info \
+            WHERE blacklisted != 1 AND obsolete != 1\
+            ORDER BY RANDOM() \
+            LIMIT 1 \
+            """)
         r = c.fetchone()
         if r is None:  # no track in database
             return None
@@ -165,7 +175,7 @@ class Track:
         return track
 
     @classmethod
-    def insert_track(cls, database, track_form:dict):
+    def insert_track(cls, database, track_form: dict):
         """
 
         :param database:
@@ -186,7 +196,7 @@ class Track:
         conn.commit()
 
     @classmethod
-    def refresh_by_url(cls, database, url, obsolete=0):
+    def refresh_by_url(cls, database, url):
         """
 
         :param database: Database used
@@ -208,12 +218,16 @@ class Track:
                 track_dict = search.search_engine(
                     url, use_youtube_dl=True, search_multiple=False)[0]
             except DownloadError as e:  # We mark the track as obsolete
-                app.logger.info(e.exc_info[1])
-                if e.args[0] == "ERROR: This video is unavailable.":
+                app.logger.info(f"DownloadError : See above lines")
+                # if True or e.args[0] == "ERROR: This video is unavailable.":
+                if "403" not in e.args[0]:
+                    # Je part du principe que s'il y a une DownloadError,
+                    # C'est que la track est obsolete
+                    # A PRIORI CELA N'EST PAS UN PROBLÈME POUR LES RANDOMS ERREURS 403
+                    # PUISQUE CES ERREURS N'ARRIVENT QUE LORSQU'UNE TRACK JOUE
                     track.obsolete = 1
+                    app.logger.info(f"Marking track [id = {track.ident}, url = {track.url}] as obsolete")
                     track.set_obsolete_value(database, track.obsolete)
-                    app.logger.warning(
-                        "Marking track {} as obsolete".format(url))
                 return
         else:
             track_dict = search.search_engine(url, use_youtube_dl=True)[0]
@@ -238,7 +252,7 @@ class Track:
                    track.albumart_url,
                    track.album,
                    track.duration,
-                   obsolete,
+                   0,
                    url)
                   )
         conn.commit()
