@@ -58,12 +58,15 @@ class Jukebox(Flask):
         """
         while len(self.playlist) > 0:
             is_repeating = False
-            if self.last_played is not None \
-                    and time.time() - self.last_played_start_time < 0.1 * self.last_played["duration"]:
-                # Basically, if not enough time has passed since the last track
-                # It's because we skipped the music, and we need to put it once again
-                self.playlist.insert(0, app.last_played)
-                is_repeating = True
+            if self.last_played is not None:
+                delta = time.time() - self.last_played_start_time
+                if delta < 0.1 * self.last_played["duration"]:
+                    app.logger.info("Time elapsed since the beginning of the last track too short.")
+                    app.logger.info(f"Time Elapsed :{delta} ; Last Track Duration : {self.last_played['duration']}")
+                    # Basically, if not enough time has passed since the last track
+                    # It's because we skipped the music, and we need to put it once again
+                    self.playlist.insert(0, app.last_played)
+                    is_repeating = True
             url = self.playlist[0]["url"]
             user = self.playlist[0]["user"]
             self.last_played = self.currently_played
