@@ -1,3 +1,4 @@
+import random
 import re
 import datetime
 import sys
@@ -94,10 +95,10 @@ def settings():
         # app.logger.info(request.form)
         style = request.form["style"]
         session["stylesheet"] = style
-        resp : flask.Response = flask.make_response(
+        resp: flask.Response = flask.make_response(
             render_template('settings.html', user=session["user"],
-                               jk_name=app.config["JK_NAME"], form=form,
-                               stylesheet=style, navlinks=get_nav_links()))
+                            jk_name=app.config["JK_NAME"], form=form,
+                            stylesheet=style, navlinks=get_nav_links()))
         resp.set_cookie('style', style)
         return resp
     elif request.method == 'GET':
@@ -181,18 +182,18 @@ def statistics():
                                app.config["DATABASE_PATH"], nbr=-1),
                            table_users_count_week=create_html_users(app.config["DATABASE_PATH"], nbr=10,
                                                                     date=datetime.datetime.now()
-                                                                    - datetime.timedelta(weeks=1)),
+                                                                         - datetime.timedelta(weeks=1)),
                            table_users_count_day=create_html_users(app.config["DATABASE_PATH"], nbr=10,
                                                                    date=datetime.datetime.now()
-                                                                   - datetime.timedelta(days=1)),
+                                                                        - datetime.timedelta(days=1)),
                            table_tracks_count_all=create_html_tracks(
                                app.config["DATABASE_PATH"], nbr=20),
                            table_tracks_count_week=create_html_tracks(app.config["DATABASE_PATH"], nbr=10,
                                                                       date=datetime.datetime.now()
-                                                                      - datetime.timedelta(weeks=1)),
+                                                                           - datetime.timedelta(weeks=1)),
                            table_tracks_count_day=create_html_tracks(app.config["DATABASE_PATH"], nbr=10,
                                                                      date=datetime.datetime.now()
-                                                                     - datetime.timedelta(days=1)),
+                                                                          - datetime.timedelta(days=1)),
 
                            stylesheet=get_style(), navlinks=get_nav_links())
 
@@ -230,7 +231,7 @@ def history(number: int):
 @main.route("/statistics/track/<track>", methods=['GET'])
 @requires_auth
 def track_stats(track: int):
-    t : Track = Track.import_from_id(app.config["DATABASE_PATH"], track)
+    t: Track = Track.import_from_id(app.config["DATABASE_PATH"], track)
     return render_template('track.html', user=session['user'],
                            jk_name=app.config["JK_NAME"],
                            track=t.track,
@@ -275,6 +276,9 @@ def search():
     """
     query = request.form["q"]
     results = []
+    if query in app.search_cache:
+        app.logger.info(f"Using the cache for request '{query}'")
+        return jsonify(app.search_cache[query])
     # if query is http or https or nothing xxxxxxx.bandcamp.com/
     # then results += apps.search_backends.bandcamp(query)
     # (if bandcamp loaded)
@@ -340,7 +344,7 @@ def search():
             if youtube.__name__ == 'jukebox.src.backends.search.youtube':
                 break
         results += youtube.search_engine(re.sub("\!yt",
-                                         "", query), use_youtube_dl=True)
+                                                "", query), use_youtube_dl=True)
 
     # Generic extractor
     elif re.match(regex_generic, query) is not None \
@@ -359,6 +363,10 @@ def search():
         results += youtube.search_engine(query)
     else:
         app.logger.error("Error: no search module found")
+
+    if len(app.search_cache) >= app.cache_size:
+        app.search_cache.pop(random.choice(list(app.search_cache.keys())))
+    app.search_cache[query] = results
     return jsonify(results)
 
 
