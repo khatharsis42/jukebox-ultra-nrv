@@ -2,6 +2,7 @@ import sqlite3
 import random
 import sys
 
+import requests
 from youtube_dl import DownloadError
 
 from jukebox.src.util import *
@@ -258,6 +259,12 @@ class Track:
         conn.commit()
         track = cls.import_from_url(database, url)
         return track
+
+    def check_obsolete(self):
+        """
+        A very quick method to check wether or not it's obsolete
+        """
+        return self.albumart_url is None or requests.get(self.albumart_url).status_code == 404
 
     def set_obsolete_value(self, database, bool=1):
         """

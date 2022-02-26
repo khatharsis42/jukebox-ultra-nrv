@@ -102,16 +102,11 @@ def suggest():
         elif track.blacklisted == 0 \
                 and track.obsolete == 0 \
                 and track.source in app.config["SEARCH_BACKENDS"]:
-            # Une tentative de code pour mettre jarter automatiquement les vidéos osbolètes
-            # De facto, ne fonctionne pas et raojute une seconde de chargement par vidéo
-            """
-            r = requests.get(track.url)
-            if "Vidéo non disponible" in r.text or "Cette vidéo a été supprimée" in r.text:
+            if not track.check_obsolete():
+                result.append(track.serialize())
+                nbr += 1
+            else:
                 app.logger.info("Was going to put an obsolete track in the recommendation")
                 app.logger.info(f"Marking track [id = {track.ident}, url = {track.url}] as obsolete")
                 track.set_obsolete_value(app.config["DATABASE_PATH"], 1)
-            """
-
-            result.append(track.serialize())
-            nbr += 1
     return jsonify(result)
