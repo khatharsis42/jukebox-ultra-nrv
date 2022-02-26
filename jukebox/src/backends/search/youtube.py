@@ -124,6 +124,8 @@ def search_fallback(query):
         'skip_download': True,
         'ignoreerrors': True
     }
+    # You can find the list of all opts here
+    # https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L128-L278
 
     results = []
 
