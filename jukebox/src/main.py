@@ -14,6 +14,8 @@ from os.path import isfile, join
 from jukebox.src.util import *
 from jukebox.src.Track import Track
 from jukebox.src.statistics import create_html_users, create_html_tracks, create_history_tracks
+from jukebox.src.backends.search import bandcamp, generic, jamendo, soundcloud, twitch, youtube
+# import * ne fonctionne pas, wtf, une histoire de cache d'après Boisdal ?
 
 main = Blueprint('main', __name__)
 
