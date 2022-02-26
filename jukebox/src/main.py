@@ -293,6 +293,7 @@ def search():
     # Bandcamp
     if re.match(regex_bandcamp, query) is not None \
             and 'jukebox.src.backends.search.bandcamp' in sys.modules:
+        app.logger.info("Using Bancamp")
         for bandcamp in app.search_backends:
             if bandcamp.__name__ == 'jukebox.src.backends.search.bandcamp':
                 break
@@ -300,12 +301,14 @@ def search():
     # Soundcloud
     elif re.match(regex_soundcloud, query) is not None \
             and 'jukebox.src.backends.search.soundcloud' in sys.modules:
+        app.logger.info("Using Soundcloud")
         for soundcloud in app.search_backends:
             if soundcloud.__name__ == 'jukebox.src.backends.search.soundcloud':
                 break
         results += soundcloud.search_engine(query)
     elif re.match(regex_jamendo, query) is not None \
             and 'jukebox.src.backends.search.jamendo' in sys.modules:
+        app.logger.info("Using Jamendo")
         for jamendo in app.search_backends:
             if jamendo.__name__ == 'jukebox.src.backends.search.jamendo':
                 break
@@ -313,6 +316,7 @@ def search():
     # Soundcloud search
     elif re.match(regex_search_soundcloud, query) is not None \
             and 'jukebox.src.backends.search.soundcloud' in sys.modules:
+        app.logger.info("Using Soundcloud search")
         for soundcloud in app.search_backends:
             if soundcloud.__name__ == 'jukebox.src.backends.search.soundcloud':
                 break
@@ -320,6 +324,7 @@ def search():
     # Twitch
     elif re.match(regex_twitch, query) is not None \
             and 'jukebox.src.backends.search.twitch' in sys.modules:
+        app.logger.info("Using Twitch")
         for twitch in app.search_backends:
             if twitch.__name__ == 'jukebox.src.backends.search.twitch':
                 break
@@ -328,6 +333,7 @@ def search():
     # Youtube search (explicit)
     elif re.match(regex_search_youtube, query) is not None \
             and 'jukebox.src.backends.search.youtube' in sys.modules:
+        app.logger.info("Using YouTube search")
         for youtube in app.search_backends:
             if youtube.__name__ == 'jukebox.src.backends.search.youtube':
                 break
@@ -337,12 +343,14 @@ def search():
     # Generic extractor
     elif re.match(regex_generic, query) is not None \
             and 'jukebox.src.backends.search.generic' in sys.modules:
+        app.logger.info("Using Generic search")
         for generic in app.search_backends:
             if generic.__name__ == 'jukebox.src.backends.search.generic':
                 break
         results += generic.search_engine(re.sub("\!url", "", query))
 
     elif 'jukebox.src.backends.search.youtube' in sys.modules:
+        app.logger.info("Using Generic youtube search")
         for youtube in app.search_backends:
             if youtube.__name__ == 'jukebox.src.backends.search.youtube':
                 break
