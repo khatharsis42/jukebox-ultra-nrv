@@ -29,9 +29,8 @@ class Jukebox(Flask):
             self.version = f.read()
 
         self.mpv = None
-        self.currently_played : dict = None
-        self.last_played : dict = None
-        self.last_played_start_time = None
+        self.currently_played: dict = None
+        self.last_played: dict = None
 
         self.mpv_lock = threading.Lock()
         self.database_lock = threading.Lock()
@@ -61,18 +60,16 @@ class Jukebox(Flask):
         while len(self.playlist) > 0:
             is_repeating = False
             if self.last_played is not None:
-                delta = time.time() - self.last_played_start_time
-                if delta < 0.1 * self.last_played["duration"]:
+                if self.last_played["actual_length"] < 0.1 * self.last_played["duration"]:
                     app.logger.info("Time elapsed since the beginning of the last track too short.")
-                    app.logger.info(f"Time Elapsed :{delta} ; Last Track Duration : {self.last_played['duration']}")
+                    app.logger.info(f"Time Elapsed :{self.last_played['actual_length']} ; Last Track Duration : {self.last_played['duration']}")
                     # Basically, if not enough time has passed since the last track
                     # It's because we skipped the music, and we need to put it once again
                     self.playlist.insert(0, app.last_played)
                     is_repeating = True
             url = self.playlist[0]["url"]
             user = self.playlist[0]["user"]
-            self.last_played = self.currently_played
-            self.last_played_start_time = time.time()
+            start_time = time.time()
             self.currently_played = self.playlist[0]
             with app.mpv_lock:
                 if hasattr(self, 'mpv') and self.mpv:
@@ -111,6 +108,9 @@ class Jukebox(Flask):
             with self.playlist_lock:
                 if len(self.playlist) > 0:  # and url == self.currently_played:
                     del self.playlist[0]
+
+            self.currently_played["actual_length"] = time.time() - start_time
+            self.last_played = self.currently_played
 
 
 app = Jukebox(__name__)
