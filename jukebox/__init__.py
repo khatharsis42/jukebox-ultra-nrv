@@ -31,6 +31,7 @@ class Jukebox(Flask):
         self.mpv = None
         self.currently_played: dict = None
         self.last_played: dict = None
+        self.number_of_repeats: int = 0
 
         self.mpv_lock = threading.Lock()
         self.database_lock = threading.Lock()
@@ -60,13 +61,18 @@ class Jukebox(Flask):
         while len(self.playlist) > 0:
             is_repeating = False
             if self.last_played is not None:
-                if self.last_played["actual_length"] < 0.1 * self.last_played["duration"]:
+                if self.last_played["actual_length"] < 0.1 * self.last_played["duration"] \
+                        and self.number_of_repeats <= 5:
+                    # Yeah idk 5 seems like a good number
                     app.logger.info("Time elapsed since the beginning of the last track too short.")
                     app.logger.info(f"Time Elapsed :{self.last_played['actual_length']} ; Last Track Duration : {self.last_played['duration']}")
                     # Basically, if not enough time has passed since the last track
                     # It's because we skipped the music, and we need to put it once again
+                    self.number_of_repeats += 1
                     self.playlist.insert(0, app.last_played)
                     is_repeating = True
+                else:
+                    self.number_of_repeats = 0
             url = self.playlist[0]["url"]
             user = self.playlist[0]["user"]
             start_time = time.time()
@@ -111,6 +117,8 @@ class Jukebox(Flask):
 
             self.currently_played["actual_length"] = time.time() - start_time
             self.last_played = self.currently_played
+        self.number_of_repeats = 0
+        self.last_played = None
 
 
 app = Jukebox(__name__)
