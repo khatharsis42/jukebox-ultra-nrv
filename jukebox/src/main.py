@@ -274,7 +274,8 @@ def search():
     renvoie une liste de tracks correspondant à la requête depuis divers services
     :return: un tableau contenant les infos que l'on a trouvé
     """
-    query = request.form["q"]
+    query = request.form["q"].strip()
+    # On veut enlever les trailing whitespace qui resteraient, pour rendre les query plus uniformes
     results = []
     if query in app.search_cache:
         app.logger.info(f"Using the cache for request '{query}'")
@@ -378,12 +379,14 @@ def pause_test():
 
 @main.route('/rewind', methods=['POST'])
 def rewind():
+    app.currently_played["duration"] += 10
     app.mpv.command('seek', - 10, 'relative', None)
     return "ok"
 
 
 @main.route('/advance', methods=['POST'])
 def advance():
+    app.currently_played["duration"] -= 10
     app.mpv.command('seek', + 10, 'relative', None)
     return "ok"
 
@@ -401,5 +404,6 @@ def jump():
         time = 60 * (60 * hours + minutes) + secondes
     else:
         return "nok"
+    app.currently_played["duration"] -= time
     app.mpv.command('seek', time, 'absolute', None)
     return "ok"
