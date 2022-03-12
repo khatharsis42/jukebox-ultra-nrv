@@ -77,6 +77,8 @@ def search_engine(query, use_youtube_dl=False, search_multiple=True):
 def search_ytdl_unique(query):
     ydl_opts = {
         'skip_download': True,
+        'ignoreerrors': True,
+        'cachedir': False
     }
 
     results = []
@@ -122,7 +124,8 @@ def search_ytdl_unique(query):
 def search_fallback(query):
     ydl_opts = {
         'skip_download': True,
-        'ignoreerrors': True
+        'ignoreerrors': True,
+        'cachedir': False
     }
     # You can find the list of all opts here
     # https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L128-L278

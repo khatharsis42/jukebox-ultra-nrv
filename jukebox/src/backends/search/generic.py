@@ -22,6 +22,8 @@ def search_engine(query, use_youtube_dl=True):
             #'writeinfojson': True,
             'skip_download': True, # we do want only a json file
             #'outtmpl': "tmp_music", # the json is tmp_music.info.json
+            'ignoreerrors': True,
+            'cachedir': False
             }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         metadata = ydl.extract_info(query, False)
