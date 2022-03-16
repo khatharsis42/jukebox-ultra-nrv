@@ -5,6 +5,7 @@ import sys
 import requests
 from youtube_dl import DownloadError
 
+from jukebox.src.User import User
 from jukebox.src.util import *
 
 
@@ -315,6 +316,7 @@ class Track:
             'blacklisted': self.blacklisted,
             'obsolete': self.obsolete,
             'user': self.user,
+            'usercolor': User.getColor(self.user),
             # to identify each track in the playlist
             'randomid': random.randint(1, 999_999_999_999)
             # even if they have the same url

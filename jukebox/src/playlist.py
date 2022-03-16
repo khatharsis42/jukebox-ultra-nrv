@@ -2,6 +2,7 @@ import requests
 from flask import Blueprint, request, jsonify, url_for
 
 from jukebox.src.Track import Track
+from jukebox.src.User import User
 from jukebox.src.util import *
 import threading
 
@@ -61,15 +62,19 @@ def remove():
     with app.playlist_lock:
         for track_p in app.playlist:
             if track_p["randomid"] == int(track["randomid"]):
-                if app.playlist.index(track_p) == 0:
-                    app.logger.info("Removing currently playing track")
-                    with app.mpv_lock:
-                        app.currently_played["duration"] = 0
-                        # Sinon problème
-                        app.mpv.quit()
+                if User.getTier(track_p["user"]) <= User.getTier(session["user"]):
+                    if app.playlist.index(track_p) == 0:
+                        app.logger.info("Removing currently playing track")
+                        with app.mpv_lock:
+                            app.currently_played["duration"] = 0
+                            # Sinon problème
+                            app.mpv.quit()
+                    else:
+                        app.playlist.remove(track_p)
+                    return "ok"
                 else:
-                    app.playlist.remove(track_p)
-                return "ok"
+                    app.logger.info("User " + session["user"] + " isn't allowed to remove from " + track_p["user"])
+                    return "nok"
     app.logger.info("Track " + track["url"] + " not found !")
     return "nok"
 

@@ -1,6 +1,7 @@
 import sqlite3
 import datetime
 
+from jukebox.src.util import *
 
 class User:
 
@@ -17,12 +18,39 @@ class User:
         self.username = username
         self.password = password
 
+        self.tier = self.getTier(self.username)
+
     def __str__(self):
         """
 
         :return: String self.username
         """
         return self.username
+
+    def makeAdmin(self, username):
+        if username not in app.admins and self.is_admin:
+            app.admins.append(username)
+
+    @classmethod
+    def makePremium(cls, username):
+        if username not in app.premiums:
+            app.premiums.append(username)
+
+    @classmethod
+    def getTier(cls, username):
+        if username in app.admins:
+            return 2
+        if username in app.premiums:
+            return 1
+        return 0
+
+    @classmethod
+    def getColor(cls, username):
+        if username in app.admins:
+            return "purple"
+        if username in app.premiums:
+            return "red"
+        return "grey"
 
     @classmethod
     def init_from_username(cls, database, username):

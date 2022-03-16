@@ -108,7 +108,7 @@ track_template = `
             <span class="track-title">{title}</span>
             <span class="track-artist">{artist}</span>
             <span class="track-duration">{duration} s.</span>
-            <span class="track-user float-right">Added by {user}</span>
+            <span class="track-user float-right">Added by <t style="color:{usercolor};">{user}</t></span>
         </div>
         <div class="col-1">
             <button class="icon btn-more" alt="More"></button>

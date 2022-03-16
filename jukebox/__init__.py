@@ -54,6 +54,21 @@ class Jukebox(Flask):
         self.search_cache: dict = {}
         self.cache_size = 500
 
+        self.admins = ["Khatharsis"]
+        self.premiums = ["Kaname",
+                         "Khatharsis",
+                         "Legendarian",
+                         "Akasuna",
+                         "Mar",
+                         "Alternatif",
+                         "Biscuit",
+                         "Chloe",
+                         "Typhlos",
+                         "Flegmatik",
+                         "Yrax",
+                         "PtiBouchon",
+                         ]
+
     def player_worker(self):
         """
         Function called in a separate thread managing the mpv player.
