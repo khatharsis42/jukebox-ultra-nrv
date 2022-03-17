@@ -54,7 +54,7 @@ def search_multiples(query):
             "source": "soundcloud",
             "title": metadata["title"],
             "artist": metadata["uploader"],
-            "url": metadata["url"],
+            "url": metadata["webpage_url"],
             "albumart_url": metadata["thumbnail"],
             "album": None,
             "duration": int(metadata["duration"]),
