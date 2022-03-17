@@ -258,6 +258,7 @@ def track_stats(track):
 
 @main.route("/status", methods=['GET'])
 def status():
+    # This is used in the portail.cj interface, to check if this is still up
     res = {
         "status": "UP"
     }
@@ -418,5 +419,8 @@ def jump():
     else:
         return "nok"
     app.currently_played["duration"] -= time
+    # The "duration" field of the currently played song has to be changed,
+    # or else there will be trouble when the skip verification happens
+    # (in __init__.py, function player_worker)
     app.mpv.command('seek', time, 'absolute', None)
     return "ok"
