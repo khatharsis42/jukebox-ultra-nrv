@@ -12,6 +12,7 @@ from wtforms import SelectField, SubmitField
 from os import listdir
 from os.path import isfile, join
 
+from jukebox.src.User import User
 from jukebox.src.util import *
 from jukebox.src.Track import Track
 from jukebox.src.statistics import create_html_users, create_html_tracks, create_history_tracks
@@ -46,9 +47,25 @@ def get_nav_links():
 @requires_auth
 def app_view():
     # app.logger.info("App access from %s", session["user"])
-    return render_template("accueil.html",
+    try:
+        text: str
+        add = app.user_add_limits[session["user"]]
+        rem = app.user_rem_limits[session["user"]]
+        if session["user"] == "local":
+            text = "local"
+        elif User.getTier(session["user"]) == 0:
+            text = f"Addition left : {add}; Removes left : {rem}"
+        elif User.getTier(session["user"]) == 1:
+            text = f"Removes left : {rem}"
+        else:
+            text = "Admin"
+        return render_template("accueil.html",
                            user=session["user"], jk_name=app.config["JK_NAME"],
+                           april_text=text,
                            stylesheet=get_style(), navlinks=get_nav_links())
+    except KeyError:
+        session['user'] = None
+        return redirect("/auth")
 
 
 @main.route("/")

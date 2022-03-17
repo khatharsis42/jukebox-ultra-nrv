@@ -68,6 +68,8 @@ class Jukebox(Flask):
                          "Yrax",
                          "PtiBouchon",
                          ]
+        self.user_add_limits = {"local": 100000}
+        self.user_rem_limits = {"local": 0}
 
     def player_worker(self):
         """

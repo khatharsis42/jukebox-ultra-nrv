@@ -22,26 +22,28 @@ def add(ident: int = None):
     :param ident: Optional, used iff it isn't None. The id of a song.
     """
     track_dict: dict
-    if ident is not None:
-        track_dict = Track.import_from_id(app.config["DATABASE_PATH"], ident).serialize()
-        # Gotta serialize it for it to be a dict
-    else:
-        track_dict = request.form.to_dict()
-    app.logger.info("Adding track %s", track_dict["url"])
-    # track["user"] = session["user"]
-    with app.database_lock:
-        if not Track.does_track_exist(app.config["DATABASE_PATH"], track_dict["url"]):
-            Track.insert_track(app.config["DATABASE_PATH"], track_dict)
-            track = Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
+    if User.getTier(session["user"]) == 2 or app.user_add_limits[session["user"]] > 0:
+        if ident is not None:
+            track_dict = Track.import_from_id(app.config["DATABASE_PATH"], ident).serialize()
+            # Gotta serialize it for it to be a dict
         else:
-            track: Track = Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
-            # we refresh the track in database
-            Track.refresh_by_url(app.config["DATABASE_PATH"], track_dict["url"])
-            if track is not None and not track.obsolete and not track.blacklisted:
-                track.user = session['user']
-                app.logger.info(track)
+            track_dict = request.form.to_dict()
+        app.logger.info("Adding track %s", track_dict["url"])
+        # track["user"] = session["user"]
+        with app.database_lock:
+            if not Track.does_track_exist(app.config["DATABASE_PATH"], track_dict["url"]):
+                Track.insert_track(app.config["DATABASE_PATH"], track_dict)
+                track = Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
             else:
-                return "nok"
+                track: Track = Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
+                # we refresh the track in database
+                Track.refresh_by_url(app.config["DATABASE_PATH"], track_dict["url"])
+                if track is not None and not track.obsolete and not track.blacklisted:
+                    track.user = session['user']
+                    app.logger.info(track)
+                    app.user_add_limits[session['user']] -= 1
+                else:
+                    return "nok"
 
     with app.playlist_lock:
         track: dict = track.serialize()
@@ -63,6 +65,14 @@ def remove():
         for track_p in app.playlist:
             if track_p["randomid"] == int(track["randomid"]):
                 if User.getTier(track_p["user"]) <= User.getTier(session["user"]):
+                    if track_p["user"] != session["user"] and User.getTier(session["user"]) < 2:
+                        if app.user_rem_limits[session["user"]] > 0:
+                            app.user_rem_limits[session["user"]] -= 1
+                        else:
+                            app.logger.info("User " + session["user"] + " doesn't have any removes left")
+                    # Soit on essaye de retirer sa propre musique
+                    # Soit on est admin
+                    # Soit on a encore des gestapint
                     if app.playlist.index(track_p) == 0:
                         app.logger.info("Removing currently playing track")
                         with app.mpv_lock:

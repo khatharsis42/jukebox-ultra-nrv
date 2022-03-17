@@ -51,6 +51,13 @@ def auth_page():
                         request.form["pass"],
                         user.password)):
                 app.logger.info("Logging in {}".format(request.form["user"]))
+                if not request.form['user'] in app.user_add_limits.keys():
+                    app.user_add_limits[request.form['user']] = 50
+                    app.user_rem_limits[request.form['user']] = 1
+                    if request.form['user'] in app.premiums:
+                        app.user_rem_limits[request.form['user']] = 50
+                        app.user_add_limites[request.form['user']] = 1000000
+
                 session['user'] = request.form['user']
                 return redirect("/app")
         except ValueError:
