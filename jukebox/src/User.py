@@ -27,9 +27,11 @@ class User:
         """
         return self.username
 
-    def makeAdmin(self, username):
-        if username not in app.admins and self.is_admin:
+    @classmethod
+    def makeAdmin(cls, username):
+        if username not in app.admins:
             app.admins.append(username)
+        cls.makePremium(username)
 
     @classmethod
     def makePremium(cls, username):

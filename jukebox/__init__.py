@@ -54,9 +54,8 @@ class Jukebox(Flask):
         self.search_cache: dict = {}
         self.cache_size = 500
 
-        self.admins = ["Khatharsis"]
+        self.admins = ["Khatharsis", "Mawan"]
         self.premiums = ["Kaname",
-                         "Khatharsis",
                          "Legendarian",
                          "Akasuna",
                          "Mar",
@@ -67,7 +66,7 @@ class Jukebox(Flask):
                          "Flegmatik",
                          "Yrax",
                          "PtiBouchon",
-                         ]
+                         ] + self.admins
         self.user_add_limits = {"local": 100000}
         self.user_rem_limits = {"local": 0}
 
