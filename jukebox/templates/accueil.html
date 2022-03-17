@@ -15,7 +15,9 @@
         <div class="container-fluid"><div class="row">
                 <div class="col-xl-8">
                     <h1 class="display-3">{{ jk_name }}</h1>
-                    <h1 class="display-4">{{ april_text }}</h1>
+                    <h1 class="display-4">
+                        {{ april_text | safe }}
+                    </h1>
                     <div class="clearfix">
                         <ul class="nav">
                             <li class="nav-item">

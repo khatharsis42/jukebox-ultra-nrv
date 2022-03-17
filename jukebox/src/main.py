@@ -54,9 +54,13 @@ def app_view():
         if session["user"] == "local":
             text = "local"
         elif User.getTier(session["user"]) == 0:
-            text = f"Addition left : {add}; Removes left : {rem}"
+            text = f"""
+            <img src="/static/images/icons/plus-square-regular.svg" style="height: .8em;"> : {add} \
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \
+            <img src="/static/images/icons/x.svg" style="height: .8em;"> : {rem}\
+            """
         elif User.getTier(session["user"]) == 1:
-            text = f"Removes left : {rem}"
+            text = f"""<img src="/static/images/icons/plus-square-regular.svg" style="height: .8em;"> : {rem}"""
         else:
             text = "Admin"
         return render_template("accueil.html",
