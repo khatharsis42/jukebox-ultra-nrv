@@ -54,7 +54,7 @@ class Jukebox(Flask):
         self.search_cache: dict = {}
         self.cache_size = 500
 
-        self.admins = ["Khatharsis", "Mawan"]
+        self.admins = ["Khatharsis", "Mawan", "Nicolas Sarkozy"]
         self.premiums = ["Kaname",
                          "Legendarian",
                          "Akasuna",
@@ -69,6 +69,10 @@ class Jukebox(Flask):
                          ] + self.admins
         self.user_add_limits = {"local": 100000}
         self.user_rem_limits = {"local": 0}
+
+        self.sarkozy_count = 10
+        self.sarkozy = Track.import_from_url(self.config["DATABASE_PATH"], "https://www.youtube.com/watch?v=ZZJOdUTlKAo")
+        self.sarkozy.user = "Nicolas Sarkozy"
 
     def player_worker(self):
         """
