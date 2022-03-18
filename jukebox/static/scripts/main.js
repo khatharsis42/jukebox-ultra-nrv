@@ -176,6 +176,10 @@ function onYouTubeIframeAPIReady() {
     });
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 /**
  * Synchronizes the video from Youtube iframe with the sound from mpv.
  *
@@ -231,6 +235,10 @@ function updates_playlist(data) {
             playlistHTML.find(".track:first .btn-top").hide();
 
             // then we manage the Youtube iframe
+            // We need to do that, because we need to let the yt thingy load
+            while (yt === 0 && $("#YT").is(":visible") && track["source"] === "youtube") {
+                sleep(10)
+            }
             if (yt.ready && $("#YT").is(":visible") && track["source"] === "youtube") {
                 let url = new URL(data.playlist[0]["url"]);
                 let videoId = url.searchParams.get("v");
@@ -285,10 +293,10 @@ sync = function() {
     let time = Date.now() / 1000;
     $.get("/sync", function (data) {
         $('#volume-slider').val(data.volume);
-        updates_playlist(data);
         if (yt !== 0) {
             syncVideo(data.time);
         }
+        updates_playlist(data);
     });
     window.setTimeout(arguments.callee, 1000);
 }();

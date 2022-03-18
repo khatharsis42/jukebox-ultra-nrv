@@ -65,6 +65,7 @@ def help():
         modules.append(i)
     return render_template("help.html", modules=modules,
                            jk_name=app.config["JK_NAME"],
+                           user=session['user'],
                            stylesheet=get_style(), navlinks=get_nav_links(),
                            version=app.version)
 
