@@ -286,6 +286,8 @@ sync = function() {
     $.get("/sync", function (data) {
         $('#volume-slider').val(data.volume);
         updates_playlist(data);
+        var s = document.getElementById("counter");
+        s.innerHTML=data.counter;
         if (yt !== 0) {
             syncVideo(data.time);
         }

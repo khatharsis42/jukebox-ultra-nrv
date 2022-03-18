@@ -47,6 +47,23 @@ class User:
         return 0
 
     @classmethod
+    def getText(cls, username):
+        add = app.user_add_limits[username]
+        rem = app.user_rem_limits[username]
+        if username == "local":
+            return "local"
+        elif User.getTier(username) == 0:
+            return f"""
+            <img src="/static/images/icons/plus-square-regular.svg" style="height: .8em;"> : {add} \
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \
+            <img src="/static/images/icons/x.svg" style="height: .8em;"> : {rem}\
+            """
+        elif User.getTier(username) == 1:
+            return f"""<img src="/static/images/icons/plus-square-regular.svg" style="height: .8em;"> : {rem}"""
+        else:
+            return"Admin"
+
+    @classmethod
     def getColor(cls, username):
         if username in app.admins:
             return "purple"

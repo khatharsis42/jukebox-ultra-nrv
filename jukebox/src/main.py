@@ -47,29 +47,10 @@ def get_nav_links():
 @requires_auth
 def app_view():
     # app.logger.info("App access from %s", session["user"])
-    try:
-        text: str
-        add = app.user_add_limits[session["user"]]
-        rem = app.user_rem_limits[session["user"]]
-        if session["user"] == "local":
-            text = "local"
-        elif User.getTier(session["user"]) == 0:
-            text = f"""
-            <img src="/static/images/icons/plus-square-regular.svg" style="height: .8em;"> : {add} \
-            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \
-            <img src="/static/images/icons/x.svg" style="height: .8em;"> : {rem}\
-            """
-        elif User.getTier(session["user"]) == 1:
-            text = f"""<img src="/static/images/icons/plus-square-regular.svg" style="height: .8em;"> : {rem}"""
-        else:
-            text = "Admin"
-        return render_template("accueil.html",
+    return render_template("accueil.html",
                            user=session["user"], jk_name=app.config["JK_NAME"],
-                           april_text=text,
+                           april_text="",
                            stylesheet=get_style(), navlinks=get_nav_links())
-    except KeyError:
-        session['user'] = None
-        return redirect("/auth")
 
 
 @main.route("/")
@@ -143,10 +124,16 @@ def sync():
             time_pos = app.mpv.time_pos  # when track is finished, continues augmenting time_pos
         else:
             time_pos = 0
+    try:
+        c = User.getText(session["user"])
+    except KeyError:
+        session['user'] = None
+        return redirect("/auth")
     res = {
         "playlist": app.playlist,
         "volume": volume,
-        "time": time_pos
+        "time": time_pos,
+        "counter": c
     }
 
     return jsonify(res)
