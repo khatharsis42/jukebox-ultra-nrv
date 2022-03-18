@@ -77,9 +77,19 @@ class Jukebox(Flask):
         while len(self.playlist) > 0:
             is_repeating = False
             if self.last_played is not None:
+                # If there is a possible track be could have skipped
                 if self.last_played["actual_length"] < 0.1 * self.last_played["duration"] \
                         and self.number_of_repeats <= 5:
+                    # And we didn't actually play it
                     # Yeah idk 5 seems like a good number
+                    # On a besoin de ça, parce que sinon deux musiques qui sautent l'une après l'autre
+                    # et boum ça boucle infiniment
+                    # NB : j'ai pas d'idée de meilleure implémentation opur éviter les skips
+                    # Mais ça marche très bien pour le moment, donc pas forcément besoin d'améliorer
+                    # Au pire, si les skips sont trop fréquents, il y a deux fix:
+                    #       1 - Augmenter le numéro maximal de check
+                    #       2 - Vider le cache de youtube-dl après chaque échec
+                    #           (parait que ça marche, à checker)
                     app.logger.info("Time elapsed since the beginning of the last track too short.")
                     app.logger.info(f"Time Elapsed :{self.last_played['actual_length']} ; Last Track Duration : {self.last_played['duration']}")
                     # Basically, if not enough time has passed since the last track
@@ -103,27 +113,25 @@ class Jukebox(Flask):
                     track.insert_track_log(app.config["DATABASE_PATH"], user)
             with app.mpv_lock:
                 self.mpv.play(url)
-            # the next instruction should be the only one without a lock
-            # but it causes a segfault when there is a lock
-            # I fear fixing it may be dirty
-            # we could switch to mpv playlists though
+            # L'instruction "mpv.wait_for_playback()" doit être sans lock
+            # Sinon segfault
+            # NB : un ancien maintainer a dit cela, mais on a encore des crashs du Core de MPV
+            # d'où le try...except
+            # L'ancien maintainer avait proposé d'utililser les playlists mpv
+            # Mais de facto c'est compliqué si mpv crash...
+
             try:
                 self.mpv.wait_for_playback()  # it's stuck here while it's playing
             except mpv.ShutdownError:
                 app.logger.info("MPV core crashed, it happens.")
-                # Sometimes the core crashes, so we gotta relaunch it
-                # I have no idea where it comes from
-                # EDIT : Since we know try to play the track again in the next iteration,
-                # These lines do not do anything
-                # So i commented them out
+                # Vu qu'on relance une instance de MPV à chaque nouvelle track
+                # Et qu'on check maintenant les skips
+                # Eh bien on a pas besoin de relancer le core...
+                # Mais c'est quand même intéressant de savoir qu'il a crashé
+
+                # Les lignes pour relancer MPV que j'ai commenté:
                 # self.mpv.stop()
                 # self.mpv = MyMPV(None, log_handler=app.logger.info)
-            """
-            if counter == max_count and end - start < min(track.duration, min_duration) and track.source == "youtube":
-                # we mark the track as obsolete
-                track.set_obsolete_value(app.config["DATABASE_PATH"], 1)
-                app.logger.info("Marking track {} as obsolete".format(track.url))
-            """
 
             with self.mpv_lock:
                 del self.mpv

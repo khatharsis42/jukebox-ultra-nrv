@@ -33,7 +33,6 @@ def add(ident: int = None):
         with app.database_lock:
             if not Track.does_track_exist(app.config["DATABASE_PATH"], track_dict["url"]):
                 Track.insert_track(app.config["DATABASE_PATH"], track_dict)
-                track = Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
             else:
                 track: Track = Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
                 # we refresh the track in database
@@ -44,16 +43,39 @@ def add(ident: int = None):
                     app.user_add_limits[session['user']] -= 1
                 else:
                     return "nok"
+    if ident is not None:
+        track_dict = Track.import_from_id(app.config["DATABASE_PATH"], ident).serialize()
+        # Gotta serialize it for it to be a dict
+    else:
+        track_dict = request.form.to_dict()
+    app.logger.info("Adding track %s", track_dict["url"])
+    # track["user"] = session["user"]
+    with app.database_lock:
+        if not Track.does_track_exist(app.config["DATABASE_PATH"], track_dict["url"]):
+            Track.insert_track(app.config["DATABASE_PATH"], track_dict)
+        else:
+            # we refresh the track in database
+            Track.refresh_by_url(app.config["DATABASE_PATH"], track_dict["url"])
+        track = Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
+        if track is not None and not track.obsolete and not track.blacklisted:
+            track.user = session['user']
+            app.logger.info(track)
+        else:
+            return "nok"
 
-    with app.playlist_lock:
-        track: dict = track.serialize()
-        track["user"] = session["user"]
-        app.playlist.append(track)
-        if len(app.playlist) == 1:
-            threading.Thread(target=app.player_worker).start()
+    add_track(track)
     if ident is not None:
         return redirect(f"/statistics/track/{ident}")
     return "ok"
+
+
+def add_track(track: Track):
+    with app.playlist_lock:
+        track: dict = track.serialize()
+        # track["user"] = session["user"]
+        app.playlist.append(track)
+        if len(app.playlist) == 1:
+            threading.Thread(target=app.player_worker).start()
 
 
 @playlist.route("/remove", methods=['POST'])

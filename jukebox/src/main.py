@@ -251,8 +251,21 @@ def history(number: int):
 
 @main.route("/statistics/track/<track>", methods=['GET'])
 @requires_auth
-def track_stats(track: int):
+def track_stats(track):
     t: Track = Track.import_from_id(app.config["DATABASE_PATH"], track)
+    if not t:
+        #This means it's not a real id, but rather a youtube id
+        #ie:
+        t: Track = Track.import_from_url(app.config["DATABASE_PATH"], "https://www.youtube.com/watch?v="+track)
+        if t:
+            return redirect(f"/statistics/track/{t.ident}")
+        # Then it's not https but http
+        t: Track = Track.import_from_url(app.config["DATABASE_PATH"], "http://www.youtube.com/watch?v="+track)
+        if t:
+            return redirect(f"/statistics/track/{t.ident}")
+        else:
+            return redirect("/app")
+
     return render_template('track.html', user=session['user'],
                            jk_name=app.config["JK_NAME"],
                            track=t.track,
@@ -266,6 +279,7 @@ def track_stats(track: int):
 
 @main.route("/status", methods=['GET'])
 def status():
+    # This is used in the portail.cj interface, to check if this is still up
     res = {
         "status": "UP"
     }
@@ -426,5 +440,8 @@ def jump():
     else:
         return "nok"
     app.currently_played["duration"] -= time
+    # The "duration" field of the currently played song has to be changed,
+    # or else there will be trouble when the skip verification happens
+    # (in __init__.py, function player_worker)
     app.mpv.command('seek', time, 'absolute', None)
     return "ok"
