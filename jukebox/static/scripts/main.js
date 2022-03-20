@@ -244,8 +244,10 @@ function updates_playlist(data) {
             // then we manage the Youtube iframe
             // We need to do that, because we need to let the yt thingy load
             if (!isMobile){
-              while (yt === 0 && $("#YT").is(":visible") && track["source"] === "youtube") {
-                  sleep(10)
+              loop = 100;
+              while (loop > 0 && yt === 0 && $("#YT").is(":visible") && track["source"] === "youtube") {
+                  sleep(10);
+                  loop -= 1;
               }
             }
             if (yt.ready && $("#YT").is(":visible") && track["source"] === "youtube") {
