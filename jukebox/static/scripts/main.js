@@ -313,7 +313,7 @@ sync = function() {
         s = document.getElementById("playlist-length");
         s.innerHTML="Time Left:" + data.playlist_length;
     });
-    window.setTimeout(arguments.callee, 5000);
+    window.setTimeout(arguments.callee, 1000);
 }();
 
 /**
