@@ -284,7 +284,7 @@ function updates_playlist(data) {
 
             if (playlistHTML.find("#playlist-queue").length === 0) {
                 playlistHTML.find(".track:eq(0)").after(
-                "<li id='playlist-queue' class='playlist-title'><div>Upcoming...</div><div id='playlist-length' style='font-size:small;'></div></li>"
+                "<li id='playlist-queue' class='playlist-title'><div>Upcoming...</div><div id='playlist-length' style='font-size:small;letter-spacing: .2em;'></div></li>"
                 );
             }
         }
