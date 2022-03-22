@@ -12,6 +12,7 @@ from wtforms import SelectField, SubmitField
 from os import listdir
 from os.path import isfile, join
 
+from jukebox.src import playlist
 from jukebox.src.util import *
 from jukebox.src.Track import Track
 from jukebox.src.statistics import create_html_users, create_html_tracks, create_history_tracks
@@ -126,8 +127,10 @@ def sync():
     res = {
         "playlist": app.playlist,
         "volume": volume,
-        "time": time_pos
+        "time": time_pos,
+        "playlist_length": playlist.get_length()
     }
+    print(playlist.get_length())
 
     return jsonify(res)
 

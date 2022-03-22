@@ -113,3 +113,17 @@ def suggest():
                 app.logger.info(f"Marking track [id = {track.ident}, url = {track.url}] as obsolete")
                 track.set_obsolete_value(app.config["DATABASE_PATH"], 1)
     return jsonify(result)
+
+
+def get_length() -> str:
+    track: dict
+    sum = 0
+    for track in app.playlist[1:]:
+        sum += int(track['duration'])
+    if sum == 0:
+        return ""
+    elif sum < 60:
+        return str(sum)
+    elif sum//60 < 60:
+        return f"{sum//60}m{sum%60:02d}s"
+    return f"{sum//60//60}h{(sum//60)%60}m{sum%60:02}s"

@@ -283,7 +283,9 @@ function updates_playlist(data) {
 
 
             if (playlistHTML.find("#playlist-queue").length === 0) {
-                playlistHTML.find(".track:eq(0)").after("<li id='playlist-queue' class='playlist-title'>Upcoming...</li>");
+                playlistHTML.find(".track:eq(0)").after(
+                "<li id='playlist-queue' class='playlist-title'><div>Upcoming...</div><div id='playlist-length' style='font-size:small;'></div></li>"
+                );
             }
         }
     }
@@ -308,8 +310,10 @@ sync = function() {
             syncVideo(data.time);
         }
         updates_playlist(data);
+        s = document.getElementById("playlist-length");
+        s.innerHTML="Time Left:" + data.playlist_length;
     });
-    window.setTimeout(arguments.callee, 1000);
+    window.setTimeout(arguments.callee, 5000);
 }();
 
 /**
