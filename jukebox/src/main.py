@@ -130,7 +130,6 @@ def sync():
         "time": time_pos,
         "playlist_length": playlist.get_length()
     }
-    print(playlist.get_length())
 
     return jsonify(res)
 

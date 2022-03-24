@@ -123,7 +123,7 @@ def get_length() -> str:
     if sum == 0:
         return ""
     elif sum < 60:
-        return str(sum)
+        return f"{sum:02}s"
     elif sum//60 < 60:
         return f"{sum//60}m{sum%60:02d}s"
     return f"{sum//60//60}h{(sum//60)%60}m{sum%60:02}s"
