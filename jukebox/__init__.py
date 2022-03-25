@@ -35,7 +35,7 @@ class Jukebox(Flask):
 
         self.mpv_lock = threading.Lock()
         self.database_lock = threading.Lock()
-        self.stylesheet = "default.css"
+        self.stylesheet = "april.css"
         self.config.from_pyfile("../config.py")
         self.register_blueprint(main)
         self.register_blueprint(auth)
