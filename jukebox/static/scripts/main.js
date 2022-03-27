@@ -154,6 +154,7 @@ function onYouTubeIframeAPIReady() {
                 console.log("YT ready");
                 yt.mute();
                 yt.ready = true;
+                yt.hasTrack = false;
                 $('#pause').on("click", function() {
                     if (pause) {yt.playVideo();} else {yt.pauseVideo();}
                     pause = ! pause;
@@ -174,10 +175,6 @@ function onYouTubeIframeAPIReady() {
         }
 
     });
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function mobileCheck() {
@@ -243,13 +240,6 @@ function updates_playlist(data) {
 
             // then we manage the Youtube iframe
             // We need to do that, because we need to let the yt thingy load
-            if (!isMobile){
-              loop = 100;
-              while (loop > 0 && yt === 0 && $("#YT").is(":visible") && track["source"] === "youtube") {
-                  sleep(10);
-                  loop -= 1;
-              }
-            }
             if (yt.ready && $("#YT").is(":visible") && track["source"] === "youtube") {
                 let url = new URL(data.playlist[0]["url"]);
                 let videoId = url.searchParams.get("v");
@@ -266,6 +256,7 @@ function updates_playlist(data) {
                     yt.playVideo();
                 }
                 syncVideo(data.time);
+                yt.hasTrack = true;
             }
             if (playlistHTML.find("#playlist-playing").length === 0) { // it doesn't display
                 console.log("Adding Lecture en cours");
@@ -306,12 +297,16 @@ sync = function() {
     let time = Date.now() / 1000;
     $.get("/sync", function (data) {
         $('#volume-slider').val(data.volume);
-        if (yt !== 0) {
+        if (yt !== 0 && yt.ready) {
+            updates_playlist(data);
+        }
+        if (yt !== 0 && yt.hasTrack) {
             syncVideo(data.time);
         }
-        updates_playlist(data);
         s = document.getElementById("playlist-length");
-        s.innerHTML="Time Left:" + data.playlist_length;
+        if (s !== null) {
+            s.innerHTML="Time Left:" + data.playlist_length;
+        };
     });
     window.setTimeout(arguments.callee, 1000);
 }();

@@ -82,10 +82,10 @@ h1, h2, h3, tr, td, p, li{
     font-size: 1.25rem;
 }
 
-iframe {
-    /* display:none; */
-    /*Pas envie d'afficher ça dans mon skin*/
+iframe#YT {
     width: 100%;
+    height : auto;
+    aspect-ratio : 16 / 9;
     /* Pour avoir un truc youtube centré un peu quand même */
     margin-top: 15px;
     margin-bottom: 15px;

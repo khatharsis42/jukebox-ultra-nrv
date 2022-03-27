@@ -82,6 +82,8 @@
 
 iframe#YT {
     width: 100%;
+    height : auto;
+    aspect-ratio : 16 / 9;
 }
 
 .icon{ /*Les icones de selection de chansons*/
