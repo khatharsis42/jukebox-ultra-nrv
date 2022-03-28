@@ -7,6 +7,14 @@ import threading
 
 playlist = Blueprint('playlist', __name__)
 
+length: str
+needs_to_update = True
+
+
+def set_to_update():
+    global needs_to_update
+    needs_to_update = True
+
 
 @playlist.route("/add", methods=['POST'])
 @playlist.route("/add/<ident>", methods=["POST"])
@@ -42,6 +50,7 @@ def add(ident: int = None):
             return "nok"
 
     add_track(track)
+    set_to_update()
     if ident is not None:
         return redirect(f"/statistics/track/{ident}")
     return "ok"
@@ -72,6 +81,7 @@ def remove():
                         app.mpv.quit()
                 else:
                     app.playlist.remove(track_p)
+                set_to_update()
                 return "ok"
     app.logger.info("Track " + track["url"] + " not found !")
     return "nok"
@@ -116,14 +126,20 @@ async def suggest():
 
 
 def get_length() -> str:
+    global length, needs_to_update
+    if not needs_to_update:
+        return length
+    needs_to_update = False
     track: dict
     sum = 0
     for track in app.playlist[1:]:
         sum += int(track['duration'])
     if sum == 0:
-        return ""
+        length = ""
     elif sum < 60:
-        return f"{sum:02}s"
-    elif sum//60 < 60:
-        return f"{sum//60}m{sum%60:02d}s"
-    return f"{sum//60//60}h{(sum//60)%60}m{sum%60:02}s"
+        length = f"{sum:02}s"
+    elif sum // 60 < 60:
+        length = f"{sum // 60}m{sum % 60:02d}s"
+    else:
+        length = f"{sum // 60 // 60}h{(sum // 60) % 60}m{sum % 60:02}s"
+    return length

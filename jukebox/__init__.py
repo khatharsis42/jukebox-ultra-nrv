@@ -11,7 +11,7 @@ from jukebox.src.MyMPV import MyMPV
 from jukebox.src.Track import Track
 from jukebox.src.main import main
 from jukebox.src.auth import auth
-from jukebox.src.playlist import playlist
+from jukebox.src.playlist import playlist, set_to_update
 
 import importlib
 
@@ -59,6 +59,7 @@ class Jukebox(Flask):
         Function called in a separate thread managing the mpv player.
         """
         while len(self.playlist) > 0:
+            set_to_update()
             is_repeating = False
             if self.last_played is not None:
                 # If there is a possible track be could have skipped
