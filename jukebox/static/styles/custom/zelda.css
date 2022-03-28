@@ -33,17 +33,18 @@ body {
     font-weight: bold;
 }
 
-h1, h2, h3, tr, td, p, li{
-    color:rgb(0,0,0);
-}
-
-@media only screen and (orientation: portrait) {
-    body {
-        background: url(https://i.pinimg.com/originals/49/a1/9c/49a19c0808863a8301e6a507383ee271.jpg);
+@media only screen and (orientation: portrait){
+    body{
+        background: url(https://i.pinimg.com/originals/30/4f/a1/304fa12fced766b70d6932cb59e49431.jpg);
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
+        background-attachment:fixed;
     }
+}
+
+h1, h2, h3, tr, td, p, li{
+    color:rgb(0,0,0);
 }
 
 .container-fluid {
@@ -82,7 +83,7 @@ h1, h2, h3, tr, td, p, li{
     font-size: 1.25rem;
 }
 .nav {
-    width:110%;
+    max-width:110%;
 }
 
 iframe#YT {
@@ -346,7 +347,6 @@ input[type=range]:focus, input[type=range]::-webkit-slider-runnable-track {
 }
 
 input[type='range'] {
-    width: 600px;
     background-color: none;
 }
 
