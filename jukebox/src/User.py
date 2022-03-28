@@ -97,3 +97,37 @@ class User:
             return r
         else:
             return r[:nbr]
+
+    @classmethod
+    def getTheme(cls, database, user:str):
+        """
+        Returns the saved theme of the user, if there is one
+
+        :param database:
+        :param user:
+        :return: str
+        """
+        conn = sqlite3.connect(database)
+        c = conn.cursor()
+        c.execute("SELECT theme from users where user=?", (user,))
+        r = c.fetchall()
+        if r is None:
+            return None
+        if len(r) > 0:
+            return r[0][0]
+        return None
+
+    @classmethod
+    def setTheme(cls, database, user: str, theme: str):
+        """
+        Returns the saved theme of the user, if there is one
+
+        :param database:
+        :param user:
+        :param theme:
+        :return: str
+        """
+        conn = sqlite3.connect(database)
+        c = conn.cursor()
+        c.execute("UPDATE users SET theme=? where user=?", (theme, user))
+        conn.commit()
