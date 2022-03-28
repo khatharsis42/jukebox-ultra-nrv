@@ -16,28 +16,32 @@
            type="text"/>
 </div>
 <div class="form-group form-inline">
-    <img class="icon btn-volume" src="static/images/icons/volume.svg" style="padding-left:0px;">
-    <input class="volume-slider form-control" id="volume-slider" max="100" min="0" type="range">
+    <div class="col-2">
+        <img class="icon btn-volume" src="static/images/icons/volume.svg" style="padding-left:0px;/*! padding: inherit; *//*! padding-right: 0; */margin: auto;">
+    </div>
+    <div class="col-10">
+        <input class="volume-slider form-control" id="volume-slider" max="100" min="0" type="range">
+    </div>
 </div>
 <ul class="list-group" id="search_results"></ul>
 <ul class="list-group" id="playlist"></ul>
 {% endblock %}
 
 {% block content %}
-<div class="col-xl-4">
+<div class="col-xl-4" style="padding-right: 0px;padding-left: 0px;">
     <div id="YT"></div>
     <div class="container">
         <div class="row">
-            <div class="col-3">
+            <div class="col-3 yt-btn">
                 <button class="btn btn-outline-primary" id="pause" type="submit">
                     <i class="fa fa-play"></i> / <i class="fa fa-pause"></i></button>
             </div>
-            <div class="col-3">
+            <div class="col-2 yt-btn">
                 <button class="btn btn-outline-primary" id="rewind" type="submit" title="-10s">
                     <i class="fa fa-fast-backward"></i>
                 </button>
             </div>
-            <div class="col-3">
+            <div class="col-2 yt-btn">
                 <button class="btn btn-outline-primary"
                         id="advance"
                         type="submit"
@@ -45,7 +49,7 @@
                     <i class="fa fa-fast-forward"></i>
                 </button>
             </div>
-            <div class="col-3">
+            <div class="col-4 yt-btn">
                 <input aria-expanded="false"
                        autocomplete="off"
                        autofocus
@@ -55,7 +59,7 @@
                        name="jump"
                        placeholder="00:00"
                        spellcheck="false"
-                       style="text-align: right; direction: ltr;"
+                       style="text-align: center; direction: ltr;"
                        type="text"/>
             </div>
         </div>
