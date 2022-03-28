@@ -1,13 +1,18 @@
+.statistics {
+    text-align:center;
+}
 
 .statistics .statcol {
     display: inline-block;
     max-width: 48%;
     vertical-align: top;
     margin: 5px;
+    text-align:left;
 }
 
 .statistics .statcol .statdisplay {
     padding: 5px 5px 30px;
+    text-align:left;
 }
 
 .statistics .statcol thead {
@@ -21,6 +26,18 @@
 
 .statistics .statcol tr:nth-child(even) {
     background-color: lightgrey;
+}
+
+table {
+    margin:auto;
+}
+
+label {
+    margin-bottom:0px;
+}
+
+select {
+    margin : 1em 0 1em 0;
 }
 
 .btn-remove, .btn-add, .btn-back, .btn-more, .btn-top, .btn-up, .btn-down, .btn-refresh {
@@ -84,6 +101,8 @@ iframe#YT {
     width: 100%;
     height : auto;
     aspect-ratio : 16 / 9;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
 .icon{ /*Les icones de selection de chansons*/

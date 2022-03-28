@@ -139,6 +139,14 @@ input[type="text"] {
     color: #4bb1db;
 }
 
+label {
+    color:black;
+    margin-bottom:0px;
+}
+
+select {
+    margin : 1em 0 1em 0;
+}
 .form-group:focus {
     border-color: red;
     box-shadow: 0px 0px 10px 3px #2596be;
@@ -158,15 +166,21 @@ iframe, .list-group, .container {
     max-width:100%;
 }
 
+.statistics {
+    text-align:center;
+}
+
 .statistics .statcol {
     display: inline-block;
     max-width: 48%;
     vertical-align: top;
     margin: 5px;
+    text-align:left;
 }
 
 .statistics .statcol .statdisplay {
     padding: 5px 5px 30px;
+    text-align:left;
 }
 
 .statistics .statcol thead {
@@ -184,6 +198,10 @@ iframe, .list-group, .container {
 
 .statistics .statcol tbody tr:nth-child(odd) {
     background-color: rgba(244, 161, 44, 0.4);
+}
+
+table {
+    margin:auto;
 }
 
 .list-group {
