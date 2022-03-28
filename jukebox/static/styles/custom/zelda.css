@@ -81,6 +81,9 @@ h1, h2, h3, tr, td, p, li{
     font-family: "Zelda";
     font-size: 1.25rem;
 }
+.nav {
+    width:110%;
+}
 
 iframe#YT {
     width: 100%;
