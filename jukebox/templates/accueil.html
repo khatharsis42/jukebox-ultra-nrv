@@ -1,134 +1,76 @@
-<!DOCTYPE html>
-<html lang="fr">
-    <head>
-        <meta charset="utf-8">
-        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-	    <link href="{{ url_for('static', filename='styles/bootstrap.min.css') }}" rel="stylesheet">
-        <link href= "{{ url_for('static',filename='styles/custom/') }}{{ stylesheet }}" rel= "stylesheet" type= "text/css">
-        <link href="{{ url_for('static', filename='favicon.ico') }}" rel="shortcut icon">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-        <title>{{ jk_name }}</title>
-    </head>
-
-    <body>
-
-        <div class="container-fluid"><div class="row">
-                <div class="col-xl-8">
-                    <h1 class="display-3">{{ jk_name }}</h1>
-                    <h1 class="display-4" id="counter">
-                        {{ april_text | safe }}
-                    </h1>
-                    <div class="clearfix">
-                        <ul class="nav">
-                            <li class="nav-item">
-                                <p class="nav-link">
-                                <a href="#">Home</a>
-                                </p>
-                            </li>
-                            <li class="nav-item">
-                                <p class="nav-link">
-                                <a href="/statistics">Statistics</a>
-                                </p>
-                            </li>
-                            <li class="nav-item">
-                                <p class="nav-link">
-                                <a href="/history/50">History</a>
-                                </p>
-                            </li>
-                            <li class="nav-item">
-                                <p class="nav-link"><a href="/settings">Settings</a></p>
-                            </li>
-                            <li class="nav-item">
-                                <p class="nav-link">
-                                <a href="/help">Help</a>
-                                </p>
-                            </li>
-                            <li class="nav-item">
-                                <p class="nav-link"><a href="/logout">Logout from {{ user }}</a></p>
-                            </li>
-                            {% for elem in navlinks %}
-                                <li class="nav-item">
-                                    <p class="nav-link">
-                                        <a href="{{ elem[1] }}" title="{{ elem[0] }}">{{ elem[0] }}</a>
-                                    </p>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    <div class="form-group">
-                        <input aria-expanded="false"
-                               autocomplete="off"
-                               autofocus
-                               class="form-control form-control-lg"
-                               dir="ltr"
-                               id="query"
-                               name="query"
-                               placeholder="Recherchez un morceau ou collez une url"
-                               spellcheck="false"
-                               style="text-align: left; direction: ltr;"
-                               type="text"/>
-                    </div>
-                    <div class="form-group form-inline">
-                        <img class="icon btn-volume" src="/static/images/icons/volume.svg">
-                        <input class="volume-slider form-control" id="volume-slider" max="100" min="0" type="range">
-                    </div>
-                    <ul class="list-group" id="search_results"></ul>
-                    <ul class="list-group" id="playlist"></ul>
-                </div>
-                <div class="col-xl-4">
-                    <div id="YT"></div>
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-3">
-                                <button class="btn btn-outline-primary" id="pause" type="submit"><i class="fa fa-play"></i>  /  <i class="fa fa-pause"></i></button>
-                            </div>
-                            <div class="col-3">
-                                <button class="btn btn-outline-primary"
-                                id="rewind"
-                                type="submit"
-                                title="-10s">
-                                    <i class="fa fa-fast-backward"></i>
-                                </button>
-                            </div>
-                            <div class="col-3">
-                                <button class="btn btn-outline-primary"
-                                id="advance"
-                                type="submit"
-                                title="+10s">
-                                    <i class="fa fa-fast-forward"></i>
-                                </button>
-                            </div>
-                            <div class="col-3">
-                                <input aria-expanded="false"
-                                   autocomplete="off"
-                                   autofocus
-                                   class="form-control form-control-lg"
-                                   dir="ltr"
-                                   id="jump"
-                                   name="jump"
-                                   placeholder="00:00"
-                                   spellcheck="false"
-                                   style="text-align: right; direction: ltr;"
-                                   type="text"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="clearfix">
-                        <p class="display-4 float-left">Suggestions</p>
-                        <p class="float-right lead py-4">
-                        <a href="#" id="refresh-suggestions">Rafraîchir</a>
-                        <a href="#" id="toggle-YT">Afficher/Masquer la vidéo</a>
-                        </p>
-                    </div>
-                    <ul class="list-group" id="suggestions"></ul>
-                </div>
-            </div></div>
+{% extends "page_template.html" %}
 
 
-	    <script src="{{ url_for('static',filename='scripts/jquery-3.3.1.min.js') }}"></script>
-            <script crossorigin="anonymous" src="{{ url_for('static',filename='scripts/jquery.loadTemplate.min.js') }}"></script>
-            <script src="{{ url_for('static',filename='scripts/main.js') }}"></script>
-	    <script src="{{ url_for('static',filename='scripts/popper.min.js') }}"></script>
-	    <script src="{{ url_for('static',filename='scripts/bootstrap.min.js') }}"></script>
-    </body>
-</html>
+{% block music %}
+<div class="form-group">
+    <input aria-expanded="false"
+           autocomplete="off"
+           autofocus
+           class="form-control form-control-lg"
+           dir="ltr"
+           id="query"
+           name="query"
+           placeholder="Recherchez un morceau ou collez une url"
+           spellcheck="false"
+           style="text-align: left; direction: ltr;"
+           type="text"/>
+</div>
+<div class="form-group form-inline">
+    <div class="col-0">
+        <img class="icon btn-volume" src="static/images/icons/volume.svg" style="padding-left:0px;/*! padding: inherit; *//*! padding-right: 0; */margin: auto;">
+    </div>
+    <div class="col-10">
+        <input class="volume-slider form-control" id="volume-slider" max="100" min="0" type="range">
+    </div>
+</div>
+<ul class="list-group" id="search_results"></ul>
+<ul class="list-group" id="playlist"></ul>
+{% endblock %}
+
+{% block content %}
+<div class="col-xl-4" style="padding-right: 0px;padding-left: 0px;">
+    <div id="YT"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-3 yt-btn">
+                <button class="btn btn-outline-primary" id="pause" type="submit">
+                    <i class="fa fa-play"></i> / <i class="fa fa-pause"></i></button>
+            </div>
+            <div class="col-2 yt-btn">
+                <button class="btn btn-outline-primary" id="rewind" type="submit" title="-10s">
+                    <i class="fa fa-fast-backward"></i>
+                </button>
+            </div>
+            <div class="col-2 yt-btn">
+                <button class="btn btn-outline-primary"
+                        id="advance"
+                        type="submit"
+                        title="+10s">
+                    <i class="fa fa-fast-forward"></i>
+                </button>
+            </div>
+            <div class="col-4 yt-btn">
+                <input aria-expanded="false"
+                       autocomplete="off"
+                       autofocus
+                       class="form-control form-control-lg"
+                       dir="ltr"
+                       id="jump"
+                       name="jump"
+                       placeholder="00:00"
+                       spellcheck="false"
+                       style="text-align: center; direction: ltr;"
+                       type="text"/>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix">
+        <p class="display-4 float-left">Suggestions</p>
+        <p class="float-right lead py-4">
+            <a href="#" id="refresh-suggestions">Rafraîchir</a>
+            <a href="#" id="toggle-YT">Afficher/Masquer la vidéo</a>
+        </p>
+    </div>
+    <ul class="list-group" id="suggestions"></ul>
+</div>
+{% endblock %}

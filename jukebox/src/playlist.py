@@ -8,6 +8,14 @@ import threading
 
 playlist = Blueprint('playlist', __name__)
 
+length: str
+needs_to_update = True
+
+
+def set_to_update():
+    global needs_to_update
+    needs_to_update = True
+
 
 @playlist.route("/add", methods=['POST'])
 @playlist.route("/add/<ident>", methods=["POST"])
@@ -45,6 +53,7 @@ def add(ident: int = None):
                     return "nok"
 
     add_track(track)
+    set_to_update()
     app.sarkozy_count -= 1
     if app.sarkozy_count <= 0:
         app.sarkozy_count = 10
@@ -87,6 +96,7 @@ def remove():
                             app.mpv.quit()
                     else:
                         app.playlist.remove(track_p)
+                    set_to_update()
                     return "ok"
                 else:
                     app.logger.info("User " + session["user"] + " isn't allowed to remove from " + track_p["user"])
@@ -104,7 +114,7 @@ def volume():
 
 
 @playlist.route("/suggest")
-def suggest():
+async def suggest():
     n = 5  # number of songs to display in the suggestions
     if "n" in request.args:
         n = int(request.args.get("n"))
@@ -131,3 +141,23 @@ def suggest():
                 app.logger.info(f"Marking track [id = {track.ident}, url = {track.url}] as obsolete")
                 track.set_obsolete_value(app.config["DATABASE_PATH"], 1)
     return jsonify(result)
+
+
+def get_length() -> str:
+    global length, needs_to_update
+    if not needs_to_update:
+        return length
+    needs_to_update = False
+    track: dict
+    sum = 0
+    for track in app.playlist[1:]:
+        sum += int(track['duration'])
+    if sum == 0:
+        length = ""
+    elif sum < 60:
+        length = f"{sum:02}s"
+    elif sum // 60 < 60:
+        length = f"{sum // 60}m{sum % 60:02d}s"
+    else:
+        length = f"{sum // 60 // 60}h{(sum // 60) % 60}m{sum % 60:02}s"
+    return length

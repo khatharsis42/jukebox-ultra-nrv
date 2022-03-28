@@ -153,6 +153,10 @@ iframe, .list-group, .container{
     right: 5px;
 }
 
+.yt-btn {
+    margin:auto;
+}
+
 .albumart{
     border-radius: 0.5em;
     border-bottom-left-radius: 70px;

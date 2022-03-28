@@ -12,6 +12,7 @@ from wtforms import SelectField, SubmitField
 from os import listdir
 from os.path import isfile, join
 
+from jukebox.src import playlist
 from jukebox.src.User import User
 from jukebox.src.util import *
 from jukebox.src.Track import Track
@@ -26,14 +27,16 @@ def get_style():
     cookie = request.cookies.get('style')
     if cookie is not None:
         return cookie
-    try:
-        if session["stylesheet"] is not None:
-            stylesheet = session["stylesheet"]
-        else:
-            stylesheet = app.stylesheet
-    except KeyError:
-        stylesheet = app.stylesheet
-    return stylesheet
+    style: str
+    if "stylesheet" in session.keys():
+        return session["stylesheet"]
+    r = User.getTheme(app.config["DATABASE_PATH"], session["user"])
+    if r is not None:
+        style = r
+    else:
+        style = app.stylesheet
+    session["stylesheet"] = style
+    return style
 
 
 def get_nav_links():
@@ -59,7 +62,7 @@ def accueil():
 
 
 @main.route("/help")
-def help():
+async def help():
     # we should add a modules argument to render_template to
     # display which search functions are available
     modules = []
@@ -67,19 +70,19 @@ def help():
         modules.append(i)
     return render_template("help.html", modules=modules,
                            jk_name=app.config["JK_NAME"],
+                           user=session['user'],
                            stylesheet=get_style(), navlinks=get_nav_links(),
                            version=app.version)
 
 
 @main.route("/settings", methods=['GET', 'POST'])
-def settings():
+async def settings():
     # we should add a modules argument to render_template to
     # display which search functions are available
 
     style_path = "jukebox/static/styles/custom/"
     styles = [(f, f) for f in listdir(style_path) if isfile(
         join(style_path, f)) and f[-4:] == ".css"]
-    app.logger.info(styles)
 
     class SettingsForm(FlaskForm):
         style = SelectField("Styles", choices=styles)
@@ -88,13 +91,6 @@ def settings():
     form = SettingsForm()
 
     if request.method == 'POST':
-        # if not(form.validate()):
-        #    flash('All fields are required.')
-        #    app.logger.info("All fields are required.")
-        #    return render_template('settings.html',
-        #            jk_name = app.config["JK_NAME"],form = form)
-        # else:
-        # app.logger.info(request.form)
         style = request.form["style"]
         session["stylesheet"] = style
         resp: flask.Response = flask.make_response(
@@ -102,6 +98,7 @@ def settings():
                             jk_name=app.config["JK_NAME"], form=form,
                             stylesheet=style, navlinks=get_nav_links()))
         resp.set_cookie('style', style)
+        User.setTheme(app.config["DATABASE_PATH"], session["user"], style)
         return resp
     elif request.method == 'GET':
         return render_template('settings.html', user=session["user"],
@@ -110,7 +107,7 @@ def settings():
 
 
 @main.route("/sync")
-def sync():
+async def sync():
     """
     Renvoie la playlist en cours
     """
@@ -133,7 +130,8 @@ def sync():
         "playlist": app.playlist,
         "volume": volume,
         "time": time_pos,
-        "counter": c
+        "counter":c,
+        "playlist_length": playlist.get_length()
     }
 
     return jsonify(res)

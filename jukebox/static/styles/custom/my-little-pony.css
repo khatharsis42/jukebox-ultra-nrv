@@ -84,6 +84,8 @@ body{
 }
 iframe#YT {
     width: 100%;
+    height : auto;
+    aspect-ratio : 16 / 9;
 }
 
 iframe, .list-group, .container{ /*Les chansons */

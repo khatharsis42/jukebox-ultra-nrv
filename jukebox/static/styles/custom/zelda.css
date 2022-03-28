@@ -33,17 +33,18 @@ body {
     font-weight: bold;
 }
 
-h1, h2, h3, tr, td, p, li{
-    color:rgb(0,0,0);
-}
-
-@media only screen and (orientation: portrait) {
-    body {
-        background: url(https://i.pinimg.com/originals/49/a1/9c/49a19c0808863a8301e6a507383ee271.jpg);
+@media only screen and (orientation: portrait){
+    body{
+        background: url(https://i.pinimg.com/originals/30/4f/a1/304fa12fced766b70d6932cb59e49431.jpg);
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
+        background-attachment:fixed;
     }
+}
+
+h1, h2, h3, tr, td, p, li{
+    color:rgb(0,0,0);
 }
 
 .container-fluid {
@@ -80,12 +81,13 @@ h1, h2, h3, tr, td, p, li{
 .nav-link {
     font-family: "Zelda";
     font-size: 1.25rem;
+    padding: .5em .5em;
 }
 
-iframe {
-    /* display:none; */
-    /*Pas envie d'afficher ça dans mon skin*/
+iframe#YT {
     width: 100%;
+    height : auto;
+    aspect-ratio : 16 / 9;
     /* Pour avoir un truc youtube centré un peu quand même */
     margin-top: 15px;
     margin-bottom: 15px;
@@ -139,6 +141,14 @@ input[type="text"] {
     color: #4bb1db;
 }
 
+label {
+    color:black;
+    margin-bottom:0px;
+}
+
+select {
+    margin : 1em 0 1em 0;
+}
 .form-group:focus {
     border-color: red;
     box-shadow: 0px 0px 10px 3px #2596be;
@@ -158,15 +168,21 @@ iframe, .list-group, .container {
     max-width:100%;
 }
 
+.statistics {
+    text-align:center;
+}
+
 .statistics .statcol {
     display: inline-block;
     max-width: 48%;
     vertical-align: top;
     margin: 5px;
+    text-align:left;
 }
 
 .statistics .statcol .statdisplay {
     padding: 5px 5px 30px;
+    text-align:left;
 }
 
 .statistics .statcol thead {
@@ -186,6 +202,10 @@ iframe, .list-group, .container {
     background-color: rgba(244, 161, 44, 0.4);
 }
 
+table {
+    margin:auto;
+}
+
 .list-group {
     margin-right: 5px;
     background-color: rgba(0, 0, 0, 0.5);
@@ -199,7 +219,7 @@ iframe, .list-group, .container {
     right: 5px;
 }
 
-.col-3 {
+.yt-btn {
     margin:auto;
 }
 
@@ -325,7 +345,6 @@ input[type=range]:focus, input[type=range]::-webkit-slider-runnable-track {
 }
 
 input[type='range'] {
-    width: 600px;
     background-color: none;
 }
 

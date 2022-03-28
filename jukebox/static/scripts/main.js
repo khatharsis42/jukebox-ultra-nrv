@@ -101,7 +101,7 @@ function generate_track_html_queue(t) {
 track_template = `
 <li class="list-group-item track" id="{randomid}">
     <div class="row recto">
-        <div class="col-4 centered">
+        <div class="col-4 centered" style="padding:inherit;">
             <img class="albumart" src="{albumart_url}">
         </div>
         <div class="col track-info centered">
@@ -110,7 +110,7 @@ track_template = `
             <span class="track-duration">{duration} s.</span>
             <span class="track-user float-right">Added by <t style="color:{usercolor};">{user}</t></span>
         </div>
-        <div class="col-1">
+        <div class="col-0" style="padding:inherit;">
             <button class="icon btn-more" alt="More"></button>
             <button class="icon btn-add" alt="Play"></button>
             <button class="icon btn-top" alt="Top"></button>
@@ -126,7 +126,7 @@ track_template = `
             <span class="track-album">Album : {album}</span>
             <span class="track-source">From {source}</span>
         </div>
-        <div class="col-1">
+        <div class="col-0" style="padding:inherit;">
             <button class="icon btn-back" alt="Back"></button>
             <button class="icon btn-refresh" alt="Refresh"></button>
             <a href="/statistics/track/{id}">
@@ -153,14 +153,15 @@ function onYouTubeIframeAPIReady() {
             'onReady': function() {
                 console.log("YT ready");
                 yt.mute();
-                yt.ready = true; 
+                yt.ready = true;
+                yt.hasTrack = false;
                 $('#pause').on("click", function() {
                     if (pause) {yt.playVideo();} else {yt.pauseVideo();}
                     pause = ! pause;
                     $.post('/pause_play');
                     return true;
                 });
-                
+
                 $('#rewind').on("click", function() {
                     $.post('rewind');
                     return true;
@@ -231,6 +232,7 @@ function updates_playlist(data) {
             playlistHTML.find(".track:first .btn-top").hide();
 
             // then we manage the Youtube iframe
+            // We need to do that, because we need to let the yt thingy load
             if (yt.ready && $("#YT").is(":visible") && track["source"] === "youtube") {
                 let url = new URL(data.playlist[0]["url"]);
                 let videoId = url.searchParams.get("v");
@@ -247,6 +249,7 @@ function updates_playlist(data) {
                     yt.playVideo();
                 }
                 syncVideo(data.time);
+                yt.hasTrack = true;
             }
             if (playlistHTML.find("#playlist-playing").length === 0) { // it doesn't display
                 console.log("Adding Lecture en cours");
@@ -264,7 +267,9 @@ function updates_playlist(data) {
 
 
             if (playlistHTML.find("#playlist-queue").length === 0) {
-                playlistHTML.find(".track:eq(0)").after("<li id='playlist-queue' class='playlist-title'>Upcoming...</li>");
+                playlistHTML.find(".track:eq(0)").after(
+                "<li id='playlist-queue' class='playlist-title'><div>Upcoming...</div><div id='playlist-length' style='font-size:small;letter-spacing: .2em;'></div></li>"
+                );
             }
         }
     }
@@ -277,22 +282,30 @@ function updates_playlist(data) {
         track_tile.remove();
     }
 }
+// This is here so that we only reload the page when the user is watching it
+var pageStatus=true;
 
 /**
  * This is what happens when we GET /sync
  */
 sync = function() {
-    let time = Date.now() / 1000;
-    $.get("/sync", function (data) {
-        $('#volume-slider').val(data.volume);
-        updates_playlist(data);
-        var s = document.getElementById("counter");
-        s.innerHTML=data.counter;
-        if (yt !== 0) {
-            syncVideo(data.time);
-        }
-    });
-    window.setTimeout(arguments.callee, 1000);
+    if (pageStatus) {
+        $.get("/sync", function (data) {
+            $('#volume-slider').val(data.volume);
+            var s = document.getElementById("counter");
+            s.innerHTML=data.counter;
+            if ( yt !== 0 ) {
+                if ( yt.ready )  updates_playlist(data);
+                if ( yt.hasTrack ) syncVideo(data.time);
+            }
+            s = document.getElementById("playlist-length");
+            if (s !== null) s.innerHTML="Time Left:" + data.playlist_length;
+        });
+        window.setTimeout(arguments.callee, 2000);
+        return;
+    }
+    window.setTimeout(arguments.callee, 100);
+    return;
 }();
 
 /**
@@ -403,5 +416,3 @@ $('#search_results').hide();
 $(document).ready(function() {
     suggest();
 });
-
-
