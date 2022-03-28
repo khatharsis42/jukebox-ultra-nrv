@@ -86,7 +86,7 @@ def volume():
 
 
 @playlist.route("/suggest")
-def suggest():
+async def suggest():
     n = 5  # number of songs to display in the suggestions
     if "n" in request.args:
         n = int(request.args.get("n"))

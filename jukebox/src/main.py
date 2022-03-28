@@ -61,7 +61,7 @@ def accueil():
 
 
 @main.route("/help")
-def help():
+async def help():
     # we should add a modules argument to render_template to
     # display which search functions are available
     modules = []
@@ -75,14 +75,13 @@ def help():
 
 
 @main.route("/settings", methods=['GET', 'POST'])
-def settings():
+async def settings():
     # we should add a modules argument to render_template to
     # display which search functions are available
 
     style_path = "jukebox/static/styles/custom/"
     styles = [(f, f) for f in listdir(style_path) if isfile(
         join(style_path, f)) and f[-4:] == ".css"]
-    # app.logger.info(styles)
 
     class SettingsForm(FlaskForm):
         style = SelectField("Styles", choices=styles)
@@ -107,7 +106,7 @@ def settings():
 
 
 @main.route("/sync")
-def sync():
+async def sync():
     """
     Renvoie la playlist en cours
     """
