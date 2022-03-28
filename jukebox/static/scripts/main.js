@@ -289,26 +289,28 @@ function updates_playlist(data) {
         track_tile.remove();
     }
 }
+// This is here so that we only reload the page when the user is watching it
+var pageStatus=true;
 
 /**
  * This is what happens when we GET /sync
  */
 sync = function() {
-    let time = Date.now() / 1000;
-    $.get("/sync", function (data) {
-        $('#volume-slider').val(data.volume);
-        if (yt !== 0 && yt.ready) {
-            updates_playlist(data);
-        }
-        if (yt !== 0 && yt.hasTrack) {
-            syncVideo(data.time);
-        }
-        s = document.getElementById("playlist-length");
-        if (s !== null) {
-            s.innerHTML="Time Left:" + data.playlist_length;
-        };
-    });
-    window.setTimeout(arguments.callee, 1000);
+    if (pageStatus) {
+        $.get("/sync", function (data) {
+            $('#volume-slider').val(data.volume);
+            if ( yt !== 0 ) {
+                if ( yt.ready )  updates_playlist(data);
+                if ( yt.hasTrack ) syncVideo(data.time);
+            }
+            s = document.getElementById("playlist-length");
+            if (s !== null) s.innerHTML="Time Left:" + data.playlist_length;
+        });
+        window.setTimeout(arguments.callee, 2000);
+        return;
+    }
+    window.setTimeout(arguments.callee, 100);
+    return;
 }();
 
 /**
