@@ -218,8 +218,8 @@ class Track:
             try:
                 track_dict = search.search_engine(
                     url, use_youtube_dl=True, search_multiple=False)[0]
-            except DownloadError as e:  # We mark the track as obsolete
-                app.logger.info(f"DownloadError : See above lines")
+            except Exception as e:  # We mark the track as obsolete
+                app.logger.warning(f"DownloadError : See above lines")
                 # if True or e.args[0] == "ERROR: This video is unavailable.":
                 if "403" not in e.args[0]:
                     # Je part du principe que s'il y a une DownloadError,
@@ -231,7 +231,13 @@ class Track:
                     track.set_obsolete_value(database, track.obsolete)
                 return
         else:
-            track_dict = search.search_engine(url, use_youtube_dl=True)[0]
+            try:
+                track_dict = search.search_engine(url, use_youtube_dl=True)[0]
+            except Exception as e:
+                app.logger.warning("This track couldn't be refreshed, so we're marking it as obsolete")
+                Track.set_obsolete_value(track, database, True)
+                return
+
         # app.logger.info("Track dict : ", track_dict)
         track = Track(None, url, track_dict["title"], track_dict["artist"], track_dict["source"],
                       track_dict["albumart_url"], album=track_dict["album"], duration=track_dict["duration"])

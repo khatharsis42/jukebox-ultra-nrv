@@ -35,7 +35,6 @@ def add(ident: int = None):
     else:
         track_dict = request.form.to_dict()
     app.logger.info("Adding track %s", track_dict["url"])
-    # track["user"] = session["user"]
     with app.database_lock:
         if not Track.does_track_exist(app.config["DATABASE_PATH"], track_dict["url"]):
             Track.insert_track(app.config["DATABASE_PATH"], track_dict)
@@ -47,8 +46,9 @@ def add(ident: int = None):
             track.user = session['user']
             app.logger.info(track)
         else:
+            if ident is not None:
+                return redirect(f"/statistics/track/{ident}")
             return "nok"
-
     add_track(track)
     set_to_update()
     if ident is not None:
