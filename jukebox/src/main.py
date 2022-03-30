@@ -24,6 +24,7 @@ main = Blueprint('main', __name__)
 
 
 def get_style():
+    return app.stylesheet
     cookie = request.cookies.get('style')
     if cookie is not None:
         return cookie
@@ -92,14 +93,10 @@ def settings():
     form = SettingsForm()
 
     if request.method == 'POST':
-        style = request.form["style"]
-        session["stylesheet"] = style
         resp: flask.Response = flask.make_response(
             render_template('settings.html', user=session["user"],
                             jk_name=app.config["JK_NAME"], form=form,
-                            stylesheet=style, navlinks=get_nav_links()))
-        resp.set_cookie('style', style)
-        User.setTheme(app.config["DATABASE_PATH"], session["user"], style)
+                            stylesheet=get_style(), navlinks=get_nav_links()))
         return resp
     elif request.method == 'GET':
         return render_template('settings.html', user=session["user"],

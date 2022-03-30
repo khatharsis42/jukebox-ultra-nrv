@@ -19,7 +19,6 @@
 
 body {
     background: url('/static/april/shrek.webp');
-    /*url(https://i.imgur.com/YlC6hYM.jpeg);*/
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -30,15 +29,6 @@ body {
 
 h1, h2, h3, tr, td, p, li{
     color:rgb(0,0,0);
-}
-
-@media only screen and (orientation: portrait) {
-    body {
-        background: url(https://i.pinimg.com/originals/49/a1/9c/49a19c0808863a8301e6a507383ee271.jpg);
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-    }
 }
 
 .container-fluid {
@@ -71,15 +61,13 @@ h1, h2, h3, tr, td, p, li{
     font-size: 1.25rem;
 }
 
-iframe {
-    /* display:none; */
-    /*Pas envie d'afficher ça dans mon skin*/
+iframe#YT {
     width: 100%;
+    height : auto;
+    aspect-ratio : 16 / 9;
     /* Pour avoir un truc youtube centré un peu quand même */
     margin-top: 15px;
     margin-bottom: 15px;
-    width: 28em;
-    height: 15.75em;
 }
 
 a {
@@ -100,7 +88,7 @@ a {
 }
 
 a:hover {
-    color: lightblue;
+    color: #B0C400;
 }
 
 a:active {
@@ -140,6 +128,14 @@ input[type="text"] {
     color: #C3BC95;
 }
 
+label {
+    color:black;
+    margin-bottom:0px;
+}
+select {
+    margin : 1em 0 1em 0;
+}
+
 .form-group:focus {
     border-color: white;
     box-shadow: 0px 0px 10px 3px #B0C400;
@@ -159,15 +155,21 @@ iframe, .list-group, .container {
     max-width:100%;
 }
 
+.statistics {
+    text-align:center;
+}
+
 .statistics .statcol {
     display: inline-block;
     max-width: 48%;
     vertical-align: top;
     margin: 5px;
+    text-align:left;
 }
 
 .statistics .statcol .statdisplay {
     padding: 5px 5px 30px;
+    text-align:left;
 }
 
 .statistics .statcol thead {
@@ -187,6 +189,10 @@ iframe, .list-group, .container {
     background-color: rgba(244, 161, 44, 0.4);
 }
 
+table {
+    margin:auto;
+}
+
 .list-group {
     margin-right: 5px;
     background-color: rgba(0, 0, 0, 0.5);
@@ -198,6 +204,10 @@ iframe, .list-group, .container {
 
 .col-1>.btn-remove, .col-1>.btn-add, .col-1>.btn-back, .col-1>.btn-more, .col-1>.btn-up, .col-1>.btn-down, .col-1>.btn-refresh {
     right: 5px;
+}
+
+.yt-btn {
+    margin:auto;
 }
 
 .col-3 {
@@ -327,7 +337,6 @@ input[type=range]:focus, input[type=range]::-webkit-slider-runnable-track {
 }
 
 input[type='range'] {
-    width: 600px;
     background-color: none;
 }
 
@@ -376,11 +385,6 @@ input[type="range"]::-moz-range-thumb {
     height: 10px;
     border: none;
     background: none;
-    /* background: url("/static/zelda/eye.svg");
-    background-size:contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-position-x:-50%; */
 }
 
 .container-fluid::after {
