@@ -251,11 +251,22 @@ def track_stats(track):
             return redirect(f"/statistics/track/{t.ident}")
         else:
             return redirect("/app")
+    # Ça, c'est pour que si jamais il y a une musique portant le même nom
+    # Mais qui est obsolète, et bien c'est pas elle qu'on ajoute.
+    # A la place, c'est la première musique non obsolète qu'on ajoute.
+    if t.obsolete:
+        t_list = Track.import_from_name(app.config["DATABASE_PATH"], t.track)
+        random.shuffle(t_list)
+        for new_t in t_list:
+            new_t = Track.refresh_by_url(app.config["DATABASE_PATH"], new_t.url)
+            if new_t is not None and not new_t.obsolete:
+                t = new_t
 
     return render_template('track.html', user=session['user'],
                            jk_name=app.config["JK_NAME"],
                            track=t.track,
                            ident=t.ident,
+                           obsolete=t.obsolete,
                            table_users_count_all=create_html_users(
                                app.config["DATABASE_PATH"], nbr=20,
                                track=t.track),
