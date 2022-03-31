@@ -50,6 +50,7 @@ class User:
     def getText(cls, username):
         add = app.user_add_limits[username]
         rem = app.user_rem_limits[username]
+        sup = app.user_sup_limits[username]
         if username == "local":
             return "local"
         elif User.getTier(username) == 0:
@@ -57,9 +58,15 @@ class User:
             <img src="/static/images/icons/plus-square-regular.svg" style="height: .8em;"> : {add} \
             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \
             <img src="/static/images/icons/x.svg" style="height: .8em;"> : {rem}\
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \
+            <img src="/static/images/icons/angle-double-up.svg" style="height: .8em;"> : {sup}\
             """
         elif User.getTier(username) == 1:
-            return f"""<img src="/static/images/icons/plus-square-regular.svg" style="height: .8em;"> : {rem}"""
+            return f"""
+            <img src="/static/images/icons/plus-square-regular.svg" style="height: .8em;"> : {rem}\
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \
+            <img src="/static/images/icons/angle-double-up.svg" style="height: .8em;"> : {sup}\
+"""
         else:
             return"Admin"
 

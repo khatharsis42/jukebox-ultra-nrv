@@ -128,7 +128,7 @@ def sync():
         "playlist": app.playlist,
         "volume": volume,
         "time": time_pos,
-        "counter":c,
+        "counter": c,
         "playlist_length": playlist.get_length()
     }
 
@@ -141,6 +141,7 @@ def move_track():
     try:
         action = request.form["action"]
         randomid = request.form["randomid"]
+        user = session["user"]
     except KeyError:
         return "nok"
 
@@ -154,10 +155,14 @@ def move_track():
             # app.logger.warning("Track {} not found".format(randomid))
             return "nok"
         if action == "top":
+            if app.user_sup_limits[user] <= 0:
+                app.logger.info(f"User {user} has got no more super-ups")
+                return "nok"
             if index < 2:
                 app.logger.warning("Track {} has index".format(index))
                 return "nok"
             app.playlist.insert(1, app.playlist.pop(index))
+            app.user_sup_limits[user] = app.user_sup_limits[user] - 1
         elif action == "up":
             if index < 2:
                 app.logger.warning("Track {} has index".format(index))
