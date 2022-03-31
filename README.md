@@ -1,4 +1,5 @@
 # Jukebox Ultra NRV mkV
+# THIS IS AN APRIL'S FOOL BRANCH, AND SHOULD NOT BE USED SERIOUSLY
 ## Prerequisites
 
 This application assumes it runs on Linux using Alsa.
