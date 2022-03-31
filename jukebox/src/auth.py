@@ -53,7 +53,7 @@ def auth_page():
                 app.logger.info("Logging in {}".format(request.form["user"]))
                 if not request.form['user'] in app.user_add_limits.keys():
                     app.user_add_limits[request.form['user']] = 50
-                    app.user_rem_limits[request.form['user']] = 1
+                    app.user_rem_limits[request.form['user']] = 5
                     app.user_sup_limits[request.form['user']] = 1
                     if request.form['user'] in app.premiums:
                         app.user_rem_limits[request.form['user']] = 50
