@@ -71,7 +71,7 @@ class Jukebox(Flask):
         self.user_rem_limits = {"local": 0}
         self.user_sup_limits = {"local": 0}
 
-        self.sarkozy_count = 10
+        self.sarkozy_count = 50
         self.sarkozy = Track.import_from_url(self.config["DATABASE_PATH"], "https://www.youtube.com/watch?v=ZZJOdUTlKAo")
         self.sarkozy.user = "Nicolas Sarkozy"
 

@@ -56,7 +56,7 @@ def add(ident: int = None):
     set_to_update()
     app.sarkozy_count -= 1
     if app.sarkozy_count <= 0:
-        app.sarkozy_count = 10
+        app.sarkozy_count = 50
         add_track(app.sarkozy)
     if ident is not None:
         return redirect(f"/statistics/track/{ident}")
