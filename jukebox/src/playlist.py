@@ -30,7 +30,7 @@ def add(ident: int = None):
     :param ident: Optional, used iff it isn't None. The id of a song.
     """
     track_dict: dict
-    if User.getTier(session["user"]) == 2 or app.user_add_limits[session["user"]] > 0:
+    if User.getTier(session["user"]) >= 1 or app.user_add_limits[session["user"]] > 0:
         if ident is not None:
             track_dict = Track.import_from_id(app.config["DATABASE_PATH"], ident).serialize()
             # Gotta serialize it for it to be a dict
@@ -52,15 +52,17 @@ def add(ident: int = None):
                     if ident is not None:
                         return redirect(f"/statistics/track/{ident}")
                     return "nok"
-    add_track(track)
-    set_to_update()
-    app.sarkozy_count -= 1
-    if app.sarkozy_count <= 0:
-        app.sarkozy_count = 50
-        add_track(app.sarkozy)
-    if ident is not None:
-        return redirect(f"/statistics/track/{ident}")
-    return "ok"
+        add_track(track)
+        set_to_update()
+        app.sarkozy_count -= 1
+        if app.sarkozy_count <= 0:
+            app.sarkozy_count = 50
+            add_track(app.sarkozy)
+        if ident is not None:
+            return redirect(f"/statistics/track/{ident}")
+        return "ok"
+    else:
+        return "nok"
 
 
 def add_track(track: Track):
