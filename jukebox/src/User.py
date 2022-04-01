@@ -63,7 +63,7 @@ class User:
             """
         elif User.getTier(username) == 1:
             return f"""
-            <img src="/static/images/icons/plus-square-regular.svg" style="height: .8em;"> : {rem}\
+            <img src="/static/images/icons/x.svg" style="height: .8em;"> : {rem}\
             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \
             <img src="/static/images/icons/angle-double-up.svg" style="height: .8em;"> : {sup}\
 """
