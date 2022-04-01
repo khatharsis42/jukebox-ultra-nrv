@@ -104,13 +104,13 @@ track_template = `
         <div class="col-4 centered" style="padding:inherit;">
             <img class="albumart" src="{albumart_url}">
         </div>
-        <div class="col track-info centered">
+        <div class="col-7 track-info centered">
             <span class="track-title">{title}</span>
             <span class="track-artist">{artist}</span>
             <span class="track-duration">{duration} s.</span>
             <span class="track-user float-right">Added by {user}</span>
         </div>
-        <div class="col-0" style="padding:inherit;">
+        <div class="col-1" style="padding:inherit;">
             <button class="icon btn-more" alt="More"></button>
             <button class="icon btn-add" alt="Play"></button>
             <button class="icon btn-top" alt="Top"></button>
