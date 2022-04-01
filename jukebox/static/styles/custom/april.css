@@ -59,6 +59,7 @@ h1, h2, h3, tr, td, p, li{
 .nav-link {
     font-family: "ComicSans";
     font-size: 1.25rem;
+    padding: .5em .5em;
 }
 
 iframe#YT {
