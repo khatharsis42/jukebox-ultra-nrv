@@ -1,5 +1,4 @@
 import sqlite3
-import datetime
 
 
 class User:
@@ -7,7 +6,7 @@ class User:
     Une classe représentant un utilisateur. Possède les mêmes attributs que dans la base de donnée, dans ta table users.
     """
 
-    def __init__(self, ident:int, username:str, password:str):
+    def __init__(self, ident: int, username: str, password: str):
         """
         :param ident: ID de l'utilisateur dans la BDD.
         :param username: Nom d'utilisateur.
@@ -26,7 +25,7 @@ class User:
         return self.username
 
     @classmethod
-    def init_from_username(cls, database:str, username:str):
+    def init_from_username(cls, database: str, username: str):
         """
         Renvoie un :class:`User` s'il existe déjà dans la base de donnée.
 
@@ -45,7 +44,7 @@ class User:
         assert r[1] == username
         return User(r[0], username, r[2])
 
-    def insert_to_database(self, database:str):
+    def insert_to_database(self, database: str):
         """
         Insére l'utilisateur dans la BDD.
 
@@ -61,7 +60,7 @@ class User:
         conn.commit()
 
     @classmethod
-    def getUserCounts(cls, database:str, nbr:int, date=0, track:str=None):
+    def getUserCounts(cls, database: str, nbr: int, date=0, track: str = None):
         """
         Renvoie une liste des :class:`User` de taille `nbr`.
         La liste est triée par nombre de musiques ajoutées (ie nombre de logs).
@@ -105,7 +104,7 @@ class User:
             return r[:nbr]
 
     @classmethod
-    def getTheme(cls, database, user:str):
+    def getTheme(cls, database, user: str):
         """
         Renvoie le thème de l'utilisateur, s'il existe.
 

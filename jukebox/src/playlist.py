@@ -1,9 +1,9 @@
-import requests
-from flask import Blueprint, request, jsonify, url_for
+import threading
+
+from flask import Blueprint, request, jsonify
 
 from jukebox.src.Track import Track
 from jukebox.src.util import *
-import threading
 
 playlist = Blueprint('playlist', __name__)
 

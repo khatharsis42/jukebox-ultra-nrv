@@ -1,9 +1,8 @@
+from functools import wraps
+
+import alsaaudio
 from flask import current_app as app
 from flask import session, redirect
-from functools import wraps
-import re
-import subprocess
-import alsaaudio
 
 
 def requires_auth(f):

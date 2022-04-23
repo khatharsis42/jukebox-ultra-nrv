@@ -1,5 +1,5 @@
-import sqlite3
 import random
+import sqlite3
 import sys
 
 import requests
@@ -292,7 +292,7 @@ class Track:
         # TODO Cette méthode fonctionne pour les vidéos YouTubes, mais pas pour certaines autre sources, il me semble.
         return self.albumart_url is None or requests.get(self.albumart_url).status_code == 404
 
-    def set_obsolete_value(self, database:str, obsolete:bool=True):
+    def set_obsolete_value(self, database: str, obsolete: bool = True):
         """
         Marque la musique comme obsolete ou pas dans la BDD. Change également la valeur de `self.obsolete`.
 
@@ -309,7 +309,7 @@ class Track:
                   (self.obsolete, self.ident))
         conn.commit()
 
-    def insert_track_log(self, database:str, user:str):
+    def insert_track_log(self, database: str, user: str):
         """
         Créé un log dans la BDD. Change également la valeur de `self.user`.
 
@@ -352,7 +352,7 @@ class Track:
         }
 
     @classmethod
-    def getTrackCounts(cls, database:str, nbr:int, date=0, user=None):
+    def getTrackCounts(cls, database: str, nbr: int, date=0, user=None):
         """
         Renvoie une liste des :class:`Track` de taille `nbr` groupées par nom (`self.title`).
         La liste est triée d'abord par nombre de passage (ie nombre de logs), puis par date d'ajout (plus récent en premier).
@@ -396,7 +396,7 @@ class Track:
             return r[:nbr]
 
     @classmethod
-    def get_history(cls, database:str, nbr: int):
+    def get_history(cls, database: str, nbr: int):
         """
         Renvoie l'historique des `nbr` dernières musiques passées sur le jukebox.
 
@@ -415,7 +415,7 @@ class Track:
                 ORDER BY log.time DESC \
                 LIMIT ?
                 """
-        c.execute(command, (nbr, ))
+        c.execute(command, (nbr,))
         r = c.fetchall()
         if r is None:
             return None

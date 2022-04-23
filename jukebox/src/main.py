@@ -1,23 +1,20 @@
-import random
-import re
 import datetime
+import random
 import sys
-
-import flask
-from flask import Blueprint, render_template, redirect, session, jsonify, request, flash
-from flask import current_app as app
-from flask_wtf import FlaskForm
-from typing import List
-from wtforms import SelectField, SubmitField
 from os import listdir
 from os.path import isfile, join
 
+import flask
+from flask import Blueprint, render_template, jsonify, request
+from flask_wtf import FlaskForm
+from wtforms import SelectField, SubmitField
+
 from jukebox.src import playlist
-from jukebox.src.User import User
-from jukebox.src.util import *
 from jukebox.src.Track import Track
+from jukebox.src.User import User
 from jukebox.src.statistics import create_html_users, create_html_tracks, create_history_tracks
-from jukebox.src.backends.search import bandcamp, generic, jamendo, soundcloud, twitch, youtube
+from jukebox.src.util import *
+
 # import * ne fonctionne pas, wtf, une histoire de cache d'après Boisdal ?
 
 main = Blueprint('main', __name__)
@@ -103,6 +100,7 @@ def settings():
     style_path = "jukebox/static/styles/custom/"
     styles = [(f, f) for f in listdir(style_path) if isfile(
         join(style_path, f)) and f[-4:] == ".css"]
+
     # app.logger.info(styles)
 
     class SettingsForm(FlaskForm):
@@ -270,13 +268,13 @@ def track_stats(track):
     """
     t: Track = Track.import_from_id(app.config["DATABASE_PATH"], track)
     if not t:
-        #This means it's not a real id, but rather a youtube id
-        #ie:
-        t: Track = Track.import_from_url(app.config["DATABASE_PATH"], "https://www.youtube.com/watch?v="+track)
+        # This means it's not a real id, but rather a youtube id
+        # ie:
+        t: Track = Track.import_from_url(app.config["DATABASE_PATH"], "https://www.youtube.com/watch?v=" + track)
         if t:
             return redirect(f"/statistics/track/{t.ident}")
         # Then it's not https but http
-        t: Track = Track.import_from_url(app.config["DATABASE_PATH"], "http://www.youtube.com/watch?v="+track)
+        t: Track = Track.import_from_url(app.config["DATABASE_PATH"], "http://www.youtube.com/watch?v=" + track)
         if t:
             return redirect(f"/statistics/track/{t.ident}")
         else:

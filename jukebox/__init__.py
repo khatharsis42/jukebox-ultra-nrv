@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
+import importlib
+import logging
 import threading
 import time
-
-import logging
 
 import mpv
 from flask import Flask
 
 from jukebox.src.MyMPV import MyMPV
 from jukebox.src.Track import Track
-from jukebox.src.main import main
 from jukebox.src.auth import auth
+from jukebox.src.main import main
 from jukebox.src.playlist import playlist, set_to_update
-
-import importlib
 
 
 class Jukebox(Flask):
@@ -76,7 +74,8 @@ class Jukebox(Flask):
                     #       2 - Vider le cache de youtube-dl après chaque échec
                     #           (parait que ça marche, à checker)
                     app.logger.info("Time elapsed since the beginning of the last track too short.")
-                    app.logger.info(f"Time Elapsed :{self.last_played['actual_length']} ; Last Track Duration : {self.last_played['duration']}")
+                    app.logger.info(
+                        f"Time Elapsed :{self.last_played['actual_length']} ; Last Track Duration : {self.last_played['duration']}")
                     # Basically, if not enough time has passed since the last track
                     # It's because we skipped the music, and we need to put it once again
                     self.number_of_repeats += 1

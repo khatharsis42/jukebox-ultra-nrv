@@ -1,5 +1,6 @@
 from jukebox import app
 import os
+
 if __name__ == "__main__":
     # cleanup leftovers
     if os.path.exists("mpv.socket"):
@@ -9,17 +10,18 @@ if __name__ == "__main__":
         app.logger.info("Database nonexistent, creating schema")
         with app.database_lock:
             import sqlite3
+
             conn = sqlite3.connect(app.config["DATABASE_PATH"])
             c = conn.cursor()
 
             path_sql = "jukebox/src/sql-schemas/"
-            with open(path_sql+"schema-users.sql", 'r') as f:
+            with open(path_sql + "schema-users.sql", 'r') as f:
                 schema_users = f.read()
             c.execute(schema_users)
-            with open(path_sql+"schema-log.sql", 'r') as f:
+            with open(path_sql + "schema-log.sql", 'r') as f:
                 schema_log = f.read()
             c.execute(schema_log)
-            with open(path_sql+"schema-track-info.sql", 'r') as f:
+            with open(path_sql + "schema-track-info.sql", 'r') as f:
                 schema_track_info = f.read()
             c.execute(schema_track_info)
             conn.commit()

@@ -1,7 +1,6 @@
-import matplotlib.pyplot as plt
 import sqlite3
 
-from typing import List
+import matplotlib.pyplot as plt
 
 NUMBER_OF_USER = 20
 NUMBER_OF_TRACK = 100
@@ -30,7 +29,7 @@ for user in top_users:
         GROUP BY track_info.track order by count(trackid) DESC, log.id DESC
         """, (user,))
     temp = c.fetchall()
-    graphs[user] = [x[1]/temp[0][1] for x in temp[:NUMBER_OF_TRACK]]
+    graphs[user] = [x[1] / temp[0][1] for x in temp[:NUMBER_OF_TRACK]]
     names[user] = [x[0] for x in temp[:NUMBER_OF_TRACK]]
 
 ranges = [
@@ -76,10 +75,10 @@ def select_japanese(user: str):
     non_word = ([], [])
     contain_word = [[], []]
     for i in range(NUMBER_OF_TRACK):
-        if any(is_cjk(c) for c in names[user][i])\
-                or "opening" in names[user][i].lower()\
-                or "ending" in names[user][i].lower()\
-                or "op" in names[user][i].lower()\
+        if any(is_cjk(c) for c in names[user][i]) \
+                or "opening" in names[user][i].lower() \
+                or "ending" in names[user][i].lower() \
+                or "op" in names[user][i].lower() \
                 or "ed" in names[user][i].lower():
             contain_word[0].append(i)
             contain_word[1].append(graphs[user][i])
@@ -96,7 +95,6 @@ def select_japanese(user: str):
 
 select_word("evangelion", "Khatharsis")
 select_word("evangelion", "yacine")
-
 
 for user in top_users:
     print(f"User : {user} -> {names[user][:3]}")

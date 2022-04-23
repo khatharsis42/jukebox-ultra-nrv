@@ -1,11 +1,12 @@
-import datetime
-from abc import ABC
-from typing import List
-
 from flask_table import Table, Col, LinkCol
 
 from jukebox.src.User import User
 from jukebox.src.Track import Track
+from flask_table import Table, Col, LinkCol
+
+from jukebox.src.Track import Track
+from jukebox.src.User import User
+
 
 # J'ai franchement la flemme de faire la documentation de ce fichier...
 class StatsUsersTable(Table):
@@ -31,7 +32,7 @@ class StatsTracksTable(Table):
 
 
 class StatsTracksItem(object):
-    def __init__(self, name, count, id= None):
+    def __init__(self, name, count, id=None):
         self.name = name
         self.description = count
         self.id = id
@@ -54,6 +55,7 @@ class HistoryTracksItem(object):
         self.description = user
         # NB: Cet id est choisi purement au hasard dans le cas de
         # plusieurs musiques ayant le même nom
+
 
 def create_html_users(database, date=0, nbr=10, track=False):
     items = []

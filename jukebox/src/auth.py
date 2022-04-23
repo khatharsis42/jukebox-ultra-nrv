@@ -5,6 +5,7 @@ from passlib.hash import pbkdf2_sha256
 
 from jukebox.src.User import User
 from jukebox.src.util import *
+
 auth = Blueprint('auth', __name__)
 
 
