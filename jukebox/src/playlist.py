@@ -21,12 +21,14 @@ def set_to_update():
 @requires_auth
 def add(ident: int = None):
     """
-    Adds a song to the playlist. Song information are stored in request.form.to_dict(). This dict generally comes from
-    the search.
-    In the special case of adding a song to the queue from the stats page, I couldn't find the way to store the
-    information in a form, so the optional parameter ident is thus used.
+    Ajoute une musique à la playlist. Les informations de la musique sont stockées dans la requête POST, ou bien dans l'URL de la page.
+    Le dictionnaire de la requête POST vient généralement de la recherche de musique.
+    NB : cela permet de modifier la requête POST et de jouer n'importe quelle audio sur le Jukebox;
 
-    :param ident: Optional, used iff it isn't None. The id of a song.
+    Dans le cas spécifique de l'ajout d'une musique depuis sa page de statistiques, il était plus simple de récupérer son ID depuis l'URL.
+    Les informations sont alors extraites depuis la BDD.
+
+    :param ident: Optionel, utilisé ssi n'est pas None (valeur par défaut). L'ID de la musique dans la BDD.
     """
     track_dict: dict
     if ident is not None:
@@ -57,6 +59,10 @@ def add(ident: int = None):
 
 
 def add_track(track: Track):
+    """Fonction subalterne permettant d'ajouter une track.
+
+    :param track: Une musique représentée par un objet :class: `Track`.
+    """
     with app.playlist_lock:
         track: dict = track.serialize()
         # track["user"] = session["user"]
@@ -68,7 +74,7 @@ def add_track(track: Track):
 @playlist.route("/remove", methods=['POST'])
 @requires_auth
 def remove():
-    """supprime la track de la playlist"""
+    """Supprime une track de la playlist. La track est identifiée par son ID et son RandomID, stockée dans la requête POST."""
     track = request.form
     with app.playlist_lock:
         for track_p in app.playlist:
@@ -90,6 +96,7 @@ def remove():
 @playlist.route("/volume", methods=['POST'])
 @requires_auth
 def volume():
+    """Setter pour la volume, la valeur est stockée dans la requête POST."""
     if request.method == 'POST':
         set_volume(request.form["volume"])
         return "ok"
@@ -97,6 +104,11 @@ def volume():
 
 @playlist.route("/suggest")
 def suggest():
+    """Renvoie une liste suggestion depuis la BDD. Sélectionne d'abord une musique parmis celles existantes,
+    puis sélectionne un log pour choisir l'utilisateur qui sera affiché.
+
+    :returns: JSON de 5 musiques recommandées existant déjà dans la BDD.
+    """
     n = 5  # number of songs to display in the suggestions
     if "n" in request.args:
         n = int(request.args.get("n"))
@@ -126,6 +138,12 @@ def suggest():
 
 
 def get_length() -> str:
+    """
+    Fonction qui renvoie une string représentant le temps restant dans la playlist.
+    Pour des raisons de performances, utilise la variable `needs_to_update` afin de ne se mettre à jour que quand la playlist est modifiée.
+
+    :returns: String, sous la forme `{heures}h {minutes}m {secondes}s` la plus restreinte possible.
+    """
     global length, needs_to_update
     if not needs_to_update:
         return length

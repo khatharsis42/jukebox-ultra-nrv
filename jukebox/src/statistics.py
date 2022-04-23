@@ -7,7 +7,7 @@ from flask_table import Table, Col, LinkCol
 from jukebox.src.User import User
 from jukebox.src.Track import Track
 
-
+# J'ai franchement la flemme de faire la documentation de ce fichier...
 class StatsUsersTable(Table):
     name = LinkCol(name='User',
                    attr='name',

@@ -5,7 +5,10 @@ import sys
 import threading
 import time
 import subprocess
-
+# I have no idea what this is used for
+# I have not read it, not even once, and I'm not sure it's ever called
+# So what the heck
+# - Khâtharsis
 
 class MyMPV(mpv.MPV):
     def __init__(self, argv):

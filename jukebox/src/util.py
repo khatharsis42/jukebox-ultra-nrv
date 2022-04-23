@@ -19,7 +19,7 @@ def requires_auth(f):
 def get_mixer_name():
     """
 
-    :return: Mixer name : either the one in config.py, or if it doesn't exist the first in the list of available mixers
+    :returns: Mixer name : either the one in config.py, or if it doesn't exist the first in the list of available mixers.
     """
     if "AMIXER_CHANNEL" in app.config and app.config["AMIXER_CHANNEL"] in alsaaudio.mixers():
         return app.config["AMIXER_CHANNEL"]

@@ -18,7 +18,7 @@ import importlib
 
 class Jukebox(Flask):
     """
-    Flask application for the Jukebox
+    Flask application for the Jukebox.
     """
 
     def __init__(self, *args, **kwargs):
@@ -108,7 +108,7 @@ class Jukebox(Flask):
             try:
                 self.mpv.wait_for_playback()  # it's stuck here while it's playing
             except mpv.ShutdownError:
-                app.logger.info("MPV core crashed, it happens.")
+                app.logger.warning("MPV core crashed, it happens.")
                 # Vu qu'on relance une instance de MPV à chaque nouvelle track
                 # Et qu'on check maintenant les skips
                 # Eh bien on a pas besoin de relancer le core...

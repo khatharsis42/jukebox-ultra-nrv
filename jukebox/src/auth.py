@@ -10,6 +10,13 @@ auth = Blueprint('auth', __name__)
 
 @auth.route("/auth", methods=['GET', 'POST'])
 def auth_page():
+    """
+    Fonction pour gérer l'authentification.
+
+    GET -> Renvoie la page d'authentification ou d'acceuil selon si l'utilisateur est logged in ou pas.
+
+    POST -> Permet de soit créer une nouvel utilisateur (action="new"), soit tenter une connection.
+    """
     conn = sqlite3.connect(app.config["DATABASE_PATH"])
     c = conn.cursor()
 
@@ -64,6 +71,11 @@ def auth_page():
 @auth.route("/logout", methods=['GET', 'POST'])
 @requires_auth
 def logout():
+    """
+    GET -> Renvoie la page de confirmation de logout
+
+    POST -> Logout.
+    """
     if request.method == "POST":
         session['user'] = None
         return redirect("/auth")

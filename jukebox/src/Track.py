@@ -3,28 +3,31 @@ import random
 import sys
 
 import requests
-from youtube_dl import DownloadError
 
 from jukebox.src.util import *
 
 
 class Track:
-    def __init__(self,
-                 ident, url, track, artist, source, albumart_url,
-                 album=None, duration=None, blacklisted=False,
-                 obsolete=0, user=None):
-        """
+    """
+    Une classe représentant une musique. Possède les mêmes attributs que dans la base de donnée, dans ta table track_info.
+    """
 
-        :param ident: int
-        :param url: str
-        :param track: str
-        :param artist: str
-        :param source: str
-        :param albumart_url: str
-        :param album: str
-        :param duration:
-        :param blacklisted:
-        :param user: may be None, else it means we get it from a log and it is a str
+    def __init__(self,
+                 ident: int, url: str, track: str, artist: str, source: str, albumart_url: str,
+                 album: str = None, duration=None, blacklisted: bool = False,
+                 obsolete: bool = False, user=None):
+        """
+        :param ident: L'identifiant de la musique dans la BDD.
+        :param url: L'URL de la musique. Est passée en argument à mpv pour jouer la musique.
+        :param track: Titre.
+        :param artist: Artiste.
+        :param source: Source.
+        :param albumart_url: URL vers la vignette de la musique.
+        :param album: Album (?).
+        :param duration: Durée de la musique en secondes.
+        :param blacklisted: Indique si la musique est blacklistée.
+        :param obsolete: Indique si la musique est obsolète.
+        :param user: Peut être None, indique l'utilisateur ayant ajouté la musique.
         """
         self.ident = ident
         self.url = url
@@ -52,10 +55,11 @@ class Track:
     @classmethod
     def does_track_exist(cls, database, url):
         """
+        NB: Les musiques sont groupées par similitude de nom, à cause d'un bug différentiant une musique en HTTP d'une musique en HTTPS.
 
-        :param database:
-        :param url:
-        :return: Boolean, True if track exists.
+        :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
+        :param url: URL de la musique.
+        :return: True si une musique avec l'URL correspondant existe.
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()
@@ -88,12 +92,13 @@ class Track:
             """
 
     @classmethod
-    def import_from_id(cls, database, ident):
+    def import_from_id(cls, database: str, ident: int):
         """
+        Permet de récupérer une musique depuis son ID.
 
-        :param database:
-        :param ident:
-        :return:
+        :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
+        :param ident: ID de la musique.
+        :returns: La track, si elle existe, sinon None.
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()
@@ -108,12 +113,13 @@ class Track:
                      source=r[7], blacklisted=r[8], obsolete=r[9])
 
     @classmethod
-    def import_from_name(cls, database, ident):
+    def import_from_name(cls, database: str, ident):
         """
+        Permet de récupérer une musique depuis son nom. Renvoie un tableau des :class:`Track` possèdant ce nom.
 
-        :param database:
-        :param ident:
-        :return:
+        :param database: Path vers base de donnée. Généralement app.config["DATABASE_PATH"].
+        :param ident: Nom de la musique.
+        :returns: List[Track] : la track, si elle existe, sinon None.
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()
@@ -128,7 +134,14 @@ class Track:
                       source=r[7], blacklisted=r[8], obsolete=r[9]) for r in table]
 
     @classmethod
-    def import_from_url(cls, database, url):
+    def import_from_url(cls, database: str, url: str):
+        """
+        Permet de récupérer une musique depuis son URL. Ce dernier étant unique, une seule :class:`Track` est renvoyée.
+
+        :param database: Path vers base de donnée. Généralement app.config["DATABASE_PATH"].
+        :param url: URL de la musique.
+        :returns: List[Track] : la track, si elle existe, sinon None.
+        """
         conn = sqlite3.connect(database)
         c = conn.cursor()
         c.execute("SELECT * FROM track_info WHERE url = ?;",
@@ -143,9 +156,12 @@ class Track:
     @classmethod
     def get_random_track(cls, database):
         """
+        Renvoie une :class:`Track` de manière aléatoire.
+        La probabilité est uniforme sur les tracks (modulo les problèmes de HTTTP/HTTPS).
+        Un log est ensuite choisi de manière aléatoire pour trouver une personne ayant ajouté cette musique.
 
-        :param database:
-        :return: a random track,
+        :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
+        :returns: Une Track.
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()
@@ -176,12 +192,12 @@ class Track:
         return track
 
     @classmethod
-    def insert_track(cls, database, track_form: dict):
+    def insert_track(cls, database: str, track_form: dict):
         """
+        Insère une :class:`Track` dans la base de donnée à partir d'un dictionnaire.
 
-        :param database:
-        :param track_form:
-        :return:
+        :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
+        :param track_form: Dictionnaire contenant les clefs "url","title","artist","album","duration","albumart_url" et "source".
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()
@@ -199,18 +215,19 @@ class Track:
     @classmethod
     def refresh_by_url(cls, database, url):
         """
+        Rafraichit les métadonnées d'une musique dans la BDD depuis son URL.
 
-        :param database: Database used
-        :param url: URL of the track (str)
-        :param obsolete: Boolean telling if track is obsolete or not.
+        :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
+        :param url: URL de la musique.
+        :returns: La track actualisée si possible.
         """
         # app.logger.info(url)
         track = cls.import_from_url(database, url)
         if track is None:
-            return
+            return None
         # check if source is loaded
         if 'jukebox.src.backends.search.' + track.source not in sys.modules:
-            return
+            return track
         for search in app.search_backends:
             if search.__name__ == 'jukebox.src.backends.search.' + track.source:
                 break
@@ -229,16 +246,17 @@ class Track:
                     track.obsolete = 1
                     app.logger.info(f"Marking track [id = {track.ident}, url = {track.url}] as obsolete")
                     track.set_obsolete_value(database, track.obsolete)
-                return
+                return None
         else:
             try:
                 track_dict = search.search_engine(url, use_youtube_dl=True)[0]
             except Exception as e:
                 app.logger.warning("This track couldn't be refreshed, so we're marking it as obsolete")
                 Track.set_obsolete_value(track, database, True)
-                return
+                return None
 
         # app.logger.info("Track dict : ", track_dict)
+        # TODO Besoin de créer un objet track ici ? Pas sûr...
         track = Track(None, url, track_dict["title"], track_dict["artist"], track_dict["source"],
                       track_dict["albumart_url"], album=track_dict["album"], duration=track_dict["duration"])
         conn = sqlite3.connect(database)
@@ -268,17 +286,20 @@ class Track:
 
     def check_obsolete(self):
         """
-        A very quick method to check wether or not it's obsolete
+        Une méthode rapide pour vérifier l'obsolescence d'une :class:`Track`.
+        Vérifie simplement si l'`albumart_url` est existant est ne renvoie pas une erreur 404.
         """
+        # TODO Cette méthode fonctionne pour les vidéos YouTubes, mais pas pour certaines autre sources, il me semble.
         return self.albumart_url is None or requests.get(self.albumart_url).status_code == 404
 
-    def set_obsolete_value(self, database, bool=1):
+    def set_obsolete_value(self, database:str, obsolete:bool=True):
         """
+        Marque la musique comme obsolete ou pas dans la BDD. Change également la valeur de `self.obsolete`.
 
-        :param database: Path to the SQLite for the Jukebox
-        :param bool: Value of the obsolete column of the track.
+        :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
+        :param obsolete: True si on veut marquer la track comme obsolete, False sinon.
         """
-        self.obsolete = bool
+        self.obsolete = obsolete
         conn = sqlite3.connect(database)
         c = conn.cursor()
         c.execute("""
@@ -288,13 +309,12 @@ class Track:
                   (self.obsolete, self.ident))
         conn.commit()
 
-    def insert_track_log(self, database, user):
+    def insert_track_log(self, database:str, user:str):
         """
-        As it creates a log, it also updates the value of self.useré
+        Créé un log dans la BDD. Change également la valeur de `self.user`.
 
-        :param database:
-        :param user:
-        :return:
+        :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
+        :param user: Nom de l'utilisateur.
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()
@@ -309,6 +329,11 @@ class Track:
         conn.commit()
 
     def serialize(self):
+        """
+        Sérialiseur pour les :class:`Track`. Rajoute un randomid pour différencier deux Tracks identiques dans la playlist.
+
+        :returns: Dictionnaire ayant les clefs "id", "url", "title", "artist", "source", "albumart_url", "album", "duration", "blaklisted", "obsolete", "user", et "randomid".
+        """
         return {
             'id': self.ident,
             'url': self.url,
@@ -322,21 +347,25 @@ class Track:
             'obsolete': self.obsolete,
             'user': self.user,
             # to identify each track in the playlist
-            'randomid': random.randint(1, 999_999_999_999)
             # even if they have the same url
+            'randomid': random.randint(1, 999_999_999_999)
         }
 
     @classmethod
-    def getTrackCounts(cls, database, nbr, date=0, user=False):
+    def getTrackCounts(cls, database:str, nbr:int, date=0, user=None):
         """
-        Returns at most the nbr users with most listening count.
-        Tracks are sorted first by count (number of times the track has been added since `date`, and second by most
-        recently added.
+        Renvoie une liste des :class:`Track` de taille `nbr` groupées par nom (`self.title`).
+        La liste est triée d'abord par nombre de passage (ie nombre de logs), puis par date d'ajout (plus récent en premier).
+        Il est possible de restreindre à une période temporelle avec l'argument `date`.
 
-        :param database:
-        :param nbr:
-        :param date:
-        :return: list of (User, int)
+        NB: Les musiques sont groupées par similitude de nom, à cause d'un bug différentiant une musique en HTTP
+        d'une musique en HTTPS. L'ID est donc choisi au hasard.
+
+
+        :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
+        :param nbr: Taille maximale de la liste en sortie.
+        :param date: Date, permet de faire des stats journalières et hebdomadaires.
+        :return: Liste de (Titre, Nombre de passage, ID).
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()
@@ -367,12 +396,12 @@ class Track:
             return r[:nbr]
 
     @classmethod
-    def get_history(cls, database, nbr: int):
+    def get_history(cls, database:str, nbr: int):
         """
-        Returns the history of the last played tracks.
+        Renvoie l'historique des `nbr` dernières musiques passées sur le jukebox.
 
-        :param database:
-        :param nbr:
+        :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
+        :param nbr: Nombre de musiques que l'on veut passer.
         :return: list of (Track_name, track_id, user)
         """
         conn = sqlite3.connect(database)
@@ -384,12 +413,11 @@ class Track:
                     log.userid = users.id \
                     AND log.trackid = track_info.id \
                 ORDER BY log.time DESC \
+                LIMIT ?
                 """
-        c.execute(command)
+        c.execute(command, (nbr, ))
         r = c.fetchall()
         if r is None:
             return None
-        if nbr < 0:
-            return r
         else:
-            return r[:nbr]
+            return r

@@ -3,13 +3,15 @@ import datetime
 
 
 class User:
+    """
+    Une classe représentant un utilisateur. Possède les mêmes attributs que dans la base de donnée, dans ta table users.
+    """
 
-    def __init__(self, ident, username, password):
+    def __init__(self, ident:int, username:str, password:str):
         """
-
-        :param ident: id of the User in database, may be None
-        :param username: username of the user
-        :param password: sha512 hash of the password
+        :param ident: ID de l'utilisateur dans la BDD.
+        :param username: Nom d'utilisateur.
+        :param password: sha512 hash du mot de passe.
 
         TODO : This isn't the best of security to do this, and we should modify this.
         """
@@ -19,18 +21,18 @@ class User:
 
     def __str__(self):
         """
-
-        :return: String self.username
+        :returns: `self.username`
         """
         return self.username
 
     @classmethod
-    def init_from_username(cls, database, username):
+    def init_from_username(cls, database:str, username:str):
         """
+        Renvoie un :class:`User` s'il existe déjà dans la base de donnée.
 
-        :param database: path to the database
-        :param username: username of the user
-        :return: None if the user was not found ; User(ident, user, pass) if it exists
+        :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
+        :param username: Nom d'utilisateur.
+        :return: None si l'utilisateur n'a pas été trouvée, l'utilisateur sinon.
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()
@@ -43,11 +45,13 @@ class User:
         assert r[1] == username
         return User(r[0], username, r[2])
 
-    def insert_to_database(self, database):
+    def insert_to_database(self, database:str):
         """
+        Insére l'utilisateur dans la BDD.
 
-        :param database: path to the database
+        :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
         """
+        # TODO : Checker que l'utilisateur n'existe pas déjà.
         conn = sqlite3.connect(database)
         c = conn.cursor()
         c.execute(
@@ -57,18 +61,20 @@ class User:
         conn.commit()
 
     @classmethod
-    def getUserCounts(cls, database, nbr, date=0, track=False):
+    def getUserCounts(cls, database:str, nbr:int, date=0, track:str=None):
         """
-        Returns at most the nbr users with most listening count
+        Renvoie une liste des :class:`User` de taille `nbr`.
+        La liste est triée par nombre de musiques ajoutées (ie nombre de logs).
+        Il est possible de restreindre à une période temporelle avec l'argument `date`.
 
-        :param database:
-        :param nbr:
-        :param date:
-        :return: list of (User, int)
+        :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
+        :param nbr: Taille maximale de la liste en sortie.
+        :param date: Date, permet de faire des stats journalières et hebdomadaires.
+        :returns: Liste de (Username, Nombre de musiques ajoutées).
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()
-        if (track):
+        if track:
             c.execute("""
                 SELECT user, count(user)\
                 FROM  users, log, track_info\
@@ -101,11 +107,11 @@ class User:
     @classmethod
     def getTheme(cls, database, user:str):
         """
-        Returns the saved theme of the user, if there is one
+        Renvoie le thème de l'utilisateur, s'il existe.
 
-        :param database:
-        :param user:
-        :return: str
+        :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
+        :param user: Nom d'utilisateur.
+        :returns: Nom du thème, ou None.
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()
@@ -120,12 +126,10 @@ class User:
     @classmethod
     def setTheme(cls, database, user: str, theme: str):
         """
-        Returns the saved theme of the user, if there is one
+        Set le thème de l'utilisateur, s'il existe.
 
-        :param database:
-        :param user:
-        :param theme:
-        :return: str
+        :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
+        :param user: Nom d'utilisateur.
         """
         conn = sqlite3.connect(database)
         c = conn.cursor()

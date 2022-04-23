@@ -23,7 +23,13 @@ from jukebox.src.backends.search import bandcamp, generic, jamendo, soundcloud, 
 main = Blueprint('main', __name__)
 
 
-def get_style():
+def get_style() -> str:
+    """
+    Renvoie le nom du thème utilisé par l'utilisateur actuel.
+    Dans l'ordre, renvoie d'abord le thème stocké dans le cookie, puis dans la session, puis dans la BDD, et sinon le style de base.
+
+    :returns: String : Le nom du thème.
+    """
     cookie = request.cookies.get('style')
     if cookie is not None:
         return cookie
@@ -40,6 +46,10 @@ def get_style():
 
 
 def get_nav_links():
+    """
+    Renvoie une liste de tuples (nom, url) des sites affichés dans la barre principale.
+    Cette liste est extraite directement du fichier de config.
+    """
     if "NAV_LINKS" in app.config:
         return app.config["NAV_LINKS"]
     else:
@@ -49,6 +59,9 @@ def get_nav_links():
 @main.route("/app")
 @requires_auth
 def app_view():
+    """
+    Renvoie la page principale (accueil.html).
+    """
     # app.logger.info("App access from %s", session["user"])
     return render_template("accueil.html",
                            user=session["user"], jk_name=app.config["JK_NAME"],
@@ -57,11 +70,17 @@ def app_view():
 
 @main.route("/")
 def accueil():
+    """
+    Redirection vers la page principale.
+    """
     return redirect("/app")
 
 
 @main.route("/help")
 def help():
+    """
+    Renvoie la page d'aide.
+    """
     # we should add a modules argument to render_template to
     # display which search functions are available
     modules = []
@@ -76,6 +95,8 @@ def help():
 
 @main.route("/settings", methods=['GET', 'POST'])
 def settings():
+    """Renvoie la page des paramètres. En vérité, cette page sert uniquement à changer le thème.
+    """
     # we should add a modules argument to render_template to
     # display which search functions are available
 
@@ -109,7 +130,10 @@ def settings():
 @main.route("/sync")
 def sync():
     """
-    Renvoie la playlist en cours
+    Fonction appellée par le JS du client pour synchroniser la page.
+    Synchronise la playlist, le volume, le timestamp, et le temps restant dans la playlist.
+
+    :returns: JSON des paramètres synchronisés (keys: "playlist", "volume", "time", "playlist_length").
     """
     volume = get_volume()
     # segfault was here
@@ -134,6 +158,9 @@ def sync():
 @main.route("/move-track", methods=['POST'])
 @requires_auth
 def move_track():
+    """
+    Traite la requête POST demandant de modifier l'emplacement d'une musique dans la playlist.
+    """
     try:
         action = request.form["action"]
         randomid = request.form["randomid"]
@@ -176,6 +203,7 @@ def move_track():
 @main.route("/statistics", methods=['GET'])
 @requires_auth
 def statistics():
+    """Renvoie la page de statistiques principale."""
     return render_template('statistics.html', user=session["user"],
                            jk_name=app.config["JK_NAME"],
                            table_users_count_all=create_html_users(
@@ -201,6 +229,7 @@ def statistics():
 @main.route("/statistics/user/<username>", methods=['GET'])
 @requires_auth
 def user_stats(username: str):
+    """Renvoie la page de statistiques pour un utilisateur donné."""
     return render_template('user.html', user=session['user'],
                            jk_name=app.config["JK_NAME"],
                            user_name=username,
@@ -217,8 +246,12 @@ def user_stats(username: str):
 @main.route("/history/<number>", methods=['GET'])
 @requires_auth
 def history(number: int):
+    """
+    Renvoie l'historique des number dernières musiques.
+    """
     number = int(number)
     # Je déteste python
+    # Si on ne fait pas ça, number est une string.
     return render_template('history.html', user=session['user'],
                            jk_name=app.config["JK_NAME"],
                            n=number,
@@ -231,6 +264,10 @@ def history(number: int):
 @main.route("/statistics/track/<track>", methods=['GET'])
 @requires_auth
 def track_stats(track):
+    """Renvoie la page de statisques pour une musique d'ID donné.
+
+    NB: Les musiques sont groupées par similitude de nom, à cause d'un bug différentiant une musique en HTTP d'une musique en HTTPS.
+    """
     t: Track = Track.import_from_id(app.config["DATABASE_PATH"], track)
     if not t:
         #This means it's not a real id, but rather a youtube id
@@ -269,6 +306,9 @@ def track_stats(track):
 
 @main.route("/status", methods=['GET'])
 def status():
+    """Renvoie un JSON indiquant que le portail est UP.
+
+    :returns: {"status" : "UP"} """
     # This is used in the portail.cj interface, to check if this is still up
     res = {
         "status": "UP"
@@ -280,8 +320,7 @@ def status():
 @requires_auth
 def refresh_track():
     """
-    For now the interface isn't refreshed
-    :return:
+    Traite la requête POST demandant de rafraichir une track dans la BDD.
     """
     try:
         url = request.form["url"]
@@ -296,8 +335,9 @@ def refresh_track():
 @requires_auth
 def search():
     """
-    renvoie une liste de tracks correspondant à la requête depuis divers services
-    :return: un tableau contenant les infos que l'on a trouvé
+    Renvoie une liste de tracks correspondant à la requête depuis divers services.
+
+    :returns: JSON des tracks.
     """
     query = request.form["q"].strip()
     # On veut enlever les trailing whitespace qui resteraient, pour rendre les query plus uniformes
@@ -397,13 +437,15 @@ def search():
 
 
 @main.route('/pause_play', methods=['POST'])
-def pause_test():
+def pause():
+    """Met la musique en pause, ou bien la relance."""
     app.mpv.command('cycle', 'pause', None)
     return "ok"
 
 
 @main.route('/rewind', methods=['POST'])
 def rewind():
+    """Remet la musique en arrière de 10 secondes."""
     app.currently_played["duration"] += 10
     app.mpv.command('seek', - 10, 'relative', None)
     return "ok"
@@ -411,6 +453,7 @@ def rewind():
 
 @main.route('/advance', methods=['POST'])
 def advance():
+    """Avance la musique de 10 secondes."""
     app.currently_played["duration"] -= 10
     app.mpv.command('seek', + 10, 'relative', None)
     return "ok"
@@ -418,6 +461,7 @@ def advance():
 
 @main.route('/jump', methods=['POST'])
 def jump():
+    """Avance la musique jusqu'au timestamp fourni dans la requête."""
     timestamp = request.form["jump"]
     if (timestamp.count(':') == 0):
         time = int(timestamp)

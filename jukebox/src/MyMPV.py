@@ -10,6 +10,8 @@ def log_mpv(logger):
     python-mpv, feel free to check it out.
 
     :param logger: a logger, meaning you call it with a string as an argument in order to log something
+
+    :returns: A Logging function.
     """
 
     def f(loglevel, component, message):
