@@ -1,20 +1,21 @@
-import datetime
 import random
+import re
+import datetime
 import sys
+
+import flask
+from flask import Blueprint, render_template, redirect, session, jsonify, request, flash
+from flask_wtf import FlaskForm
+from wtforms import SelectField, SubmitField
 from os import listdir
 from os.path import isfile, join
 
-import flask
-from flask import Blueprint, render_template, jsonify, request
-from flask_wtf import FlaskForm
-from wtforms import SelectField, SubmitField
-
 from jukebox.src import playlist
-from jukebox.src.Track import Track
 from jukebox.src.User import User
-from jukebox.src.statistics import create_html_users, create_html_tracks, create_history_tracks
 from jukebox.src.util import *
-
+from jukebox.src.Track import Track
+from jukebox.src.statistics import create_html_users, create_html_tracks, create_history_tracks
+from jukebox.src.backends.search import bandcamp, generic, jamendo, soundcloud, twitch, youtube
 # import * ne fonctionne pas, wtf, une histoire de cache d'après Boisdal ?
 
 main = Blueprint('main', __name__)
