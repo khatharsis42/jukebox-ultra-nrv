@@ -11,8 +11,6 @@ class User:
         :param ident: ID de l'utilisateur dans la BDD.
         :param username: Nom d'utilisateur.
         :param password: sha512 hash du mot de passe.
-
-        TODO : This isn't the best of security to do this, and we should modify this.
         """
         self.ident = ident
         self.username = username
@@ -50,7 +48,7 @@ class User:
 
         :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
         """
-        # TODO : Checker que l'utilisateur n'existe pas déjà.
+        # TODO: Checker que l'utilisateur n'existe pas déjà.
         conn = sqlite3.connect(database)
         c = conn.cursor()
         c.execute(

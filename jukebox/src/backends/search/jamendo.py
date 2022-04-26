@@ -26,7 +26,7 @@ def search_engine(query, use_youtube_dl=True):
     duration = metadata["duration"]
     if duration is None:
         # app.logger.info("Duration is None")
-        duration = 42  # TODO: arbitrary value because youtube-dl is borken
+        duration = 42  # Arbitrary value because youtube-dl is broken
 
     results.append({
         "source": "jamendo",

@@ -256,7 +256,7 @@ class Track:
                 return None
 
         # app.logger.info("Track dict : ", track_dict)
-        # TODO Besoin de créer un objet track ici ? Pas sûr...
+        # TODO: Pas sûr d'avoir besoin de créer un objet Track içi.
         track = Track(None, url, track_dict["title"], track_dict["artist"], track_dict["source"],
                       track_dict["albumart_url"], album=track_dict["album"], duration=track_dict["duration"])
         conn = sqlite3.connect(database)
@@ -289,7 +289,7 @@ class Track:
         Une méthode rapide pour vérifier l'obsolescence d'une :class:`Track`.
         Vérifie simplement si l'`albumart_url` est existant est ne renvoie pas une erreur 404.
         """
-        # TODO Cette méthode fonctionne pour les vidéos YouTubes, mais pas pour certaines autre sources, il me semble.
+        # TODO: Cette méthode fonctionne pour les vidéos YouTubes, mais pas pour certaines autre sources, il me semble.
         return self.albumart_url is None or requests.get(self.albumart_url).status_code == 404
 
     def set_obsolete_value(self, database: str, obsolete: bool = True):

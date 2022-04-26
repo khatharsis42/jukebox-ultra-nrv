@@ -134,6 +134,11 @@ def sync():
 
     :returns: JSON des paramètres synchronisés (keys: "playlist", "volume", "time", "playlist_length").
     """
+    # TODO: Trouver un moyen d'envoyer l'information de la source, et cacher l'intégration
+    #       YouTube si la musique ne vient pas de YouTube. Je dirais qu'il faudrait utiliser
+    #       deux variables booléenes dans le JS, afin de savoir si l'utilisateur veut que la
+    #       vidéo soit affichée, et si la vidéo peut être affichée.
+    #       Aux futurs maintainer de voir comment faire ça.
     volume = get_volume()
     # segfault was here
     with app.mpv_lock:
@@ -248,6 +253,7 @@ def history(number: int):
     """
     Renvoie l'historique des number dernières musiques.
     """
+    # TODO: Faire un système de pages, plutôt que de juste prendre les n dernières.
     number = int(number)
     # Je déteste python
     # Si on ne fait pas ça, number est une string.
@@ -357,6 +363,15 @@ def search():
     regex_search_youtube = re.compile('(\!yt\s)|(.*\s\!yt\s)|(.*\s\!yt$)')
     regex_generic = re.compile(
         '(\!url\s)|(.*\s\!url\s)|(.*\s\!url$)|(\!g\s)|(.*\s\!g\s)|(.*\s\!g$)')
+    # TODO: Pour être vraiment bien, il faudrait différencier le fait de mettre une URL
+    #       et le fait de faire une recherche. Par exemple, si je met une URL sous la forme
+    #       https://youtube.com/watch?v=[VideoID], alors ça ajoute directement cette vidéo.
+    #       Et si je met !yt [Termes de Recherches] alors ça fait une recherche (avec la base
+    #       qui serait YouTube).
+    #       Ça permettrait notamment de rajouter de manière pas trop compliquée les musiques custom
+    #       i.e. on met l'url d'un fichier .mp3 ou mp4 ou un truc du genre
+    #       ça reconnait automatiquement et ça le joue. Avec un point bonus si on arrive à
+    #       diffuser la vidéo sur la page en plus de ça.
 
     # print("Query : \"" + query + "\"")
     # print("Regex match :", re.match(regex_generic, query))
@@ -462,12 +477,12 @@ def advance():
 def jump():
     """Avance la musique jusqu'au timestamp fourni dans la requête."""
     timestamp = request.form["jump"]
-    if (timestamp.count(':') == 0):
+    if timestamp.count(':') == 0:
         time = int(timestamp)
-    elif (timestamp.count(':') == 1):
+    elif timestamp.count(':') == 1:
         minutes, secondes = [int(t) for t in timestamp.split(":")]
         time = 60 * minutes + secondes
-    elif (timestamp.count(':') == 2):
+    elif timestamp.count(':') == 2:
         hours, minutes, secondes = [int(t) for t in timestamp.split(":")]
         time = 60 * (60 * hours + minutes) + secondes
     else:
