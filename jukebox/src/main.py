@@ -447,6 +447,17 @@ def search():
     if len(app.search_cache) >= app.cache_size:
         app.search_cache.pop(random.choice(list(app.search_cache.keys())))
     app.search_cache[query] = results
+    # TODO: On m'a proposé de faire en sorte qu'on puisse rajouter des résultats
+    #       Par exemple, si on n'a pas satisfait des 5 premiers résultats, de cliquer
+    #       sur un bouton "Voir plus" et on optiendrait alors les 5 résultats suivants.
+    #       À voir comment on mettrait ça en place, une idée possible serait de faire
+    #       une fonction search(i) qui rechercherait les i premiers résultats ?
+    #       Sinon de manière plus optimisée, faire en sorte que search renvoie un à un
+    #       des tracks au client, et ensuite on aurait juste à les traiter.
+    #       L'avantage de faire ça, c'est qu'on pourrait avoir les premiers résultats
+    #       d'une recherche très rapidement. Le désavantage, c'est que j'ai du mal à voir
+    #       comment implémenter ça sans faire de multithreading ? Je ne sais pas trop.
+    #       J'ai pas forcément envie de faire ça, je vais peut être le laisser à mon successeur.
     return jsonify(results)
 
 
