@@ -243,7 +243,7 @@ class Track:
                     # C'est que la track est obsolete
                     # A PRIORI CELA N'EST PAS UN PROBLÈME POUR LES RANDOMS ERREURS 403
                     # PUISQUE CES ERREURS N'ARRIVENT QUE LORSQU'UNE TRACK JOUE
-                    track.obsolete = 1
+                    track.obsolete = True
                     app.logger.info(f"Marking track [id = {track.ident}, url = {track.url}] as obsolete")
                     track.set_obsolete_value(database, track.obsolete)
                 return None
