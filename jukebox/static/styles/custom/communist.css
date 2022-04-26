@@ -57,25 +57,9 @@ h1
     background: red;
 }
 
-
-.statistics .statcol {
-    display: inline-block;
-    max-width: 48%;
-    vertical-align: top;
-    margin: 5px;
-}
-
-.statistics .statcol .statdisplay {
-    padding: 5px 5px 30px;
-}
-
 .statistics .statcol thead {
     background-color: #e00b00;
     border-bottom: 1px solid yellow;
-}
-
-.statistics .statcol th, .statistics .statcol td {
-    padding: 5px;
 }
 
 .statistics .statcol tr:nth-child(even) {
@@ -84,7 +68,6 @@ h1
 
 .icon {
     height: 20px;
-    display: block;
     display: block;
     margin: 6px;
 	cursor: pointer
@@ -260,33 +243,4 @@ iframe#YT {
 	cursor: pointer;
     margin: 6px;
     display: block;
-}
-
-.icon.btn-back {
-    background-image: url("/static/images/icons/arrow-alt-circle-left-solid.svg");
-}
-.icon.btn-more {
-    background-image: url("/static/images/icons/ellipsis-h-solid.svg");
-}
-.icon.btn-up{
-    background-image: url("/static/images/icons/chevron-up-solid.svg");
-}
-.icon.btn-down{
-    background-image: url("/static/images/icons/chevron-down-solid.svg");
-}
-.icon.btn-remove{
-    background-image: url("/static/images/icons/x.svg");
-}
-.icon.btn-add{
-    background-image: url("/static/images/icons/plus-square-regular.svg");
-}
-.icon.btn-refresh {
-    background-image: url("/static/images/icons/sync-solid.svg");
-}
-.icon.btn-stats {
-    background-image: url("/static/images/icons/stats.svg");
-}
-.icon.btn-top{
-    background-image: url("/static/images/icons/angle-double-up.svg");
-    height: 30px;
 }

@@ -1,69 +1,70 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-      <meta charset="utf-8">
-      <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-      <link href="{{ url_for('static', filename='styles/bootstrap.min.css') }}" rel="stylesheet">
-      <link href="{{ url_for('static',filename='styles/custom/') }}{{ stylesheet }}" rel= "stylesheet" type= "text/css">
-      <link href="{{ url_for('static', filename='favicon.ico') }}" rel="shortcut icon">
-      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-      <title>{{ jk_name }}</title>
-    </head>
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <link href="{{ url_for('static', filename='styles/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='styles/custom/default.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static',filename='styles/custom/') }}{{ stylesheet }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='favicon.ico') }}" rel="shortcut icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <title>{{ jk_name }}</title>
+</head>
 
-    <body onmouseover="pageStatus=true;" onmouseout="pageStatus=false;">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-xl-8">
-                    <h1 class="display-3">{{ jk_name }}</h1>
-                    <div class="clearfix">
-                        <ul class="nav">
-                            <li class="nav-item">
-                                <p class="nav-link">
-                                <a href="/app">Accueil</a>
-                                </p>
-                            </li>
-                            <li class="nav-item">
-                                <p class="nav-link">
-                                <a href="/statistics">Statistics</a>
-                                </p>
-                            </li>
-                            <li class="nav-item">
-                                <p class="nav-link">
-                                <a href="/history/50">History</a>
-                                </p>
-                            </li>
-                            <li class="nav-item">
-                                <p class="nav-link">
-                                <a href="/settings">Settings</a>
-                                </p>
-                            </li>
-                            <li class="nav-item">
-                                <p class="nav-link">
-                                <a href="/help">Help</a>
-                                </p>
-                            </li>
-                            <li class="nav-item">
-                                <p class="nav-link"><a href="/logout">Logout from {{ user }}</a></p>
-                            </li>
-                            {% for elem in navlinks %}
-                                <li class="nav-item">
-                                    <p class="nav-link">
-                                        <a href="{{ elem[1] }}" title="{{ elem[0] }}">{{ elem[0] }}</a>
-                                    </p>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    {% block music %} {% endblock %}
-                </div>
-                {% block content %} {% endblock %}
+<body onmouseover="pageStatus=true;" onmouseout="pageStatus=false;">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-8">
+            <h1 class="display-3">{{ jk_name }}</h1>
+            <div class="clearfix">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <p class="nav-link">
+                            <a href="/app">Accueil</a>
+                        </p>
+                    </li>
+                    <li class="nav-item">
+                        <p class="nav-link">
+                            <a href="/statistics">Statistics</a>
+                        </p>
+                    </li>
+                    <li class="nav-item">
+                        <p class="nav-link">
+                            <a href="/history/50">History</a>
+                        </p>
+                    </li>
+                    <li class="nav-item">
+                        <p class="nav-link">
+                            <a href="/settings">Settings</a>
+                        </p>
+                    </li>
+                    <li class="nav-item">
+                        <p class="nav-link">
+                            <a href="/help">Help</a>
+                        </p>
+                    </li>
+                    <li class="nav-item">
+                        <p class="nav-link"><a href="/logout">Logout from {{ user }}</a></p>
+                    </li>
+                    {% for elem in navlinks %}
+                    <li class="nav-item">
+                        <p class="nav-link">
+                            <a href="{{ elem[1] }}" title="{{ elem[0] }}">{{ elem[0] }}</a>
+                        </p>
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
+            {% block music %} {% endblock %}
         </div>
+        {% block content %} {% endblock %}
+    </div>
+</div>
 
-        <script src="{{ url_for('static',filename='scripts/jquery-3.3.1.min.js') }}"></script>
-        <script src="{{ url_for('static',filename='scripts/jquery.loadTemplate.min.js') }}" crossorigin="anonymous"></script>
-        <script src="{{ url_for('static',filename='scripts/main.js') }}"></script>
-        <script src="{{ url_for('static',filename='scripts/popper.min.js') }}"></script>
-        <script src="{{ url_for('static',filename='scripts/bootstrap.min.js') }}"></script>
-    </body>
+<script src="{{ url_for('static',filename='scripts/jquery-3.3.1.min.js') }}"></script>
+<script src="{{ url_for('static',filename='scripts/jquery.loadTemplate.min.js') }}" crossorigin="anonymous"></script>
+<script src="{{ url_for('static',filename='scripts/main.js') }}"></script>
+<script src="{{ url_for('static',filename='scripts/popper.min.js') }}"></script>
+<script src="{{ url_for('static',filename='scripts/bootstrap.min.js') }}"></script>
+</body>
 </html>

@@ -82,11 +82,6 @@ body{
     float: left;
     transform: scaleX(0.1) scaleY(0.1);
 }
-iframe#YT {
-    width: 100%;
-    height : auto;
-    aspect-ratio : 16 / 9;
-}
 
 iframe, .list-group, .container{ /*Les chansons */
     box-shadow: -2px -2px 0 0 #00000042,-2px 2px 0 0 #00000042,2px -2px 0 0 #00000042, 2px 2px 0 0 #00000042;
@@ -98,17 +93,6 @@ iframe, .list-group, .container{ /*Les chansons */
 
 .container {
     background-color: rgba(255, 255, 255, .5);
-}
-
-.statistics .statcol {
-    display: inline-block;
-    max-width: 48%;
-    vertical-align: top;
-    margin: 5px;
-}
-
-.statistics .statcol .statdisplay {
-    padding: 5px 5px 30px;
 }
 
 .statistics .statcol thead {
@@ -187,32 +171,25 @@ iframe, .list-group, .container{ /*Les chansons */
 }
 
 .icon.btn-back {
-    background-image: url("/static/images/mlpicons/MLPZecora-left.gif");
+    background-image: url("resources/mlpicons/MLPZecora-left.gif");
 }
 .icon.btn-more {
-    background-image: url("/static/images/mlpicons/MLPZecora-right.gif");
+    background-image: url("resources/mlpicons/MLPZecora-right.gif");
 }
 .icon.btn-up{
-    background-image: url("/static/images/mlpicons/MLPup.png");
+    background-image: url("resources/mlpicons/MLPup.png");
 }
 .icon.btn-down{
-    background-image: url("/static/images/mlpicons/MLPdown.png");
+    background-image: url("resources/mlpicons/MLPdown.png");
 }
 .icon.btn-remove{
-    background-image: url("/static/images/mlpicons/MLPDelete.png");
+    background-image: url("resources/mlpicons/MLPDelete.png");
 }
 .icon.btn-add{
-    background-image: url("/static/images/mlpicons/MLPAdd.png");
+    background-image: url("resources/mlpicons/MLPAdd.png");
 }
 .icon.btn-refresh {
-    background-image: url("/static/images/mlpicons/MLPRefresh.png");
-}
-.icon.btn-stats {
-    background-image: url("/static/images/icons/stats.svg");
-}
-.icon.btn-top{
-    background-image: url("/static/images/icons/angle-double-up.svg");
-    height: 30px;
+    background-image: url("resources/mlpicons/MLPRefresh.png");
 }
 input[type=range] {
   -webkit-appearance: none;     /*nécessaire pour Chrome */

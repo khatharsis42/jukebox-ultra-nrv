@@ -24,11 +24,11 @@ h1:before
 
 @font-face{
     font-family: "Digi";
-    src: url("/static/styles/custom/digimon/DigimonBasic.ttf");
+    src: url("resources/digimon/DigimonBasic.ttf");
 }
 
 body{
-    background: url("/static/styles/custom/digimon/wallpaper_digimon_world_next_order_01_1920x1080.jpg");
+    background: url("resources/digimon/wallpaper_digimon_world_next_order_01_1920x1080.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -39,7 +39,7 @@ body{
 
 @media only screen and (orientation: portrait){ /*Image de fond*/
     body{
-        background: url("/static/styles/custom/digimon/wallpaper_digimon_world_next_order_01_1920x1080.jpg");
+        background: url("resources/digimon/wallpaper_digimon_world_next_order_01_1920x1080.jpg");
         background-size: cover;
         background-repeat: repeat-x;
         background-position: center;
@@ -75,7 +75,7 @@ body{
 }
 
 .display-4:before {
-    content: url("/static/styles/custom/digimon/MegAgumon.png");
+    content: url("resources/digimon/MegAgumon.png");
     visibility: visible;
     height:1px;
     width:1px;
@@ -101,25 +101,9 @@ iframe, .list-group, .container{ /*Les chansons */
 }
 
 
-.statistics .statcol {
-    display: inline-block;
-    max-width: 48%;
-    vertical-align: top;
-    margin: 5px;
-}
-
-.statistics .statcol .statdisplay {
-    padding: 5px 5px 30px;
-}
-
-
 .statistics .statcol thead {
     background-color: rgba(101, 181, 255, 0.6);
     border-bottom: 1px solid grey;
-}
-
-.statistics .statcol th, .statistics .statcol td {
-    padding: 5px;
 }
 
 .statistics .statcol tbody tr:nth-child(even) {
@@ -187,6 +171,10 @@ iframe, .list-group, .container{ /*Les chansons */
     margin: 1px;
     display: block;
 }
+.icon.btn-top{
+    height: 50px;
+    background-size: 50px 50px;
+}
 
 .btn-volume {
     width: 20px;
@@ -194,22 +182,22 @@ iframe, .list-group, .container{ /*Les chansons */
 }
 
 .icon.btn-more, .icon.btn-back {
-    background-image: url("/static/styles/custom/digimon/more.png");
+    background-image: url("resources/digimon/more.png");
 }
 .icon.btn-up{
-    background-image: url("/static/styles/custom/digimon/up.png");
+    background-image: url("resources/digimon/up.png");
 }
 .icon.btn-down{
-    background-image: url("/static/styles/custom/digimon/down.png");
+    background-image: url("resources/digimon/down.png");
 }
 .icon.btn-remove{
-    background-image: url("/static/styles/custom/digimon/remove.png");
+    background-image: url("resources/digimon/remove.png");
 }
 .icon.btn-add{
-    background-image: url("/static/styles/custom/digimon/add.png");
+    background-image: url("resources/digimon/add.png");
 }
 .icon.btn-refresh {
-    background-image: url("/static/styles/custom/digimon/refresh.png");
+    background-image: url("resources/digimon/refresh.png");
 }
 
 input[type=range] {
@@ -271,11 +259,4 @@ input[type=range]::-moz-range-thumb {
     font-family: "Digi", serif;
     color: #fac700;
     -webkit-text-stroke: 1px #65b5ff; /*may not work with every browser*/
-}
-.icon.btn-stats {
-    background-image: url("/static/images/icons/stats.svg");
-}
-.icon.btn-top{
-    background-image: url("/static/images/icons/angle-double-up.svg");
-    height: 30px;
 }

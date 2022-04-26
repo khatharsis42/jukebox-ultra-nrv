@@ -1,13 +1,12 @@
 .statistics {
     text-align:center;
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .statistics .statcol {
-    display: inline-block;
-    max-width: 48%;
-    vertical-align: top;
-    margin: 5px;
-    text-align:left;
+    flex-basis: auto;
 }
 
 .statistics .statcol .statdisplay {
@@ -118,30 +117,30 @@ iframe#YT {
 }
 
 .icon.btn-back {
-    background-image: url("/static/images/icons/arrow-alt-circle-left-solid.svg");
+    background-image: url("resources/icons/arrow-alt-circle-left-solid.svg");
 }
 .icon.btn-more {
-    background-image: url("/static/images/icons/ellipsis-h-solid.svg");
+    background-image: url("resources/icons/ellipsis-h-solid.svg");
 }
 .icon.btn-up{
-    background-image: url("/static/images/icons/chevron-up-solid.svg");
+    background-image: url("resources/icons/chevron-up-solid.svg");
 }
 .icon.btn-down{
-    background-image: url("/static/images/icons/chevron-down-solid.svg");
+    background-image: url("resources/icons/chevron-down-solid.svg");
 }
 .icon.btn-remove{
-    background-image: url("/static/images/icons/x.svg");
+    background-image: url("resources/icons/x.svg");
 }
 .icon.btn-add{
-    background-image: url("/static/images/icons/plus-square-regular.svg");
+    background-image: url("resources/icons/plus-square-regular.svg");
 }
 .icon.btn-refresh {
-    background-image: url("/static/images/icons/sync-solid.svg");
+    background-image: url("resources/icons/sync-solid.svg");
 }
 .icon.btn-stats {
-    background-image: url("/static/images/icons/stats.svg");
+    background-image: url("resources/icons/stats.svg");
 }
 .icon.btn-top{
-    background-image: url("/static/images/icons/angle-double-up.svg");
+    background-image: url("resources/icons/angle-double-up.svg");
     height: 30px;
 }

@@ -1,11 +1,11 @@
 @font-face {
     font-family: "Shrek";
-    src: url("/static/april/Shrek.ttf");
+    src: url("resources/april/Shrek.ttf");
 }
 
 @font-face {
     font-family: "ComicSans";
-    src: url("/static/april/ComicSans.ttf");
+    src: url("resources/april/ComicSans.ttf");
 }
 
 #playlist-playing, #playlist-queue {
@@ -18,7 +18,7 @@
 }
 
 body {
-    background: url('/static/april/shrek.webp');
+    background: url('resources/april/shrek.webp');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -114,7 +114,6 @@ input[type="text"] {
     background-color: #D5DE2E;
     color: #795A2D;
     border-radius: 25px;
-    /* border-image: url(/static/zelda/temp.jpg) 15 / 15px round; */
 }
 
 .form-control:focus {
@@ -156,30 +155,9 @@ iframe, .list-group, .container {
     max-width:100%;
 }
 
-.statistics {
-    text-align:center;
-}
-
-.statistics .statcol {
-    display: inline-block;
-    max-width: 48%;
-    vertical-align: top;
-    margin: 5px;
-    text-align:left;
-}
-
-.statistics .statcol .statdisplay {
-    padding: 5px 5px 30px;
-    text-align:left;
-}
-
 .statistics .statcol thead {
     background-color: rgba(255, 0, 0, 0.4);
     border-bottom: 1px solid grey;
-}
-
-.statistics .statcol th, .statistics .statcol td {
-    padding: 5px;
 }
 
 .statistics .statcol tbody tr:nth-child(even) {
@@ -190,10 +168,6 @@ iframe, .list-group, .container {
     background-color: rgba(244, 161, 44, 0.4);
 }
 
-table {
-    margin:auto;
-}
-
 .list-group {
     margin-right: 5px;
     background-color: rgba(0, 0, 0, 0.5);
@@ -201,14 +175,6 @@ table {
 
 .list-group-item.track {
     background-color: transparent;
-}
-
-.col-1>.btn-remove, .col-1>.btn-add, .col-1>.btn-back, .col-1>.btn-more, .col-1>.btn-up, .col-1>.btn-down, .col-1>.btn-refresh {
-    right: 5px;
-}
-
-.yt-btn {
-    margin:auto;
 }
 
 .col-3 {
@@ -277,37 +243,31 @@ table {
 }
 
 .icon.btn-more, .icon.btn-back {
-    /* background-image: url('/static/zelda/yellowRupee.png'); */
-    /* background-image: url("/static/zelda/eyeAlternative.png") */
-    background-image: url('/static/april/information.png');
+    background-image: url('resources/april/information.png');
     height:30px;
 }
 
 .icon.btn-up {
-    background-image: url('/static/april/stonks_up.png');
+    background-image: url('resources/april/stonks_up.png');
 }
 
 .icon.btn-down {
-    background-image: url('/static/april/stonks_down.png');
+    background-image: url('resources/april/stonks_down.png');
 }
 
 .icon.btn-remove {
-    background-image: url("/static/april/cancel.png")
+    background-image: url("resources/april/cancel.png")
 }
 
 .icon.btn-add {
-    background-image: url("/static/april/add.png")
+    background-image: url("resources/april/add.png")
 }
 
 .icon.btn-refresh {
-    background-image: url('/static/april/refresh.gif');
-}
-.icon.btn-stats {
-    background-image: url("/static/images/icons/stats.svg");
+    background-image: url('resources/april/refresh.gif');
 }
 .icon.btn-top{
-    background-image: url("/static/april/isabelle_default_dancing.gif");
-    height: 30px;
+    background-image: url("resources/april/isabelle_default_dancing.gif");
 }
 
 input[type=range] {

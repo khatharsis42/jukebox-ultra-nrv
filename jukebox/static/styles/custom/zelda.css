@@ -1,16 +1,16 @@
 @font-face {
     font-family: "ZeldaBOTW";
-    src: url("/static/zelda/zeldaBOTW.otf");
+    src: url("resources/zelda/zeldaBOTW.otf");
 }
 
 @font-face {
     font-family: "Zelda";
-    src: url("/static/zelda/zelda.otf");
+    src: url("resources/zelda/zelda.otf");
 }
 
 @font-face {
     font-family: "Pixel";
-    src: url("/static/zelda/pixel.ttf");
+    src: url("resources/zelda/pixel.ttf");
 }
 
 #playlist-playing, #playlist-queue {
@@ -23,23 +23,16 @@
 }
 
 body {
-    background: url(https://images.alphacoders.com/789/thumb-1920-789452.jpg);
-    /*url(https://i.imgur.com/YlC6hYM.jpeg);*/
+    background: url(https://images.alphacoders.com/789/thumb-1920-789452.jpg) no-repeat fixed center;
     background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
     font-family: "Pixel";
     font-weight: bold;
 }
 
 @media only screen and (orientation: portrait){
     body{
-        background: url(https://i.pinimg.com/originals/30/4f/a1/304fa12fced766b70d6932cb59e49431.jpg);
+        background: url(https://i.pinimg.com/originals/30/4f/a1/304fa12fced766b70d6932cb59e49431.jpg) no-repeat center fixed;
         background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-attachment:fixed;
     }
 }
 
@@ -79,7 +72,7 @@ h1, h2, h3, tr, td, p, li{
 }
 
 .nav-link {
-    font-family: "Zelda";
+    font-family: "Zelda", serif;
     font-size: 1.25rem;
     padding: .5em .5em;
 }
@@ -120,18 +113,16 @@ a:active {
 input[type="text"] {
     text-align: left;
     direction: ltr;
-    border-radius: 0;
     border: solid 1px;
     border-color: white;
-    box-shadow: 0px 0px 10px 2px #2596be;
+    box-shadow: 0 0 10px 2px #2596be;
     background-color: #1887b5;
     color: #dcf5f7;
     border-radius: 25px;
-    /* border-image: url(/static/zelda/temp.jpg) 15 / 15px round; */
 }
 
 .form-control:focus {
-    box-shadow: 0px 0px 20px 8px #2596be;
+    box-shadow: 0 0 20px 8px #2596be;
     outline: none;
     background-color: #1887b5;
     color: #dcf5f7;
@@ -143,7 +134,7 @@ input[type="text"] {
 
 label {
     color:black;
-    margin-bottom:0px;
+    margin-bottom:0;
 }
 
 select {
@@ -151,12 +142,11 @@ select {
 }
 .form-group:focus {
     border-color: red;
-    box-shadow: 0px 0px 10px 3px #2596be;
+    box-shadow: 0 0 10px 3px #2596be;
 }
 
 iframe, .list-group, .container {
     box-shadow: 1px 1px 0 0 #000, 2px 2px 0 0 #000, 3px 3px 0 0 #000, 4px 4px 0 0 #000, 5px 5px 0 0 #000, 6px 6px 0 0 #000, 7px 7px 0 0 #000, 8px 8px 0 0 #000, 9px 9px 0 0 #000, 10px 10px 0 0 #000;
-    margin-left: -5px;
     border: none;
     border-radius: 0;
     margin-bottom: 15px;
@@ -168,30 +158,9 @@ iframe, .list-group, .container {
     max-width:100%;
 }
 
-.statistics {
-    text-align:center;
-}
-
-.statistics .statcol {
-    display: inline-block;
-    max-width: 48%;
-    vertical-align: top;
-    margin: 5px;
-    text-align:left;
-}
-
-.statistics .statcol .statdisplay {
-    padding: 5px 5px 30px;
-    text-align:left;
-}
-
 .statistics .statcol thead {
     background-color: rgba(255, 0, 0, 0.4);
     border-bottom: 1px solid grey;
-}
-
-.statistics .statcol th, .statistics .statcol td {
-    padding: 5px;
 }
 
 .statistics .statcol tbody tr:nth-child(even) {
@@ -213,10 +182,6 @@ table {
 
 .list-group-item.track {
     background-color: transparent;
-}
-
-.col-1>.btn-remove, .col-1>.btn-add, .col-1>.btn-back, .col-1>.btn-more, .col-1>.btn-up, .col-1>.btn-down, .col-1>.btn-refresh {
-    right: 5px;
 }
 
 .yt-btn {
@@ -269,52 +234,39 @@ table {
 }
 
 .icon {
-    background-image: none;
-    background-color: transparent;
-    background-repeat: no-repeat;
+    background: transparent none no-repeat center;
     border: none;
-    background-size: 20px;
     background-size: auto 100%;
     padding-left: 20px;
-    background-position: center;
     width: 20px;
     height: 20px;
     cursor: pointer;
-    margin: 6px;
+    margin: .3em auto;
     display: block;
 }
 
 .icon.btn-more, .icon.btn-back {
-    /* background-image: url('/static/zelda/yellowRupee.png'); */
-    /* background-image: url("/static/zelda/eyeAlternative.png") */
-    background-image: url('/static/zelda/navy.png');
+    background-image: url('resources/zelda/navy.png');
 }
 
 .icon.btn-up {
-    background-image: url('/static/zelda/greenRupee.png');
+    background-image: url('resources/zelda/greenRupee.png');
 }
 
 .icon.btn-down {
-    background-image: url('/static/zelda/redRupee.png');
+    background-image: url('resources/zelda/redRupee.png');
 }
 
 .icon.btn-remove {
-    background-image: url("/static/zelda/bomb.png")
+    background-image: url("resources/zelda/bomb.png")
 }
 
 .icon.btn-add {
-    background-image: url("/static/zelda/triforce.png")
+    background-image: url("resources/zelda/triforce.png")
 }
 
 .icon.btn-refresh {
-    background-image: url('/static/zelda/yellowRupee.png');
-}
-.icon.btn-stats {
-    background-image: url("/static/images/icons/stats.svg");
-}
-.icon.btn-top{
-    background-image: url("/static/images/icons/angle-double-up.svg");
-    height: 30px;
+    background-image: url('resources/zelda/yellowRupee.png');
 }
 
 input[type=range] {
@@ -360,15 +312,15 @@ input[type='range']::-webkit-slider-runnable-track {
     background-size: var(--background-size, 0%) 100%;
     background-repeat: no-repeat;
     border-radius: 5px;
-    background-color: red;
+    background-color: blue;
 }
 
 input[type='range']::-webkit-slider-thumb {
     width: 15px;
     height: 15px;
     cursor: pointer;
-    background: red;
-    border: solid red 1px;
+    background: blue;
+    border: solid blue 1px;
     border-radius: 50%;
     margin-top: -6px;
     background-color: none;
@@ -393,11 +345,6 @@ input[type="range"]::-moz-range-thumb {
     height: 10px;
     border: none;
     background: none;
-    /* background: url("/static/zelda/eye.svg");
-    background-size:contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-position-x:-50%; */
 }
 
 .container-fluid::after {
