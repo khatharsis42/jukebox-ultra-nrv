@@ -44,11 +44,10 @@ class User:
 
     def insert_to_database(self, database: str):
         """
-        Insére l'utilisateur dans la BDD.
+        Insére l'utilisateur dans la BDD. NB: Fait cela indépendament de s'il existe déjà.
 
         :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
         """
-        # TODO: Checker que l'utilisateur n'existe pas déjà.
         conn = sqlite3.connect(database)
         c = conn.cursor()
         c.execute(

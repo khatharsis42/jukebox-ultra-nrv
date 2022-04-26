@@ -29,19 +29,22 @@ def auth_page():
             return render_template("auth.html")
 
     # handle account creation
-    success = False
     if request.form["action"] == "new":
-        # we must first check if the username isn't aleady taken
-        # then we do as usual
-        # if it is, display a notification
+        username, password = request.form["user"].strip(' '), request.form["pass"]
+        if len(username) > 25:
+            flash("Nom d'utilisateur trop long ! La limite est de 25 caractères.")
+            return render_template("auth.html")
+        if len(password) < 10:
+            flash("Le mot de passe doit être de plus de 10 caractères.")
+            return render_template("auth.html")
         user = User.init_from_username(
             app.config["DATABASE_PATH"],
-            request.form["user"]
+            username
         )
+        password_hashed = pbkdf2_sha256.hash(password)
         if user is not None:
             flash("Account already exists")
             return render_template("auth.html")
-        password_hashed = pbkdf2_sha256.hash(request.form["pass"])
         user = User(None, request.form["user"], password_hashed)
         user.insert_to_database(app.config["DATABASE_PATH"])
         app.logger.info("Created account for %s", request.form["user"])
@@ -54,16 +57,16 @@ def auth_page():
             request.form["user"]
         )
         try:
-            if (user is not None
-                    and pbkdf2_sha256.verify(
-                        request.form["pass"],
-                        user.password)):
+            if user is None:
+                flash("Nom d'utilisateur invalide.")
+            elif not pbkdf2_sha256.verify(request.form["pass"], user.password):
+                flash("Mot de passe invalide.")
+            else:
                 app.logger.info("Logging in {}".format(request.form["user"]))
                 session['user'] = request.form['user']
                 return redirect("/app")
         except ValueError:
             pass
-        flash("Raté")
         app.logger.info("Failed log attempt for %s", request.form["user"])
     # if account successfully created OR login successful
     return render_template("auth.html")
