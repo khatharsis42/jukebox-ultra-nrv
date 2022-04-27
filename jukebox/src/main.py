@@ -342,7 +342,7 @@ def search():
     """
     Renvoie une liste de tracks correspondant à la requête depuis divers services.
 
-    :returns: JSON des tracks.
+    :returns: Liste de JSON des tracks.
     """
     query = request.form["q"].strip()
     # On veut enlever les trailing whitespace qui resteraient, pour rendre les query plus uniformes
@@ -368,6 +368,16 @@ def search():
     #       https://youtube.com/watch?v=[VideoID], alors ça ajoute directement cette vidéo.
     #       Et si je met !yt [Termes de Recherches] alors ça fait une recherche (avec la base
     #       qui serait YouTube).
+    #       ATTENTION :  si on fait ça, il faudrait faire gaffe àla forme de l'URL
+    #       Typiquement, les URL avec un timestamp pourraient poser un problème ?
+    #       Au moins dans la DB, il faudrait pouvoir faire gaffe à ça.
+    #       URL d'exemple :
+    #           Doit jouer une seule musique et pas la playlist :
+    #               https://www.youtube.com/watch?v=uHrLkddGjFk&list=RDuHrLkddGjFk&start_radio=1
+    #           Doit jouer la musique à partir de son timestamp ? Ou pas.
+    #               https://youtube/watch?v=EIP3HdFl-JM?t=135
+    #           Doit également fonctionner:
+    #               https://youtu.be/EIP3HdFl-JM?t=138
     #       Ça permettrait notamment de rajouter de manière pas trop compliquée les musiques custom
     #       i.e. on met l'url d'un fichier .mp3 ou mp4 ou un truc du genre
     #       ça reconnait automatiquement et ça le joue. Avec un point bonus si on arrive à
