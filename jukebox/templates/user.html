@@ -8,16 +8,16 @@
 		</h1>
 	</div>
 	<div class="statistics">
-		<div class="col statcol" style="float:none;margin:auto;">
+		<div class="col-xl-6 statcol">
 			<div class="statdisplay">
 				<h3 style="text-align:center">All time</h3>
 				{{ table_tracks_count_all|safe }}
 			</div>
 		</div>
-		<div class="col statcol" style="float:none;margin:auto;">
+		<div class="col-xl-6 statcol">
 			<div class="statdisplay">
-				<h3 style="text-align:center">Last seven days</h3>
-				{{ table_tracks_count_week|safe }}
+				<h3 style="text-align:center">Last month</h3>
+				{{ table_tracks_count_month|safe }}
 			</div>
 		</div>
 	</div>

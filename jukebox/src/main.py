@@ -239,9 +239,9 @@ def user_stats(username: str):
                            user_name=username,
                            table_tracks_count_all=create_html_tracks(
                                app.config["DATABASE_PATH"], nbr=20, user=username),
-                           table_tracks_count_week=create_html_tracks(
-                               app.config["DATABASE_PATH"], nbr=10,
-                               date=datetime.datetime.now() - datetime.timedelta(weeks=1),
+                           table_tracks_count_month=create_html_tracks(
+                               app.config["DATABASE_PATH"], nbr=20,
+                               date=datetime.datetime.now() - datetime.timedelta(days=30),
                                user=username),
                            stylesheet=get_style(), navlinks=get_nav_links()
                            )
