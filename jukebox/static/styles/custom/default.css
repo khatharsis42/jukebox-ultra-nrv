@@ -144,3 +144,6 @@ iframe#YT {
     background-image: url("resources/icons/angle-double-up.svg");
     height: 30px;
 }
+.icon.btn-volume {
+    background-image: url("resources/icons/volume.svg");
+}
