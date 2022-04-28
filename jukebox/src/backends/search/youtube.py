@@ -1,4 +1,6 @@
 import re, requests
+from typing import List
+
 from flask import current_app as app
 from flask import session
 import youtube_dl
@@ -65,20 +67,37 @@ def search(query):
     return results
 
 
-def search_engine(query, use_youtube_dl=False, search_multiple=True):
+def search_multiples(query, use_youtube_dl=False):
     if use_youtube_dl or "YOUTUBE_KEY" not in app.config or app.config["YOUTUBE_KEY"] is None:
-        if search_multiple:
-            return search_fallback(query)
-        else:
-            return search_ytdl_unique(query)
+        return search_fallback(query)
     return search(query)
+
+
+def search_engine(query):
+    id_and_other_shit: List[str]
+    if "youtu.be" in query:
+        video_id = "v=" + query.split("/")[-1].split("?")[0]
+        id_and_other_shit = [video_id] + query.split("/")[-1].split("?")[1].split("&")
+    else:
+        id_and_other_shit = query.split("?")[-1].split("&")
+    query = "https://youtube.com/watch?" + id_and_other_shit[0]
+    # for x in id_and_other_shit[1:]:
+    #     if x[:2] == "t=":
+    #         query += "&" + x
+    # TODO: En décommentant ce code, on aurait la possibilité de mettre des timestamps dans les musiques
+    #       Le problème, c'est que ça risque de poser des problèmes dans la BDD
+    #       Notamment parce qu'on risquerait de mettre des musiques avec timestamp dans la BDD
+    #       Et donc on risquerait de recommander une musique avec un timestamp
+    #       ce qui serait plutôt drôle x) Mais assez frustrant aussi...
+    return search_ytdl_unique(query)
 
 
 def search_ytdl_unique(query):
     ydl_opts = {
         'skip_download': True,
         'ignoreerrors': True,
-        'cachedir': False
+        'cachedir': False,
+        'noplaylist': True
     }
 
     results = []

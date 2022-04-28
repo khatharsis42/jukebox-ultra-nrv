@@ -15,8 +15,7 @@ from jukebox.src.User import User
 from jukebox.src.util import *
 from jukebox.src.Track import Track
 from jukebox.src.statistics import create_html_users, create_html_tracks, create_history_tracks
-from jukebox.src.backends.search import bandcamp, generic, jamendo, soundcloud, twitch, youtube
-# import * ne fonctionne pas, wtf, une histoire de cache d'après Boisdal ?
+import jukebox.src.backends.search as search_backends
 
 main = Blueprint('main', __name__)
 
@@ -336,6 +335,17 @@ def refresh_track():
     return "ok"
 
 
+url_regexes = {
+            "youtube": re.compile('^(https?://)?(www.)?(youtube.com|youtu.be)'),
+            "jamendo": re.compile('^(https?://)?(www.)?jamendo.com'),
+            "twitch": re.compile('^(http://|https://)?(www\.)?twitch.tv'),
+            "soundcloud": re.compile('^(http://|https://)?(www.)?soundcloud.com'),
+            "bandcamp": re.compile('^(http://|https://)?\S*\.bandcamp.com')
+        }
+search_regexes = {
+    "soundcloud": re.compile('(\!sc\s)|(.*\s\!sc\s)|(.*\s\!sc$)'),
+    "youtube": re.compile('(\!yt\s)|(.*\s\!yt\s)|(.*\s\!yt$)')
+}
 @main.route("/search", methods=['POST'])
 @requires_auth
 def search():
@@ -355,20 +365,13 @@ def search():
     # (if bandcamp loaded)
     # similar for soundcloud
     # else we search only on youtube (in the future, maybe soundcloud too
-    regex_bandcamp = re.compile('^(http://|https://)?\S*\.bandcamp.com')
-    regex_soundcloud = re.compile('^(http://|https://)?(www.)?soundcloud.com')
-    regex_twitch = re.compile('^(http://|https://)?(www\.)?twitch.tv')
-    regex_jamendo = re.compile('^(https?://)?(www.)?jamendo.com')
-    regex_search_soundcloud = re.compile('(\!sc\s)|(.*\s\!sc\s)|(.*\s\!sc$)')
-    regex_search_youtube = re.compile('(\!yt\s)|(.*\s\!yt\s)|(.*\s\!yt$)')
-    regex_generic = re.compile(
-        '(\!url\s)|(.*\s\!url\s)|(.*\s\!url$)|(\!g\s)|(.*\s\!g\s)|(.*\s\!g$)')
+    regex_url = re.compile("(http://|https://)")
     # TODO: Pour être vraiment bien, il faudrait différencier le fait de mettre une URL
     #       et le fait de faire une recherche. Par exemple, si je met une URL sous la forme
     #       https://youtube.com/watch?v=[VideoID], alors ça ajoute directement cette vidéo.
     #       Et si je met !yt [Termes de Recherches] alors ça fait une recherche (avec la base
     #       qui serait YouTube).
-    #       ATTENTION :  si on fait ça, il faudrait faire gaffe àla forme de l'URL
+    #       ATTENTION :  si on fait ça, il faudrait faire gaffe à la forme de l'URL
     #       Typiquement, les URL avec un timestamp pourraient poser un problème ?
     #       Au moins dans la DB, il faudrait pouvoir faire gaffe à ça.
     #       URL d'exemple :
@@ -382,76 +385,33 @@ def search():
     #       i.e. on met l'url d'un fichier .mp3 ou mp4 ou un truc du genre
     #       ça reconnait automatiquement et ça le joue. Avec un point bonus si on arrive à
     #       diffuser la vidéo sur la page en plus de ça.
-
-    # print("Query : \"" + query + "\"")
-    # print("Regex match :", re.match(regex_generic, query))
-    # print('jukebox.src.backends.search.jamendo' in sys.modules)
-    # Bandcamp
-    if re.match(regex_bandcamp, query) is not None \
-            and 'jukebox.src.backends.search.bandcamp' in sys.modules:
-        app.logger.info("Using Bancamp")
-        for bandcamp in app.search_backends:
-            if bandcamp.__name__ == 'jukebox.src.backends.search.bandcamp':
-                break
-        results += bandcamp.search_engine(query)
-    # Soundcloud
-    elif re.match(regex_soundcloud, query) is not None \
-            and 'jukebox.src.backends.search.soundcloud' in sys.modules:
-        app.logger.info("Using Soundcloud")
-        for soundcloud in app.search_backends:
-            if soundcloud.__name__ == 'jukebox.src.backends.search.soundcloud':
-                break
-        results += soundcloud.search_engine(query)
-    elif re.match(regex_jamendo, query) is not None \
-            and 'jukebox.src.backends.search.jamendo' in sys.modules:
-        app.logger.info("Using Jamendo")
-        for jamendo in app.search_backends:
-            if jamendo.__name__ == 'jukebox.src.backends.search.jamendo':
-                break
-        results += jamendo.search_engine(query)
-    # Soundcloud search
-    elif re.match(regex_search_soundcloud, query) is not None \
-            and 'jukebox.src.backends.search.soundcloud' in sys.modules:
-        app.logger.info("Using Soundcloud search")
-        for soundcloud in app.search_backends:
-            if soundcloud.__name__ == 'jukebox.src.backends.search.soundcloud':
-                break
-        results += soundcloud.search_multiples(re.sub("\!sc", "", query))
-    # Twitch
-    elif re.match(regex_twitch, query) is not None \
-            and 'jukebox.src.backends.search.twitch' in sys.modules:
-        app.logger.info("Using Twitch")
-        for twitch in app.search_backends:
-            if twitch.__name__ == 'jukebox.src.backends.search.twitch':
-                break
-        results += twitch.search_engine(query)
-
-    # Youtube search (explicit)
-    elif re.match(regex_search_youtube, query) is not None \
-            and 'jukebox.src.backends.search.youtube' in sys.modules:
-        app.logger.info("Using YouTube search")
-        for youtube in app.search_backends:
-            if youtube.__name__ == 'jukebox.src.backends.search.youtube':
-                break
-        results += youtube.search_engine(re.sub("\!yt",
-                                                "", query), use_youtube_dl=True)
-
-    # Generic extractor
-    elif re.match(regex_generic, query) is not None \
-            and 'jukebox.src.backends.search.generic' in sys.modules:
-        app.logger.info("Using Generic search")
-        for generic in app.search_backends:
-            if generic.__name__ == 'jukebox.src.backends.search.generic':
-                break
-        results += generic.search_engine(re.sub("\!url", "", query))
-
-    elif 'jukebox.src.backends.search.youtube' in sys.modules:
-        app.logger.info("Using Generic youtube search")
-        for youtube in app.search_backends:
-            if youtube.__name__ == 'jukebox.src.backends.search.youtube':
-                break
-        results += youtube.search_engine(query)
+    used_search = False
+    if re.match(regex_url, query) is not None:
+        # Then we have an URL boys
+        for source, regex in url_regexes.items():
+            if re.match(regex, query) is not None and \
+                    f'jukebox.src.backends.search.{source}' in sys.modules:
+                app.logger.info(f"Importing music from url from {source}.")
+                # TODO: Faire une interface pour les search_engine
+                # TODO: Faire une interface pour les search_engine avec recherche multiple
+                music: dict = getattr(search_backends, source).search_engine(query)[0]
+                # TODO: On part du principe que l'URL est valide lol
+                track = playlist.check_track_in_database(music)
+                playlist.add_track(track.serialize())
+                used_search = True
+    # Search for multiples tracks
     else:
+        for source, regex in search_regexes.items():
+            if re.match(regex, query) is not None and \
+                    f'jukebox.src.backends.search.{source}' in sys.modules:
+                app.logger.info(f"Using {source} search")
+                results += getattr(search_backends, source).search_multiples(query[4:])
+                used_search = True
+    if not used_search and 'jukebox.src.backends.search.youtube' in sys.modules:
+        app.logger.info("Using Generic youtube search")
+        results += search_backends.youtube.search_multiples(query)
+        used_search = True
+    if not used_search:
         app.logger.error("Error: no search module found")
 
     if len(app.search_cache) >= app.cache_size:
@@ -467,6 +427,7 @@ def search():
     #       L'avantage de faire ça, c'est qu'on pourrait avoir les premiers résultats
     #       d'une recherche très rapidement. Le désavantage, c'est que j'ai du mal à voir
     #       comment implémenter ça sans faire de multithreading ? Je ne sais pas trop.
+    #       ---> C'est possiblement faisable avec le cache en fait, je suis con moi.
     #       J'ai pas forcément envie de faire ça, je vais peut être le laisser à mon successeur.
     return jsonify(results)
 

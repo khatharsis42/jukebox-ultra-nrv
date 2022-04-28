@@ -44,39 +44,46 @@ def add(ident: int = None):
     else:
         track_dict = request.form.to_dict()
     app.logger.info("Adding track %s", track_dict["url"])
-    with app.database_lock:
-        if not Track.does_track_exist(app.config["DATABASE_PATH"], track_dict["url"]):
-            Track.insert_track(app.config["DATABASE_PATH"], track_dict)
-        else:
-            # we refresh the track in database
-            Track.refresh_by_url(app.config["DATABASE_PATH"], track_dict["url"])
-        track = Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
-        if track is not None and not track.obsolete and not track.blacklisted:
-            track.user = session['user']
-            app.logger.info(track)
-        else:
-            if ident is not None:
-                return redirect(f"/statistics/track/{ident}")
-            return "nok"
-    add_track(track)
+    track = check_track_in_database(track_dict)
+    if track is not None and not track.obsolete and not track.blacklisted:
+        app.logger.info(track)
+    else:
+        if ident is not None:
+            return redirect(f"/statistics/track/{ident}")
+        return "nok"
+    add_track(track.serialize())
     set_to_update()
     if ident is not None:
         return redirect(f"/statistics/track/{ident}")
     return "ok"
 
 
-def add_track(track: Track):
+def add_track(track: dict):
     """Fonction subalterne permettant d'ajouter une track.
 
-    :param track: Une musique représentée par un objet :class: `Track`.
+    :param track: Une musique représentée par un dictionnaire (ie :class: `Track` sérialisée).
     """
     with app.playlist_lock:
-        track: dict = track.serialize()
-        # track["user"] = session["user"]
+        track["user"] = session["user"]
         app.playlist.append(track)
         if len(app.playlist) == 1:
             threading.Thread(target=app.player_worker).start()
 
+
+def check_track_in_database(track_dict: dict) -> Track:
+    """
+    Cherche si la track est dans la BDD. Sinon, l'insère dans la BDD.
+
+    :param track_dict: Un dictionnaire représentant une track.
+    :returns: Une :class: `Track` correspondant à la musique, importée depuis la BDD.
+    """
+    with app.database_lock:
+        if not Track.does_track_exist(app.config["DATABASE_PATH"], track_dict["url"]):
+            Track.insert_track(app.config["DATABASE_PATH"], track_dict)
+        else:
+            # we refresh the track in database
+            Track.refresh_by_url(app.config["DATABASE_PATH"], track_dict["url"])
+        return Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
 
 @playlist.route("/remove", methods=['POST'])
 @requires_auth
