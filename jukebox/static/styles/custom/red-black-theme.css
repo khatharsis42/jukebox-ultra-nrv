@@ -224,8 +224,11 @@ a:hover
     cursor: pointer;
     margin: 6px;
     display: block;
+    -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
+    -webkit-mask-size:20px;
     mask-size: 20px;
+    -webkit-mask-position: center;
     mask-position: center;
 }
 .icon.btn-back {
