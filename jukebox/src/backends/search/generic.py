@@ -1,76 +1,32 @@
-import re, requests
-from flask import current_app as app
-from flask import session
-
-import youtube_dl
-import json
-from urllib.parse import unquote
+from typing import List
 
 
-def search_engine(query, use_youtube_dl=True):
-    results = []
-    query = query.strip(" ")
-    print(query[:6])
-    if query[:6] == "ftp://":
-        query = unquote(query)
-    #print(query)
-    #print("---")
-
-    # We use youtube-dl to get the song metadata
-    # only problem : it's a bit slow (about 3 seconds)
+class Search_engine:
     ydl_opts = {
-            #'writeinfojson': True,
-            'skip_download': True, # we do want only a json file
-            #'outtmpl': "tmp_music", # the json is tmp_music.info.json
-            'ignoreerrors': True,
-            'cachedir': False
-            }
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        metadata = ydl.extract_info(query, False)
+        'skip_download': True,
+    }
+    # You can find the list of all opts here
+    # https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L128-L278
+    @classmethod
+    def url_search(cls, query: str) -> List[dict]:
+        """Takes in a url, returns the result. For certain search engines, the list may be
+        longer than 1 because it was a playlist URL.
 
-    if "entries" in metadata:
-        for res in metadata["entries"]:
-            thumbnail = None
-            if "thumbnail" in res:
-                thumbnail = res["thumbnail"]
-            artist = None
-            if "artist" in res:
-                artist = res["artist"]
-            duration = None
-            if "duration" in res:
-                duration = res["duration"]
+        :param query: The query. Better if is an url, else it might not mork as intented.
+        :returns: List of tracks as dict. The list may be of length 1 if it's a direct URL, or 0 if the URL is invalid.
+        """
+        raise Exception("Method not yet implemented")
+        return [{}]
+    has_multiple_search = False
+    @classmethod
+    def multiple_search(cls, query: str, use_youtube_dl: bool = True) -> List[dict]:
+        """
+        Takes in a query (aka keywords), returns the result of the search.
 
-            results.append({
-                "source": "generic",
-                "title": res["title"],
-                "artist": None,
-                "url": res["url"],
-                "albumart_url": thumbnail,
-                "duration": duration,
-                "id": metadata["id"]
-                })
-    else:
-        thumbnail = None
-        if "thumbnail" in metadata:
-            thumbnail = metadata["thumbnail"]
-        artist = None
-        if "artist" in metadata:
-            artist = metadata["artist"]
-        duration = None
-        if "duration" in metadata:
-            duration = metadata["duration"]
-        url = query
-        if "url" in metadata:
-            url = metadata["url"]
-
-        results.append({
-            "source": "generic",
-            "title": metadata["title"],
-            "artist": None,
-            "url": url,
-            "albumart_url": thumbnail,
-            "duration": duration,
-            "id": metadata["id"]
-            })
-
-    return results
+        :param query: The query.
+        :param use_youtube_dl: Boolean indicating if the search should be conducted using youtube-dl.
+        Almost always true.
+        :returns: List of tracks found as dict.
+        """
+        raise Exception("Method not yet implemented")
+        return [{}]

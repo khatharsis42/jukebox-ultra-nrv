@@ -3,7 +3,10 @@ import sqlite3
 import sys
 
 import requests
+from youtube_dl import DownloadError
 
+from jukebox.src.backends.search.generic import Search_engine
+import jukebox.src.backends.search as search_backends
 from jukebox.src.util import *
 
 
@@ -228,13 +231,10 @@ class Track:
         # check if source is loaded
         if 'jukebox.src.backends.search.' + track.source not in sys.modules:
             return track
-        for search in app.search_backends:
-            if search.__name__ == 'jukebox.src.backends.search.' + track.source:
-                break
         if track.source == "youtube":
             try:
-                track_dict = search.search_engine(url)[0]
-            except Exception as e:  # We mark the track as obsolete
+                track_dict = search_backends.youtube.Search_engine.url_search(url)[0]
+            except DownloadError as e:  # We mark the track as obsolete
                 app.logger.warning(f"DownloadError : {e}")
                 # if True or e.args[0] == "ERROR: This video is unavailable.":
                 if "403" not in e.args[0]:
@@ -248,9 +248,10 @@ class Track:
                 return None
         else:
             try:
-                track_dict = search.search_engine(url)[0]
-            except Exception as e:
-                app.logger.warning("This track couldn't be refreshed, so we're marking it as obsolete")
+                Engine: Search_engine = getattr(search_backends, track.source).Search_engine
+                track_dict = Engine.url_search(url)[0]
+            except DownloadError as e:
+                app.logger.warning("This track couldn't be refreshed, so we're marking it as obsolete.")
                 Track.set_obsolete_value(track, database, True)
                 return None
 

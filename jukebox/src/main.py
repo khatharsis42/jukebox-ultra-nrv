@@ -15,6 +15,7 @@ from jukebox.src.User import User
 from jukebox.src.util import *
 from jukebox.src.Track import Track
 from jukebox.src.statistics import create_html_users, create_html_tracks, create_history_tracks
+from jukebox.src.backends.search.generic import Search_engine
 import jukebox.src.backends.search as search_backends
 
 main = Blueprint('main', __name__)
@@ -392,24 +393,31 @@ def search():
             if re.match(regex, query) is not None and \
                     f'jukebox.src.backends.search.{source}' in sys.modules:
                 app.logger.info(f"Importing music from url from {source}.")
-                # TODO: Faire une interface pour les search_engine
-                # TODO: Faire une interface pour les search_engine avec recherche multiple
-                music: dict = getattr(search_backends, source).search_engine(query)[0]
+                Engine: Search_engine = getattr(search_backends, source).Search_engine
+                music = Engine.url_search(query)
+                # C'est peut être un peu convolué, mais ça devrait marcher.
+                if len(music) > 1:
+                    # Alors on avait une playlist, et là on a toutes les musiques de la playlist
+                    results += music
+                elif len(music) == 1:
+                    track = playlist.check_track_in_database(music[0])
+                    playlist.add_track(track.serialize())
+                else:
+                    app.logger.warning("Warning : URL might be invalid.")
                 # TODO: On part du principe que l'URL est valide lol
-                track = playlist.check_track_in_database(music)
-                playlist.add_track(track.serialize())
                 used_search = True
-    # Search for multiples tracks
+    # Search for multiples tracks (i.e. no URL)
     else:
         for source, regex in search_regexes.items():
             if re.match(regex, query) is not None and \
                     f'jukebox.src.backends.search.{source}' in sys.modules:
                 app.logger.info(f"Using {source} search")
-                results += getattr(search_backends, source).search_multiples(query[4:])
+                Engine: Search_engine = getattr(search_backends, source).Search_engine
+                results += Engine.multiple_search(query[4:])
                 used_search = True
     if not used_search and 'jukebox.src.backends.search.youtube' in sys.modules:
         app.logger.info("Using Generic youtube search")
-        results += search_backends.youtube.search_multiples(query)
+        results += search_backends.youtube.Search_engine.multiple_search(query)
         used_search = True
     if not used_search:
         app.logger.error("Error: no search module found")
