@@ -9,11 +9,6 @@ from jukebox.src.backends.search.generic import Search_engine
 import jukebox.src.backends.search as search_backends
 from jukebox.src.util import *
 
-from jukebox.src.backends.search import bandcamp, direct_file, generic, jamendo, soundcloud, twitch, youtube
-
-
-# Do not remove, this is what makes the direct-file thingy work, idk why
-
 
 class Track:
     """

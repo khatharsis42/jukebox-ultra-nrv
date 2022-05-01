@@ -5,6 +5,13 @@ if __name__ == "__main__":
     # cleanup leftovers
     if os.path.exists("mpv.socket"):
         os.remove("mpv.socket")
+    temp_download_path = app.config["TEMP_DOWNLOAD_PATH"]
+    if os.path.isfile(temp_download_path):
+        os.remove(temp_download_path)
+    if not os.path.exists(temp_download_path):
+        os.makedirs(temp_download_path)
+    for file in os.listdir(temp_download_path):
+        os.remove(temp_download_path + file)
     # create database if it doesn't exists
     if not os.path.exists(app.config["DATABASE_PATH"]):
         app.logger.info("Database nonexistent, creating schema")

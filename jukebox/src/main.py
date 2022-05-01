@@ -18,10 +18,6 @@ from jukebox.src.statistics import create_html_users, create_html_tracks, create
 from jukebox.src.backends.search.generic import Search_engine
 import jukebox.src.backends.search as search_backends
 
-from jukebox.src.backends.search import bandcamp, direct_file, generic, jamendo, soundcloud, twitch, youtube
-
-# Do not remove, this is what makes the direct-file thingy work, idk why
-
 
 main = Blueprint('main', __name__)
 
@@ -347,7 +343,7 @@ url_regexes = {
     "twitch": re.compile('^(http://|https://)?(www\.)?twitch.tv'),
     "soundcloud": re.compile('^(http://|https://)?(www.)?soundcloud.com'),
     "bandcamp": re.compile('^(http://|https://)?\S*\.bandcamp.com'),
-    "direct_file": re.compile('((http|https)://)?.*\.(mp3|mp4|ogg|flac|wav)')
+    "direct_file": re.compile('((http|https)://)?.*\.(mp3|mp4|ogg|flac|wav|webm)')
 }
 search_regexes = {
     "soundcloud": re.compile('(\!sc\s)|(.*\s\!sc\s)|(.*\s\!sc$)'),

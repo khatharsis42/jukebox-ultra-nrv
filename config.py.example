@@ -10,6 +10,8 @@ AMIXER_CHANNEL="Master"
 SECRET_KEY=""
 # Path to your sqlite database. Will be created on first run
 DATABASE_PATH = "jukebox.sqlite3"
+# Path to where your tracks will be temporary donwloaded, if needed
+TEMP_DOWNLOAD_PATH = "jukebox/src/backends/temp_downloads/"
 # Your YouTube API Key. Needed for YouTube searches
 YOUTUBE_KEY=""
 # Enabled search backends
