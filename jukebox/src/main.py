@@ -18,10 +18,6 @@ from jukebox.src.statistics import create_html_users, create_html_tracks, create
 from jukebox.src.backends.search.generic import Search_engine
 import jukebox.src.backends.search as search_backends
 
-from jukebox.src.backends.search import bandcamp, direct_file, generic, jamendo, soundcloud, twitch, youtube
-
-# Do not remove, this is what makes the direct-file thingy work, idk why
-
 
 main = Blueprint('main', __name__)
 
