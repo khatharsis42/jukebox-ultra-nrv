@@ -18,6 +18,11 @@ from jukebox.src.statistics import create_html_users, create_html_tracks, create
 from jukebox.src.backends.search.generic import Search_engine
 import jukebox.src.backends.search as search_backends
 
+from jukebox.src.backends.search import bandcamp, direct_file, generic, jamendo, soundcloud, twitch, youtube
+
+# Do not remove, this is what makes the direct-file thingy work, idk why
+
+
 main = Blueprint('main', __name__)
 
 
@@ -337,16 +342,20 @@ def refresh_track():
 
 
 url_regexes = {
-            "youtube": re.compile('^(https?://)?(www.)?(youtube.com|youtu.be)'),
-            "jamendo": re.compile('^(https?://)?(www.)?jamendo.com'),
-            "twitch": re.compile('^(http://|https://)?(www\.)?twitch.tv'),
-            "soundcloud": re.compile('^(http://|https://)?(www.)?soundcloud.com'),
-            "bandcamp": re.compile('^(http://|https://)?\S*\.bandcamp.com')
-        }
+    "youtube": re.compile('^(https?://)?(www.)?(youtube.com|youtu.be)'),
+    "jamendo": re.compile('^(https?://)?(www.)?jamendo.com'),
+    "twitch": re.compile('^(http://|https://)?(www\.)?twitch.tv'),
+    "soundcloud": re.compile('^(http://|https://)?(www.)?soundcloud.com'),
+    "bandcamp": re.compile('^(http://|https://)?\S*\.bandcamp.com'),
+    "direct_file": re.compile('((http|https)://)?.*\.(mp3|mp4|ogg|flac|wav)')
+}
 search_regexes = {
     "soundcloud": re.compile('(\!sc\s)|(.*\s\!sc\s)|(.*\s\!sc$)'),
     "youtube": re.compile('(\!yt\s)|(.*\s\!yt\s)|(.*\s\!yt$)')
 }
+regex_url = re.compile("(http://|https://)")
+
+
 @main.route("/search", methods=['POST'])
 @requires_auth
 def search():
@@ -361,32 +370,8 @@ def search():
     if query in app.search_cache:
         app.logger.info(f"Using the cache for request '{query}'")
         return jsonify(app.search_cache[query])
-    # if query is http or https or nothing xxxxxxx.bandcamp.com/
-    # then results += apps.search_backends.bandcamp(query)
-    # (if bandcamp loaded)
-    # similar for soundcloud
-    # else we search only on youtube (in the future, maybe soundcloud too
-    regex_url = re.compile("(http://|https://)")
-    # TODO: Pour être vraiment bien, il faudrait différencier le fait de mettre une URL
-    #       et le fait de faire une recherche. Par exemple, si je met une URL sous la forme
-    #       https://youtube.com/watch?v=[VideoID], alors ça ajoute directement cette vidéo.
-    #       Et si je met !yt [Termes de Recherches] alors ça fait une recherche (avec la base
-    #       qui serait YouTube).
-    #       ATTENTION :  si on fait ça, il faudrait faire gaffe à la forme de l'URL
-    #       Typiquement, les URL avec un timestamp pourraient poser un problème ?
-    #       Au moins dans la DB, il faudrait pouvoir faire gaffe à ça.
-    #       URL d'exemple :
-    #           Doit jouer une seule musique et pas la playlist :
-    #               https://www.youtube.com/watch?v=uHrLkddGjFk&list=RDuHrLkddGjFk&start_radio=1
-    #           Doit jouer la musique à partir de son timestamp ? Ou pas.
-    #               https://youtube/watch?v=EIP3HdFl-JM?t=135
-    #           Doit également fonctionner:
-    #               https://youtu.be/EIP3HdFl-JM?t=138
-    #       Ça permettrait notamment de rajouter de manière pas trop compliquée les musiques custom
-    #       i.e. on met l'url d'un fichier .mp3 ou mp4 ou un truc du genre
-    #       ça reconnait automatiquement et ça le joue. Avec un point bonus si on arrive à
-    #       diffuser la vidéo sur la page en plus de ça.
     used_search = False
+    posted_music = False  # Need for the caching
     if re.match(regex_url, query) is not None:
         # Then we have an URL boys
         for source, regex in url_regexes.items():
@@ -402,9 +387,9 @@ def search():
                 elif len(music) == 1:
                     track = playlist.check_track_in_database(music[0])
                     playlist.add_track(track.serialize())
+                    posted_music = True
                 else:
                     app.logger.warning("Warning : URL might be invalid.")
-                # TODO: On part du principe que l'URL est valide lol
                 used_search = True
     # Search for multiples tracks (i.e. no URL)
     else:
@@ -414,6 +399,10 @@ def search():
                 app.logger.info(f"Using {source} search")
                 Engine: Search_engine = getattr(search_backends, source).Search_engine
                 results += Engine.multiple_search(query[4:])
+                # TODO: les [4:] force les tag de recherche à faire exactement 3 caractères.
+                #       Dans l'actuel on n'a que !sc et !yt mais on pourrait penser à de nouveaux tags
+                #       Il faudrait donc penser à ça, d'autant plus qu'il me semble que les tags peuvent
+                #       être autre part qu'au tout début...
                 used_search = True
     if not used_search and 'jukebox.src.backends.search.youtube' in sys.modules:
         app.logger.info("Using Generic youtube search")
@@ -422,9 +411,10 @@ def search():
     if not used_search:
         app.logger.error("Error: no search module found")
 
-    if len(app.search_cache) >= app.cache_size:
-        app.search_cache.pop(random.choice(list(app.search_cache.keys())))
-    app.search_cache[query] = results
+    if not posted_music:
+        if len(app.search_cache) >= app.cache_size:
+            app.search_cache.pop(random.choice(list(app.search_cache.keys())))
+        app.search_cache[query] = results
     # TODO: On m'a proposé de faire en sorte qu'on puisse rajouter des résultats
     #       Par exemple, si on n'a pas satisfait des 5 premiers résultats, de cliquer
     #       sur un bouton "Voir plus" et on optiendrait alors les 5 résultats suivants.

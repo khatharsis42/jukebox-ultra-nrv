@@ -30,13 +30,6 @@ def add(ident: int = None):
 
     :param ident: Optionel, utilisé ssi n'est pas None (valeur par défaut). L'ID de la musique dans la BDD.
     """
-    # TODO: séparer la fonction d'ajout depuis une page de stats et l'ajout normal ?
-    #       Je sais pas si c'est vraiment utile, mais bon
-
-    # TODO: Faire le schéma d'appel de cette fonction, et le simplifier si possible.
-    #       Je suis plus ou moins sûr qu'il y a des appels circulaires dans cette fonction,
-    #       Notamment par rapport aux refreshs dans la database, ou de youtube-dl.
-    #       Simplifier ça permettrait notamment d'économiser des requêtes de l'API YouTube.
     track_dict: dict
     if ident is not None:
         track_dict = Track.import_from_id(app.config["DATABASE_PATH"], ident).serialize()
@@ -84,6 +77,7 @@ def check_track_in_database(track_dict: dict) -> Track:
             # we refresh the track in database
             Track.refresh_by_url(app.config["DATABASE_PATH"], track_dict["url"])
         return Track.import_from_url(app.config["DATABASE_PATH"], track_dict["url"])
+
 
 @playlist.route("/remove", methods=['POST'])
 @requires_auth
