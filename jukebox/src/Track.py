@@ -287,7 +287,7 @@ class Track:
         Vérifie simplement si l'`albumart_url` est existant est ne renvoie pas une erreur 404.
         """
         # TODO: Cette méthode fonctionne pour les vidéos YouTubes, mais pas pour certaines autre sources, il me semble.
-        return self.albumart_url is None or requests.get(self.albumart_url).status_code == 404
+        return self.source != "youtube" and (self.albumart_url is None or requests.get(self.albumart_url).status_code == 404)
 
     def set_obsolete_value(self, database: str, obsolete: bool = True):
         """
