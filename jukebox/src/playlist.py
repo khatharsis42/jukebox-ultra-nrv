@@ -139,9 +139,8 @@ def suggest():
                 result.append(track.serialize())
                 nbr += 1
             else:
-                app.logger.info("Was going to put an obsolete track in the recommendation")
-                app.logger.info(f"Marking track [id = {track.ident}, url = {track.url}] as obsolete")
-                track.set_obsolete_value(app.config["DATABASE_PATH"], 1)
+                app.logger.warning("Was going to put an obsolete track in the recommendation")
+                track.set_obsolete_value(app.config["DATABASE_PATH"], True)
     return jsonify(result)
 
 

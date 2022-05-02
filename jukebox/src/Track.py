@@ -224,7 +224,7 @@ class Track:
         :param url: URL de la musique.
         :returns: La track actualisée si possible.
         """
-        # app.logger.info(url)
+        # app.logger.info(url)bon la deadline va être déplacé au 27 mai
         track = cls.import_from_url(database, url)
         if track is None:
             return None
@@ -234,17 +234,14 @@ class Track:
         if track.source == "youtube":
             try:
                 track_dict = search_backends.youtube.Search_engine.url_search(url)[0]
-            except DownloadError as e:  # We mark the track as obsolete
+            except DownloadError as e:
                 app.logger.warning(f"DownloadError : {e}")
-                # if True or e.args[0] == "ERROR: This video is unavailable.":
                 if "403" not in e.args[0]:
-                    # Je part du principe que s'il y a une DownloadError,
-                    # C'est que la track est obsolete
-                    # A PRIORI CELA N'EST PAS UN PROBLÈME POUR LES RANDOMS ERREURS 403
-                    # PUISQUE CES ERREURS N'ARRIVENT QUE LORSQU'UNE TRACK JOUE
-                    track.obsolete = True
-                    app.logger.info(f"Marking track [id = {track.ident}, url = {track.url}] as obsolete")
-                    track.set_obsolete_value(database, track.obsolete)
+                    # Je part du principe que s'il y a une DownloadError, c'est que la track est obsolete
+                    # Il faut cependant pas que cette erreur soit une 403 pour les vidéos YouTube
+                    # Parce que cette erreur ne veux en fait rien dire (elle peut arriver de manière random)
+                    app.logger.warning("This track couldn't be refreshed, so we're marking it as obsolete.")
+                    track.set_obsolete_value(database, True)
                 return None
         else:
             try:
@@ -299,6 +296,7 @@ class Track:
         :param database: Path vers la base de donnée. Généralement app.config["DATABASE_PATH"].
         :param obsolete: True si on veut marquer la track comme obsolete, False sinon.
         """
+        app.logger.info(f"Marking track [id = {self.ident}, url = {self.url}] as {'' if obsolete else 'non-'}obsolete")
         self.obsolete = obsolete
         conn = sqlite3.connect(database)
         c = conn.cursor()
