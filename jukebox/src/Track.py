@@ -224,7 +224,7 @@ class Track:
         :param url: URL de la musique.
         :returns: La track actualisée si possible.
         """
-        # app.logger.info(url)bon la deadline va être déplacé au 27 mai
+        # Check if we even have it
         track = cls.import_from_url(database, url)
         if track is None:
             return None
@@ -251,11 +251,6 @@ class Track:
                 app.logger.warning("This track couldn't be refreshed, so we're marking it as obsolete.")
                 Track.set_obsolete_value(track, database, True)
                 return None
-
-        # app.logger.info("Track dict : ", track_dict)
-        # TODO: Pas sûr d'avoir besoin de créer un objet Track içi.
-        track = Track(None, url, track_dict["title"], track_dict["artist"], track_dict["source"],
-                      track_dict["albumart_url"], album=track_dict["album"], duration=track_dict["duration"])
         conn = sqlite3.connect(database)
         c = conn.cursor()
         c.execute("""
@@ -269,17 +264,16 @@ class Track:
                 obsolete = ? \
             WHERE url = ?;
             """,
-                  (track.track,
-                   track.artist,
-                   track.albumart_url,
-                   track.album,
-                   track.duration,
+                  (track_dict["title"],
+                   track_dict["artist"],
+                   track_dict["albumart_url"],
+                   track_dict["album"],
+                   track_dict["duration"],
                    0,
                    url)
                   )
         conn.commit()
-        track = cls.import_from_url(database, url)
-        return track
+        return cls.import_from_url(database, url)
 
     def check_obsolete(self):
         """
@@ -287,7 +281,7 @@ class Track:
         Vérifie simplement si l'`albumart_url` est existant est ne renvoie pas une erreur 404.
         """
         # TODO: Cette méthode fonctionne pour les vidéos YouTubes, mais pas pour certaines autre sources, il me semble.
-        return self.source != "youtube" and (self.albumart_url is None or requests.get(self.albumart_url).status_code == 404)
+        return (self.albumart_url is None or requests.get(self.albumart_url).status_code == 404) if self.source != "youtube" else False
 
     def set_obsolete_value(self, database: str, obsolete: bool = True):
         """
@@ -320,7 +314,6 @@ class Track:
         c.execute("SELECT id FROM users WHERE user = ?;",
                   (user,))
         r = c.fetchall()
-        # print(r)
         user_id = r[0][0]
         c.execute("INSERT INTO log(trackid,userid) VALUES (?,?)",
                   (self.ident, user_id))
