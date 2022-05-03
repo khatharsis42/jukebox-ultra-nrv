@@ -367,16 +367,19 @@ def search():
         app.logger.info(f"Using the cache for request '{query}'")
         return jsonify(app.search_cache[query])
     used_search = False
-    posted_music = False  # Need for the caching
+    # Utilisé pour voir si on a utilisé la recherche, pour prévenir d'une erreur
+    posted_music = False
+    # Utilisé pour le système de cache, puisque certains musiques sont
+    # mises directement dans la file d'attente.
     if re.match(regex_url, query) is not None:
-        # Then we have an URL boys
+        # Si ça ressemble à une URL
         for source, regex in url_regexes.items():
             if re.match(regex, query) is not None and \
                     f'jukebox.src.backends.search.{source}' in sys.modules:
                 app.logger.info(f"Importing music from url from {source}.")
                 Engine: Search_engine = getattr(search_backends, source).Search_engine
                 music = Engine.url_search(query)
-                # C'est peut être un peu convolué, mais ça devrait marcher.
+                # Ici, on peut avoir plusieurs musiques, ou une seule, ou rien du tout
                 if len(music) > 1:
                     # Alors on avait une playlist, et là on a toutes les musiques de la playlist
                     results += music
@@ -387,7 +390,8 @@ def search():
                 else:
                     app.logger.warning("Warning : URL might be invalid.")
                 used_search = True
-    # Search for multiples tracks (i.e. no URL)
+    # Sinon, ça ressemble pas à une URL, donc ça ressemble peut être à un tag de recherche
+    # i.e les !yt [] ou bien !sc [] (deux seuls tags existants pour le moment)
     else:
         for source, regex in search_regexes.items():
             if re.match(regex, query) is not None and \
