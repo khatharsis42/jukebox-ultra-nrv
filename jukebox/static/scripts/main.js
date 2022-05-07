@@ -190,7 +190,7 @@ const isMobile = mobileCheck();
  * @param mpv_time : float : timestamp of mpv
  */
 function syncVideo(mpv_time) {
-    if (mpv_time === 0) {
+    if (mpv_time <= 0.01) {
         yt.pauseVideo();
     } else {
         let ytTime = yt.getCurrentTime();
@@ -325,6 +325,21 @@ let delay = (function(){
 })();
 
 /**
+ * This is so that you can shift add tracks
+ */
+var shiftKeyDown = false;
+document.addEventListener("keyup", function(event) {
+    if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
+        shiftKeyDown = false;
+    }
+});
+document.addEventListener("keydown", function(event) {
+    if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
+        shiftKeyDown = true;
+    }
+});
+
+/**
  * When pressing enter in the search bar, make a search.
  */
 $('#query').keyup(function(e) {
@@ -350,7 +365,9 @@ $('#query').keyup(function(e) {
                 $('#search_results').append(generate_track_html_suggest(track));
                 $('#search_results li:last .btn-add').click(function() {
                     $('#query').val("");
-                    $('#search_results').hide();
+                    if (!shiftKeyDown) {
+                        $('#search_results').hide();
+                    }
                 });
             }
             $("#search_results").show()
