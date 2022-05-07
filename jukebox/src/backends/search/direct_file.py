@@ -1,5 +1,6 @@
 from typing import List
-from flask import session, app
+from flask import session
+from flask import current_app as app
 from tinytag import TinyTag
 import requests
 import os
