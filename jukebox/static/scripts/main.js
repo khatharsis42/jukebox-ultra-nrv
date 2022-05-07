@@ -101,7 +101,7 @@ function generate_track_html_queue(t) {
 track_template = `
 <li class="list-group-item track" id="{randomid}">
     <div class="row recto">
-        <div class="col-4 centered" style="padding:inherit;">
+        <div class="col-4 centered">
             <img class="albumart" src="{albumart_url}">
         </div>
         <div class="col-7 track-info centered">
@@ -110,7 +110,7 @@ track_template = `
             <span class="track-duration">{duration} s.</span>
             <span class="track-user float-right">Added by {user}</span>
         </div>
-        <div class="col-1" style="padding:inherit;">
+        <div class="col-1 centered">
             <button class="icon btn-more" alt="More"></button>
             <button class="icon btn-add" alt="Play"></button>
             <button class="icon btn-top" alt="Top"></button>
@@ -120,13 +120,13 @@ track_template = `
         </div>
      </div>
      <div class="row verso">
-        <div class="col">
+        <div class="col-11">
             <span class="track-title">{title}</span>
             <span class="track-url"><a href="{url}">Link to media</a></span>
             <span class="track-album">Album : {album}</span>
             <span class="track-source">From {source}</span>
         </div>
-        <div class="col-0" style="padding:inherit;">
+        <div class="col-1">
             <button class="icon btn-back" alt="Back"></button>
             <button class="icon btn-refresh" alt="Refresh"></button>
             <a href="/statistics/track/{id}">
