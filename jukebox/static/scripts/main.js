@@ -110,7 +110,7 @@ track_template = `
             <span class="track-duration">{duration} s.</span>
             <span class="track-user float-right">Added by {user}</span>
         </div>
-        <div class="col-1 centered">
+        <div class="col-1">
             <button class="icon btn-more" alt="More"></button>
             <button class="icon btn-add" alt="Play"></button>
             <button class="icon btn-top" alt="Top"></button>
