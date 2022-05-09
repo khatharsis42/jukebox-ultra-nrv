@@ -6,4 +6,5 @@ passlib
 pyalsaaudio >= 0.8
 flask-table
 isodate
+tinytag
 requests >= 2.27
