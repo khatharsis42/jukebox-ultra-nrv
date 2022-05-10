@@ -116,6 +116,14 @@ iframe#YT {
     display: block;
 }
 
+.recto, .verso {
+    flex-wrap: nowrap;
+}
+
+.col-1 {
+    padding:0;
+}
+
 .icon.btn-back {
     background-image: url("resources/icons/arrow-alt-circle-left-solid.svg");
 }
