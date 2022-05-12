@@ -47,8 +47,7 @@ class Search_engine(Search_engine):
 
     @classmethod
     def multiple_search(cls, query: str, search_playlist=False, use_youtube_dl: bool = False) -> List[dict]:
-        if use_youtube_dl or "YOUTUBE_KEY" not in app.config or app.config["YOUTUBE_KEY"] is None:
-            # TODO: Once the youtube API key works again, remove the search_playlist
+        if use_youtube_dl or "YOUTUBE_KEYS" not in app.config or not app.config["YOUTUBE_KEYS"]:
             return cls.__search_fallback(query, search_playlist=search_playlist)
         return cls.__search(query, search_playlist=search_playlist)
 
@@ -104,75 +103,70 @@ class Search_engine(Search_engine):
     def __search(cls, query, search_playlist=False):
         app.logger.info("Using YoutubeAPI like a chad")
         results = []
-        m = re.search("youtube.com/watch\?v=([\w\d\-_]+)", query)
-        if m:
-            youtube_ids = [m.groups()[0]]
-        m = re.search("youtu.be/(\w+)", query)
-        if m:
-            youtube_ids = [m.groups()[0]]
-        # if youtube_ids:
-        # app.logger.info("Youtube video pasted by %s: %s", session["user"], youtube_ids[0])
-        # else:
-        # app.logger.info("Youtube search by %s : %s", session["user"], query)
-        r: requests.models.Response
-        if search_playlist:
-            params = {
-                "playlistId": query.split("list=")[-1].split("&")[0],
-                "key": app.config["YOUTUBE_KEY"],
-                "part": "snippet",
-                "maxResults": 50
-            }
-            r = requests.get(
-                "https://www.googleapis.com/youtube/v3/playlistItems",
-                params=params
-            )
-        else:
-            params = {
-                "part": "snippet",
-                "key": app.config["YOUTUBE_KEY"],
-                "type": "video",
-                "maxResults": 5,
-                "q": query
-            }
-            r = requests.get(
-                "https://www.googleapis.com/youtube/v3/search",
-                params=params
-            )
-        if r.status_code != 200:
-            if r.status_code != 403:
-                raise Exception(r.text, r.reason)
+        for key in app.config["YOUTUBE_KEYS"]:
+            r: requests.models.Response
+            if search_playlist:
+                params = {
+                    "playlistId": query.split("list=")[-1].split("&")[0],
+                    "key": key,
+                    "part": "snippet",
+                    "maxResults": 50
+                }
+                r = requests.get(
+                    "https://www.googleapis.com/youtube/v3/playlistItems",
+                    params=params
+                )
             else:
-                return cls.__search_fallback(query, search_playlist=search_playlist)
-        data = r.json()
-        if len(data["items"]) == 0:  # Si le serveur n'a rien trouvé
-            app.logger.warning("Nothing found on youtube for query {}".format(query))
-        youtube_ids : List[str]
-        if not search_playlist:
-            youtube_ids = [i["id"]["videoId"] for i in data["items"]]
-        else:
-            youtube_ids = [i["snippet"]["resourceId"]["videoId"] for i in data["items"]]
-        r = requests.get(
-            "https://www.googleapis.com/youtube/v3/videos",
-            params={
-                "part": "snippet,contentDetails",
-                "key": app.config["YOUTUBE_KEY"],
-                "id": ",".join(youtube_ids)
-            })
-        data = r.json()
-        for i in data["items"]:
-            album = None
-            # app.logger.info(i)
-            results.append({
-                "source": "youtube",
-                "title": i["snippet"]["title"],
-                "artist": i["snippet"]["channelTitle"],
-                "url": "http://www.youtube.com/watch?v=" + i["id"],
-                "albumart_url": i["snippet"]["thumbnails"]["medium"]["url"],
-                "duration": cls.__parse_iso8601(i["contentDetails"]["duration"]),
-                "id": i["id"],
-                "album": album,
-            })
-        return results
+                params = {
+                    "part": "snippet",
+                    "key": key,
+                    "type": "video",
+                    "maxResults": 5,
+                    "q": query
+                }
+                r = requests.get(
+                    "https://www.googleapis.com/youtube/v3/search",
+                    params=params
+                )
+            if r.status_code != 200:
+                if r.status_code != 403:
+                    raise Exception(r.text, r.reason)
+                else:
+                    # On essaye la clef suivante
+                    continue
+            data = r.json()
+            if len(data["items"]) == 0:  # Si le serveur n'a rien trouvé
+                app.logger.warning("Nothing found on youtube for query {}".format(query))
+            youtube_ids: List[str]
+            if not search_playlist:
+                youtube_ids = [i["id"]["videoId"] for i in data["items"]]
+            else:
+                youtube_ids = [i["snippet"]["resourceId"]["videoId"] for i in data["items"]]
+            r = requests.get(
+                "https://www.googleapis.com/youtube/v3/videos",
+                params={
+                    "part": "snippet,contentDetails",
+                    "key": key,
+                    "id": ",".join(youtube_ids)
+                })
+            data = r.json()
+            for i in data["items"]:
+                album = None
+                # app.logger.info(i)
+                results.append({
+                    "source": "youtube",
+                    "title": i["snippet"]["title"],
+                    "artist": i["snippet"]["channelTitle"],
+                    "url": "http://www.youtube.com/watch?v=" + i["id"],
+                    "albumart_url": i["snippet"]["thumbnails"]["medium"]["url"],
+                    "duration": cls.__parse_iso8601(i["contentDetails"]["duration"]),
+                    "id": i["id"],
+                    "album": album,
+                })
+            return results
+        # Si on arrive ici c'est qu'on a pas réussi à obtenir quoi que ce soit avec
+        # Les clefs, donc on fait le fallback
+        return cls.__search_fallback(query, search_playlist=search_playlist)
 
 
 @classmethod
