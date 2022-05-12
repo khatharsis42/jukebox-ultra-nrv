@@ -47,8 +47,8 @@ class Search_engine(Search_engine):
 
     @classmethod
     def multiple_search(cls, query: str, search_playlist=False, use_youtube_dl: bool = False) -> List[dict]:
-        if use_youtube_dl or search_playlist or "YOUTUBE_KEY" not in app.config or app.config["YOUTUBE_KEY"] is None:
-            #TODO: Once the youtube API key works again, remove the search_playlist
+        if use_youtube_dl or "YOUTUBE_KEY" not in app.config or app.config["YOUTUBE_KEY"] is None:
+            # TODO: Once the youtube API key works again, remove the search_playlist
             return cls.__search_fallback(query, search_playlist=search_playlist)
         return cls.__search(query, search_playlist=search_playlist)
 
@@ -102,7 +102,7 @@ class Search_engine(Search_engine):
     @classmethod
     @lru_cache()
     def __search(cls, query, search_playlist=False):
-        print("Using YoutubeAPI like a chad")
+        app.logger.info("Using YoutubeAPI like a chad")
         results = []
         m = re.search("youtube.com/watch\?v=([\w\d\-_]+)", query)
         if m:
@@ -114,107 +114,113 @@ class Search_engine(Search_engine):
         # app.logger.info("Youtube video pasted by %s: %s", session["user"], youtube_ids[0])
         # else:
         # app.logger.info("Youtube search by %s : %s", session["user"], query)
-        params = {
-            "part": "snippet",
-            "key": app.config["YOUTUBE_KEY"],
-            "type": "video"}
-        params = {
-            "maxResults": 5,
-            "q": query,
-        }
         # TODO: Continuer de bosser sur ça
+        r: requests.models.Response
         if search_playlist:
-            params["maxResults"] = 50
-            params["playlistId"] = query.split("list=")[-1].split("&")[0]
-        else:
-            params["maxResults"] = 5
-            params["q"] = query
-        r = requests.get(
-            "https://www.googleapis.com/youtube/v3/search",
-            params=params
+            params = {
+                "playlistId": query.split("list=")[-1].split("&")[0],
+                "key": app.config["YOUTUBE_KEY"],
+                "part": "snippet",
+                "maxResults": 50
+            }
+            r = requests.get(
+                "https://www.googleapis.com/youtube/v3/playlistItems",
+                params=params
             )
-        print(r.content)
+        else:
+            params = {
+                "part": "snippet",
+                "key": app.config["YOUTUBE_KEY"],
+                "type": "video",
+                "maxResults": 5,
+                "q": query
+            }
+            r = requests.get(
+                "https://www.googleapis.com/youtube/v3/search",
+                params=params
+            )
         if r.status_code != 200:
             if r.status_code != 403:
                 raise Exception(r.text, r.reason)
             else:
                 return cls.__search_fallback(query, search_playlist=search_playlist)
         data = r.json()
-        print(data.keys())
         if len(data["items"]) == 0:  # Si le serveur n'a rien trouvé
             app.logger.warning("Nothing found on youtube for query {}".format(query))
+        youtube_ids : List[str]
         if not search_playlist:
             youtube_ids = [i["id"]["videoId"] for i in data["items"]]
-            r = requests.get(
-                "https://www.googleapis.com/youtube/v3/videos",
-                params={
-                    "part": "snippet,contentDetails",
-                    "key": app.config["YOUTUBE_KEY"],
-                    "id": ",".join(youtube_ids)
-                })
-            data = r.json()
-            for i in data["items"]:
-                album = None
-                # app.logger.info(i)
-                results.append({
-                    "source": "youtube",
-                    "title": i["snippet"]["title"],
-                    "artist": i["snippet"]["channelTitle"],
-                    "url": "http://www.youtube.com/watch?v=" + i["id"],
-                    "albumart_url": i["snippet"]["thumbnails"]["medium"]["url"],
-                    "duration": cls.__parse_iso8601(i["contentDetails"]["duration"]),
-                    "id": i["id"],
-                    "album": album,
-                })
         else:
-            print(data["items"][0])
+            youtube_ids = [i["snippet"]["resourceId"]["videoId"] for i in data["items"]]
+        r = requests.get(
+            "https://www.googleapis.com/youtube/v3/videos",
+            params={
+                "part": "snippet,contentDetails",
+                "key": app.config["YOUTUBE_KEY"],
+                "id": ",".join(youtube_ids)
+            })
+        data = r.json()
+        for i in data["items"]:
+            album = None
+            # app.logger.info(i)
+            results.append({
+                "source": "youtube",
+                "title": i["snippet"]["title"],
+                "artist": i["snippet"]["channelTitle"],
+                "url": "http://www.youtube.com/watch?v=" + i["id"],
+                "albumart_url": i["snippet"]["thumbnails"]["medium"]["url"],
+                "duration": cls.__parse_iso8601(i["contentDetails"]["duration"]),
+                "id": i["id"],
+                "album": album,
+            })
         return results
 
-    @classmethod
-    @lru_cache()
-    def __search_fallback(cls, query, search_playlist=False):
-        print("Using youtube-dl like a virgin")
-        results = []
-        if search_playlist:
-            ydl_opts = cls.ydl_opts.copy()
-            ydl_opts.pop("noplaylist")
-            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                metadatas = ydl.extract_info(query, False)
-        else:
-            with youtube_dl.YoutubeDL(cls.ydl_opts) as ydl:
-                metadatas = ydl.extract_info("ytsearch5:" + query, False)
 
-        for metadata in metadatas["entries"]:
-            if metadata is not None:
-                """
-                app.logger.info("Title: {}".format(metadata["title"]))
-                app.logger.info("Track: {}".format(metadata["track"]))
-                app.logger.info("Alt Title: {}".format(metadata["alt_title"]))
-                app.logger.info("Album: {}".format(metadata["album"]))
-                app.logger.info("Artist: {}".format(metadata["artist"]))
-                app.logger.info("Uploader: {}".format(metadata["uploader"]))
-                """
+@classmethod
+@lru_cache()
+def __search_fallback(cls, query, search_playlist=False):
+    app.logger.info("Using youtube-dl like a virgin")
+    results = []
+    if search_playlist:
+        ydl_opts = cls.ydl_opts.copy()
+        ydl_opts.pop("noplaylist")
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            metadatas = ydl.extract_info(query, False)
+    else:
+        with youtube_dl.YoutubeDL(cls.ydl_opts) as ydl:
+            metadatas = ydl.extract_info("ytsearch5:" + query, False)
 
-                title = metadata["title"]
-                if title is None and metadata["track"] is not None:
-                    title = metadata["track"]
-                artist = None
-                if "artist" in metadata:
-                    artist = metadata["artist"]
-                if artist is None and "uploader" in metadata:
-                    artist = metadata["uploader"]
-                album = None
-                if "album" in metadata:
-                    album = metadata["album"]
+    for metadata in metadatas["entries"]:
+        if metadata is not None:
+            """
+            app.logger.info("Title: {}".format(metadata["title"]))
+            app.logger.info("Track: {}".format(metadata["track"]))
+            app.logger.info("Alt Title: {}".format(metadata["alt_title"]))
+            app.logger.info("Album: {}".format(metadata["album"]))
+            app.logger.info("Artist: {}".format(metadata["artist"]))
+            app.logger.info("Uploader: {}".format(metadata["uploader"]))
+            """
 
-                results.append({
-                    "source": "youtube",
-                    "title": title,
-                    "artist": artist,
-                    "album": album,
-                    "url": metadata["webpage_url"],
-                    "albumart_url": metadata["thumbnail"],
-                    "duration": metadata["duration"],
-                    "id": metadata["id"]
-                })
-        return results
+            title = metadata["title"]
+            if title is None and metadata["track"] is not None:
+                title = metadata["track"]
+            artist = None
+            if "artist" in metadata:
+                artist = metadata["artist"]
+            if artist is None and "uploader" in metadata:
+                artist = metadata["uploader"]
+            album = None
+            if "album" in metadata:
+                album = metadata["album"]
+
+            results.append({
+                "source": "youtube",
+                "title": title,
+                "artist": artist,
+                "album": album,
+                "url": metadata["webpage_url"],
+                "albumart_url": metadata["thumbnail"],
+                "duration": metadata["duration"],
+                "id": metadata["id"]
+            })
+    return results
