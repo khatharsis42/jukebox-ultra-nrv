@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import List
 
 
@@ -16,6 +17,7 @@ class Search_engine:
     # You can find the list of all opts here
     # https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L128-L278
     @classmethod
+    @lru_cache()
     def url_search(cls, query: str) -> List[dict]:
         """Takes in a url, returns the result. For certain search engines, the list may be
         longer than 1 because it was a playlist URL.
@@ -29,6 +31,7 @@ class Search_engine:
     has_multiple_search = False
 
     @classmethod
+    @lru_cache()
     def multiple_search(cls, query: str, use_youtube_dl: bool = True) -> List[dict]:
         """
         Takes in a query (aka keywords), returns the result of the search.

@@ -1,10 +1,11 @@
 from typing import List
-
+from functools import lru_cache
 import youtube_dl
 from jukebox.src.backends.search.generic import Search_engine
 
 class Search_engine(Search_engine):
     @classmethod
+    @lru_cache()
     def url_search(cls, query: str) -> List[dict]:
         results = []
         with youtube_dl.YoutubeDL(cls.ydl_opts) as ydl:
@@ -37,6 +38,7 @@ class Search_engine(Search_engine):
 
     has_multiple_search = True
     @classmethod
+    @lru_cache()
     def multiple_search(cls, query: str, use_youtube_dl: bool = True) -> List[dict]:
         results = []
 

@@ -49,8 +49,6 @@ class Jukebox(Flask):
         self.search_backends = []
         for i in self.config["SEARCH_BACKENDS"]:
             self.search_backends.append(importlib.import_module("jukebox.src.backends.search." + i))
-        self.search_cache: dict = {}
-        self.cache_size = 500
 
     def player_worker(self):
         """

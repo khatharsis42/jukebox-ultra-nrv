@@ -6,10 +6,12 @@ import requests
 import os
 from tinytag.tinytag import TinyTagException
 from jukebox.src.backends.search.generic import Search_engine
+from functools import lru_cache
 
 
 class Search_engine(Search_engine):
     @classmethod
+    @lru_cache()
     def url_search(cls, query: str) -> List[dict]:
         # On est obligé de télécharger la musique pour pouvoir obtenir ses métadonnées
         # En réalité, vu que c'est une requête, c'est relativement rapide

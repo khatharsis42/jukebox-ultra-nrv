@@ -363,14 +363,11 @@ def search():
     query = request.form["q"].strip()
     # On veut enlever les trailing whitespace qui resteraient, pour rendre les query plus uniformes
     results = []
-    if query in app.search_cache:
-        app.logger.info(f"Using the cache for request '{query}'")
-        return jsonify(app.search_cache[query])
+    # if query in app.search_cache:
+    #     app.logger.info(f"Using the cache for request '{query}'")
+    #     return jsonify(app.search_cache[query])
     used_search = False
     # Utilisé pour voir si on a utilisé la recherche, pour prévenir d'une erreur
-    posted_music = False
-    # Utilisé pour le système de cache, puisque certains musiques sont
-    # mises directement dans la file d'attente.
     if re.match(regex_url, query) is not None:
         # Si ça ressemble à une URL
         for source, regex in url_regexes.items():
@@ -386,7 +383,6 @@ def search():
                 elif len(music) == 1:
                     track = playlist.check_track_in_database(music[0])
                     playlist.add_track(track.serialize())
-                    posted_music = True
                 else:
                     app.logger.warning("Warning : URL might be invalid.")
                 used_search = True
@@ -411,10 +407,6 @@ def search():
     if not used_search:
         app.logger.error("Error: no search module found")
 
-    if not posted_music:
-        if len(app.search_cache) >= app.cache_size:
-            app.search_cache.pop(random.choice(list(app.search_cache.keys())))
-        app.search_cache[query] = results
     # TODO: On m'a proposé de faire en sorte qu'on puisse rajouter des résultats
     #       Par exemple, si on n'a pas satisfait des 5 premiers résultats, de cliquer
     #       sur un bouton "Voir plus" et on optiendrait alors les 5 résultats suivants.
@@ -425,8 +417,6 @@ def search():
     #       L'avantage de faire ça, c'est qu'on pourrait avoir les premiers résultats
     #       d'une recherche très rapidement. Le désavantage, c'est que j'ai du mal à voir
     #       comment implémenter ça sans faire de multithreading ? Je ne sais pas trop.
-    #       ---> C'est possiblement faisable avec le cache en fait, je suis con moi.
-    #       J'ai pas forcément envie de faire ça, je vais peut être le laisser à mon successeur.
     return jsonify(results)
 
 
