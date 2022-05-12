@@ -24,7 +24,7 @@ SEARCH_BACKENDS = [
   "jamendo",
   "generic",
   "twitch",
-  "direct_files"
+  "direct_file"
 ]
 # Name of the app
 JK_NAME="Jukebox Ultra NRV MkV"
