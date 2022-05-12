@@ -114,7 +114,6 @@ class Search_engine(Search_engine):
         # app.logger.info("Youtube video pasted by %s: %s", session["user"], youtube_ids[0])
         # else:
         # app.logger.info("Youtube search by %s : %s", session["user"], query)
-        # TODO: Continuer de bosser sur ça
         r: requests.models.Response
         if search_playlist:
             params = {
