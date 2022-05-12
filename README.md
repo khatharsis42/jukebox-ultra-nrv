@@ -5,12 +5,11 @@ This application assumes it runs on Linux using Alsa.
 
 `python3, python-flask, python-requests,  mpv, youtube-dl, alsa-utils,
 python3-pip` and `libmpv-dev` have to be installed.
-Also from pip, get `pyalsaaudio`, `youtube_dl`, `passlib`, `flask-WTF` and `flask-table`.
 
 ## Installation
 
  - Clone the repo
- - Copy config.py.example to config.py and edit it 😎 (gitignore will make sure it is not gitted, cause you have a youtube api key in this)
+ - Copy example_config.py.example to config.py and edit it 😎 (gitignore will make sure it is not gitted, cause you have a youtube api key in this)
  - To add a favicon, place it in the `jukebox/static` folder
  - Install requirements using `pip install -r requirements.txt`
  
@@ -18,7 +17,7 @@ Also from pip, get `pyalsaaudio`, `youtube_dl`, `passlib`, `flask-WTF` and `flas
  $ git clone https://github.com/matthias4217/jukebox-ultra-nrv.git
  $ cd jukebox-ultra-nrv
  $ pip install -r requirements.txt
- $ cp config.py.example config.py
+ $ cp example_config.py config.py
  $ <edit config.py>
  $ <optionally add a favicon.ico>
  $ python3 run.py
