@@ -383,6 +383,8 @@ def search():
                 elif len(music) == 1:
                     track = playlist.check_track_in_database(music[0])
                     playlist.add_track(track.serialize())
+                    # Pour le JS, indique qu'on a bien ajouté la musique.
+                    return jsonify("ok")
                 else:
                     app.logger.warning("Warning : URL might be invalid.")
                 used_search = True

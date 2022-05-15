@@ -358,6 +358,11 @@ $('#query').keyup(function(e) {
         console.log("searching "+$('#query').val());
         $.post("/search", {"q": query}, function(data) {
             $("#search_results").html("");
+            if (data==="ok") {
+                $('#query').val("");
+                $('#search_results').hide();
+                return;
+            }
             for (let i=0; i<data.length; i++) {
                 let track = data[i];
                 console.log("Track :");
