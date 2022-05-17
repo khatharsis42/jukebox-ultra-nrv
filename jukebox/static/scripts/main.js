@@ -184,6 +184,29 @@ function mobileCheck() {
 };
 const isMobile = mobileCheck();
 
+if (isMobile) {
+    var isChromium = window.chrome;
+    var winNav = window.navigator;
+    var vendorName = winNav.vendor;
+    var isOpera = typeof window.opr !== "undefined";
+    var isIEedge = winNav.userAgent.indexOf("Edg") > -1;
+    var isIOSChrome = winNav.userAgent.match("CriOS");
+
+    if (isIOSChrome) {
+       alert("The jukebox is currently bugged on Chromium-based browsers. Please use a better browser, such as Firefox.")
+    } else if(
+      isChromium !== null &&
+      typeof isChromium !== "undefined" &&
+      vendorName === "Google Inc." &&
+      isOpera === false &&
+      isIEedge === false
+    ) {
+       alert("The jukebox is currently bugged on Chromium-based browsers. Please use a better browser, such as Firefox.")
+    } else {
+       // not Google Chrome
+    }
+}
+
 /**
  * Synchronizes the video from Youtube iframe with the sound from mpv.
  *
