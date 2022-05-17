@@ -104,7 +104,7 @@ a:active {
     border-radius: 25px;
 }
 
-input[type="text"] {
+input[type="search"] {
     text-align: left;
     direction: ltr;
     border-radius: 0;

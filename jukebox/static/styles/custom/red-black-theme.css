@@ -15,7 +15,7 @@ body
     background: #101010;
 }
 
-input[type="text"]{
+input[type="search"]{
     text-align: left;
     direction: ltr;
     border-radius: 0;
@@ -24,7 +24,7 @@ input[type="text"]{
     background: #101010;
 }
 
-input[type="text"]:focus{
+input[type="search"]:focus{
     background: #202020;
     border-color: darkred;
     box-shadow: 0 0 0 .2rem darkred;
