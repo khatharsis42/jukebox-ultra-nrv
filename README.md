@@ -9,7 +9,7 @@ Here's what you should have installed on your computer:
  - `alsa-utils`, grab it with the usual `sudo apt install alsa-utils`.
  - `libmpv-dev`, same thing, `sudo apt install libmpv-dev`.
 
-## Youtube-dl
+### Youtube-dl
 
 This application uses `yt-dlp` to grab some information about youtube videos, and `youtube-dl` to stream videos with mpv (this is the default behavior).
 
@@ -95,3 +95,5 @@ For the logs, please use `app.logger.info`, `app.logger.warning` or `app.logger.
 
 This project uses Fontawesome icons, which underare Creative Commons Attribution 4.0
 International license. The complete license can be found [here](https://fontawesome.com/license).
+
+It also uses the [Sponsorblock MPV Script](https://github.com/po5/mpv_sponsorblock), albeit somewhat modified, so that it works as intented.
