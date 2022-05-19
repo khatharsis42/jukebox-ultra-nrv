@@ -3,8 +3,19 @@
 
 This application assumes it runs on Linux using Alsa.
 
-`python3, python-flask, python-requests,  mpv, youtube-dl, alsa-utils,
-python3-pip` and `libmpv-dev` have to be installed.
+Here's what you should have installed on your computer:
+ - `python3`, obviously. This jukebox has been tested with Python3.7, 3.8 and 3.10.
+ - pip requirements. Do do that, simply type `pip install -r requirements.txt`, and pip should do the rest. Note that you might have to use `pip3` insted of `pip`.
+ - `alsa-utils`, grab it with the usual `sudo apt install alsa-utils`.
+ - `libmpv-dev`, same thing, `sudo apt install libmpv-dev`.
+
+## Youtube-dl
+
+This application uses `yt-dlp` to grab some information about youtube videos, and `youtube-dl` to stream videos with mpv (this is the default behavior).
+
+You can also make it so that it uses `yt-dlp` when streaming videos with mpv.
+Bear in mind, YOU NEED LIBMPV-DEV >= 34.0 TO MAKE THIS WORK.
+To do so, simply add your path to the `yt-dlp` binary (which you can find with `which yt-dlp`) do the config file.
 
 ## Installation
 

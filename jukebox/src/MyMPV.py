@@ -14,22 +14,29 @@ def log_mpv(logger):
     :returns: A Logging function.
     """
 
-    def f(loglevel, component, message):
-        logger('[python-mpv] {}: {}'.format(component, message))
+    def f(loglevel, component: str, message: str):
+        logger('[python-mpv] {}: {}'.format(component, message.rstrip("\n")))
+        # Sinon il y a un \n en trop :shrug:
 
     return f
 
 
 class MyMPV(mpv.MPV):
-    def __init__(self, argv, log_handler=None, video=False):
-        super().__init__(
-            video=video,
-            log_handler=log_mpv(log_handler),
-            scripts=f'sponsorblock.lua',
-        )  # , start_event_thread=False)
+    def __init__(self, config, log_handler=None, video=False):
+        if "YOUTUBE_DL_PATH" in config and config["YOUTUBE_DL_PATH"] is not None and config["YOUTUBE_DL_PATH"] != "":
+            super().__init__(video=video,
+                             log_handler=log_mpv(log_handler),
+                             ytdl=True,
+                             scripts=f'sponsorblock.lua',
+                             script_opts=f'ytdl_hook-ytdl_path={config["YOUTUBE_DL_PATH"]}')
+        else:
+            super().__init__(video=video,
+                             log_handler=log_mpv(log_handler),
+                             scripts=f'sponsorblock.lua',)
 
         self.playlist_pos = 0
         self.ended = False
 
     def quit(self, code=0):
-        super().quit(code)
+        super().quit(code=code)
+        # Apparement avec code=None ça ne fonctionne pas.

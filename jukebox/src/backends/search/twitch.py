@@ -1,6 +1,6 @@
 from typing import List
 from flask import current_app as app
-import youtube_dl
+import yt_dlp as youtube_dl
 from jukebox.src.backends.search.generic import Search_engine
 from functools import lru_cache
 

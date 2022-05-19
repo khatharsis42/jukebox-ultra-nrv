@@ -88,7 +88,7 @@ class Jukebox(Flask):
             with app.mpv_lock:
                 if hasattr(self, 'mpv') and self.mpv:
                     del self.mpv
-                self.mpv = MyMPV(None, log_handler=app.logger.info)  # we start the track
+                self.mpv = MyMPV(app.config, log_handler=app.logger.info)  # we start the track
             with self.database_lock:
                 track = Track.import_from_url(app.config["DATABASE_PATH"], url)
                 if not is_repeating:

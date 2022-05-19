@@ -1,9 +1,10 @@
-Flask >= 1.0.2
-Flask-WTF >= 0.14.3
-python-mpv >= 0.4.0
+Flask >= 2.1
+Flask-WTF >= 1.0
+python-mpv >= 1.0
 youtube-dl >= 2021.04.17
+yt-dlp
 passlib
-pyalsaaudio >= 0.8
+pyalsaaudio >= 0.9
 flask-table
 isodate
 tinytag

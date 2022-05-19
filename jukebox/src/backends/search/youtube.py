@@ -3,7 +3,7 @@ from typing import List
 
 from flask import current_app as app
 from flask import session
-import youtube_dl
+import yt_dlp as youtube_dl
 import json
 import isodate
 from functools import lru_cache
@@ -28,8 +28,11 @@ class Search_engine(Search_engine):
         # On est obligé de modifier l'URL, parce que sinon youtube-dl et l'API font n'importe quoi
         id_and_other_shit: List[str]
         if "youtu.be" in query:
-            video_id = "v=" + query.split("/")[-1].split("?")[0]
-            id_and_other_shit = [video_id] + query.split("/")[-1].split("?")[1].split("&")
+            id_and_other_shit = ["v=" + query.split("/")[-1].split("?")[0]]
+            try:
+                id_and_other_shit += query.split("/")[-1].split("?")[1].split("&")
+            except IndexError:
+                pass
         else:
             id_and_other_shit = query.split("?")[-1].split("&")
         query = "https://youtube.com/watch?" + id_and_other_shit[0]
