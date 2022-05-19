@@ -22,7 +22,14 @@ def log_mpv(logger):
 
 class MyMPV(mpv.MPV):
     def __init__(self, argv, log_handler=None, video=False):
-        super().__init__(video=video, log_handler=log_mpv(log_handler))  # , start_event_thread=False)
+        super().__init__(
+            video=video,
+            log_handler=log_mpv(log_handler),
+            scripts=f'sponsorblock.lua',
+        )  # , start_event_thread=False)
 
         self.playlist_pos = 0
         self.ended = False
+
+    def quit(self, code=0):
+        super().quit(code)
