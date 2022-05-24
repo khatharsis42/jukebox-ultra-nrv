@@ -184,6 +184,7 @@ function mobileCheck() {
 };
 const isMobile = mobileCheck();
 
+/**
 if (isMobile) {
     var isChromium = window.chrome;
     var winNav = window.navigator;
@@ -206,6 +207,7 @@ if (isMobile) {
        // not Google Chrome
     }
 }
+*/
 
 /**
  * Synchronizes the video from Youtube iframe with the sound from mpv.
