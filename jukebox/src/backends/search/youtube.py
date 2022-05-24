@@ -171,52 +171,51 @@ class Search_engine(Search_engine):
         # Les clefs, donc on fait le fallback
         return cls.__search_fallback(query, search_playlist=search_playlist)
 
+    @classmethod
+    @lru_cache()
+    def __search_fallback(cls, query, search_playlist=False):
+        app.logger.info("Using youtube-dl like a virgin")
+        results = []
+        if search_playlist:
+            ydl_opts = cls.ydl_opts.copy()
+            ydl_opts.pop("noplaylist")
+            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                metadatas = ydl.extract_info(query, False)
+        else:
+            with youtube_dl.YoutubeDL(cls.ydl_opts) as ydl:
+                metadatas = ydl.extract_info("ytsearch5:" + query, False)
 
-@classmethod
-@lru_cache()
-def __search_fallback(cls, query, search_playlist=False):
-    app.logger.info("Using youtube-dl like a virgin")
-    results = []
-    if search_playlist:
-        ydl_opts = cls.ydl_opts.copy()
-        ydl_opts.pop("noplaylist")
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            metadatas = ydl.extract_info(query, False)
-    else:
-        with youtube_dl.YoutubeDL(cls.ydl_opts) as ydl:
-            metadatas = ydl.extract_info("ytsearch5:" + query, False)
+        for metadata in metadatas["entries"]:
+            if metadata is not None:
+                """
+                app.logger.info("Title: {}".format(metadata["title"]))
+                app.logger.info("Track: {}".format(metadata["track"]))
+                app.logger.info("Alt Title: {}".format(metadata["alt_title"]))
+                app.logger.info("Album: {}".format(metadata["album"]))
+                app.logger.info("Artist: {}".format(metadata["artist"]))
+                app.logger.info("Uploader: {}".format(metadata["uploader"]))
+                """
 
-    for metadata in metadatas["entries"]:
-        if metadata is not None:
-            """
-            app.logger.info("Title: {}".format(metadata["title"]))
-            app.logger.info("Track: {}".format(metadata["track"]))
-            app.logger.info("Alt Title: {}".format(metadata["alt_title"]))
-            app.logger.info("Album: {}".format(metadata["album"]))
-            app.logger.info("Artist: {}".format(metadata["artist"]))
-            app.logger.info("Uploader: {}".format(metadata["uploader"]))
-            """
+                title = metadata["title"]
+                if title is None and metadata["track"] is not None:
+                    title = metadata["track"]
+                artist = None
+                if "artist" in metadata:
+                    artist = metadata["artist"]
+                if artist is None and "uploader" in metadata:
+                    artist = metadata["uploader"]
+                album = None
+                if "album" in metadata:
+                    album = metadata["album"]
 
-            title = metadata["title"]
-            if title is None and metadata["track"] is not None:
-                title = metadata["track"]
-            artist = None
-            if "artist" in metadata:
-                artist = metadata["artist"]
-            if artist is None and "uploader" in metadata:
-                artist = metadata["uploader"]
-            album = None
-            if "album" in metadata:
-                album = metadata["album"]
-
-            results.append({
-                "source": "youtube",
-                "title": title,
-                "artist": artist,
-                "album": album,
-                "url": metadata["webpage_url"],
-                "albumart_url": metadata["thumbnail"],
-                "duration": metadata["duration"],
-                "id": metadata["id"]
-            })
-    return results
+                results.append({
+                    "source": "youtube",
+                    "title": title,
+                    "artist": artist,
+                    "album": album,
+                    "url": metadata["webpage_url"],
+                    "albumart_url": metadata["thumbnail"],
+                    "duration": metadata["duration"],
+                    "id": metadata["id"]
+                })
+        return results
