@@ -1,12 +1,12 @@
 from typing import List
-from functools import lru_cache
+from cachetools.func import ttl_cache
 import yt_dlp as youtube_dl
 from jukebox.src.backends.search.generic import Search_engine
 
 
 class Search_engine(Search_engine):
     @classmethod
-    @lru_cache()
+    @ttl_cache(ttl=3600 * 24)  # 24h
     def url_search(cls, query: str) -> List[dict]:
         with youtube_dl.YoutubeDL(cls.ydl_opts) as ydl:
             metadata = ydl.extract_info(query, False)

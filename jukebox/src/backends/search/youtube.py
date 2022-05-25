@@ -6,7 +6,7 @@ from flask import session
 import yt_dlp as youtube_dl
 import json
 import isodate
-from functools import lru_cache
+from cachetools.func import ttl_cache
 from jukebox.src.backends.search.generic import Search_engine
 
 
@@ -21,7 +21,7 @@ class Search_engine(Search_engine):
     }
 
     @classmethod
-    @lru_cache()
+    @ttl_cache(ttl=3600 * 24)  # 24h
     def url_search(cls, query: str, use_youtube_dl=True) -> List[dict]:
         if "list" in query:
             return cls.multiple_search(query, search_playlist=True)
@@ -60,7 +60,7 @@ class Search_engine(Search_engine):
         return isodate.parse_duration(x).total_seconds()
 
     @classmethod
-    @lru_cache()
+    @ttl_cache(ttl=3600 * 24)  # 24h
     def search_ytdl_unique(cls, query: str):
         results = []
         with youtube_dl.YoutubeDL(cls.ydl_opts) as ydl:
@@ -102,7 +102,7 @@ class Search_engine(Search_engine):
         return results
 
     @classmethod
-    @lru_cache()
+    @ttl_cache(ttl=3600 * 24)  # 24h
     def __search(cls, query, search_playlist=False):
         app.logger.info("Using YoutubeAPI like a chad")
         results = []
@@ -172,7 +172,7 @@ class Search_engine(Search_engine):
         return cls.__search_fallback(query, search_playlist=search_playlist)
 
     @classmethod
-    @lru_cache()
+    @ttl_cache(ttl=3600 * 24)  # 24h
     def __search_fallback(cls, query, search_playlist=False):
         app.logger.info("Using youtube-dl like a virgin")
         results = []

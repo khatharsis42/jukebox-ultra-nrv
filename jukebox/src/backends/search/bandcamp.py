@@ -3,12 +3,12 @@ from typing import List
 import yt_dlp as youtube_dl
 
 from jukebox.src.backends.search.generic import Search_engine
-from functools import lru_cache
+from cachetools.func import ttl_cache
 
 
 class Search_engine(Search_engine):
     @classmethod
-    @lru_cache()
+    @ttl_cache(ttl=3600 * 24)  # 24h
     def url_search(cls, query: str) -> List[dict]:
         """
         Search for a bandcamp url.

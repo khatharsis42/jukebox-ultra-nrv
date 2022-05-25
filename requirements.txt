@@ -8,4 +8,5 @@ pyalsaaudio >= 0.9
 flask-table
 isodate
 tinytag
+cachetools
 requests >= 2.27
