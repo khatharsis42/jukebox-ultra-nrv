@@ -3,6 +3,7 @@ import re
 import datetime
 import sys
 
+import apport
 import flask
 from flask import Blueprint, render_template, redirect, session, jsonify, request, flash
 from flask_wtf import FlaskForm
@@ -425,7 +426,8 @@ def search():
 @main.route('/pause_play', methods=['POST'])
 def pause():
     """Met la musique en pause, ou bien la relance."""
-    app.mpv.command('cycle', 'pause', None)
+    app.mpv.command('cycle', 'pause')
+    app.logger.info("Pausing or resuming, not sure which is which.")
     return "ok"
 
 
@@ -433,7 +435,8 @@ def pause():
 def rewind():
     """Remet la musique en arrière de 10 secondes."""
     app.currently_played["duration"] += 10
-    app.mpv.command('seek', - 10, 'relative', None)
+    app.mpv.command('seek', - 10, 'relative')
+    app.logger.info("Going backward in track by 10 seconds.")
     return "ok"
 
 
@@ -441,7 +444,8 @@ def rewind():
 def advance():
     """Avance la musique de 10 secondes."""
     app.currently_played["duration"] -= 10
-    app.mpv.command('seek', + 10, 'relative', None)
+    app.mpv.command('seek', + 10, 'relative')
+    app.logger.info("Advancing track by 10 seconds.")
     return "ok"
 
 
@@ -449,6 +453,7 @@ def advance():
 def jump():
     """Avance la musique jusqu'au timestamp fourni dans la requête."""
     timestamp = request.form["jump"]
+    app.logger.info(f"Jumping track to {timestamp}")
     if timestamp.count(':') == 0:
         time = int(timestamp)
     elif timestamp.count(':') == 1:
@@ -463,5 +468,5 @@ def jump():
     # The "duration" field of the currently played song has to be changed,
     # or else there will be trouble when the skip verification happens
     # (in __init__.py, function player_worker)
-    app.mpv.command('seek', time, 'absolute', None)
+    app.mpv.command('seek', time, 'absolute')
     return "ok"
