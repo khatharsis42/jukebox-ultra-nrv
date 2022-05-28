@@ -2,8 +2,6 @@ import random
 import re
 import datetime
 import sys
-
-import apport
 import flask
 from flask import Blueprint, render_template, redirect, session, jsonify, request, flash
 from flask_wtf import FlaskForm
