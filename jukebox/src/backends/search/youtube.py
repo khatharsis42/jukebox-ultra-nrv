@@ -1,10 +1,8 @@
-import re, requests
+import requests
 from typing import List
 
 from flask import current_app as app
-from flask import session
 import yt_dlp as youtube_dl
-import json
 import isodate
 from cachetools.func import ttl_cache
 from jukebox.src.backends.search.generic import Search_engine
@@ -60,45 +58,39 @@ class Search_engine(Search_engine):
         return isodate.parse_duration(x).total_seconds()
 
     @classmethod
+    def __ytdl_metadata_to_dict(cls, query: str, metadata: dict):
+        return_dict = {
+            "source": "youtube",
+        }
+        if "title" in metadata and metadata["title"] is not None:
+            return_dict["title"] = metadata["title"]
+        elif "track" in metadata and metadata["track"] is not None:
+            return_dict["title"] = metadata["track"]
+        if "artist" in metadata and metadata["artist"] is not None:
+            return_dict["artist"] = metadata["artist"]
+        elif "uploader" in metadata and metadata["uploader"] is not None:
+            return_dict["artist"] = metadata["uploader"]
+        if "album" in metadata:
+            return_dict["album"] = metadata["album"]
+        if "thumbnail" in metadata:
+            return_dict["albumart_url"] = metadata["thumbnail"]
+        if "duration" in metadata:
+            return_dict["duration"] = int(metadata["duration"])
+        else:
+            return_dict["duration"] = 0
+        if "id" in metadata:
+            return_dict["id"] = metadata["id"]
+            return_dict["url"] = "https://www.youtube.com/watch?v=" + metadata["id"]
+
+        return return_dict
+
+    @classmethod
     @ttl_cache(ttl=3600 * 24)  # 24h
     def search_ytdl_unique(cls, query: str):
         results = []
         with youtube_dl.YoutubeDL(cls.ydl_opts) as ydl:
             metadata = ydl.extract_info(query, False)
-
-        """
-        app.logger.info("Title: {}".format(metadata["title"]))
-        app.logger.info("Track: {}".format(metadata["track"]))
-        app.logger.info("Alt Title: {}".format(metadata["alt_title"]))
-        app.logger.info("Album: {}".format(metadata["album"]))
-        app.logger.info("Artist: {}".format(metadata["artist"]))
-        app.logger.info("Uploader: {}".format(metadata["uploader"]))
-        """
-
-        title = metadata["title"]
-        if title is None and metadata["track"] is not None:
-            title = metadata["track"]
-        artist = None
-        if "artist" in metadata:
-            artist = metadata["artist"]
-        if artist is None and "uploader" in metadata:
-            artist = metadata["uploader"]
-        album = None
-        if "album" in metadata:
-            album = metadata["album"]
-
-        results.append({
-            "source": "youtube",
-            "title": title,
-            "artist": artist,
-            "album": album,
-            "url": query,
-            "albumart_url": metadata["thumbnail"],
-            "duration": int(metadata["duration"]),
-            "id": metadata["id"]
-        })
-        # app.logger.info("Results : ")
-        # app.logger.info(results)
+        results.append(cls.__ytdl_metadata_to_dict(query, metadata))
         return results
 
     @classmethod
@@ -160,7 +152,7 @@ class Search_engine(Search_engine):
                     "source": "youtube",
                     "title": i["snippet"]["title"],
                     "artist": i["snippet"]["channelTitle"],
-                    "url": "http://www.youtube.com/watch?v=" + i["id"],
+                    "url": "https://www.youtube.com/watch?v=" + i["id"],
                     "albumart_url": i["snippet"]["thumbnails"]["medium"]["url"],
                     "duration": cls.__parse_iso8601(i["contentDetails"]["duration"]),
                     "id": i["id"],
@@ -187,35 +179,5 @@ class Search_engine(Search_engine):
 
         for metadata in metadatas["entries"]:
             if metadata is not None:
-                """
-                app.logger.info("Title: {}".format(metadata["title"]))
-                app.logger.info("Track: {}".format(metadata["track"]))
-                app.logger.info("Alt Title: {}".format(metadata["alt_title"]))
-                app.logger.info("Album: {}".format(metadata["album"]))
-                app.logger.info("Artist: {}".format(metadata["artist"]))
-                app.logger.info("Uploader: {}".format(metadata["uploader"]))
-                """
-
-                title = metadata["title"]
-                if title is None and metadata["track"] is not None:
-                    title = metadata["track"]
-                artist = None
-                if "artist" in metadata:
-                    artist = metadata["artist"]
-                if artist is None and "uploader" in metadata:
-                    artist = metadata["uploader"]
-                album = None
-                if "album" in metadata:
-                    album = metadata["album"]
-
-                results.append({
-                    "source": "youtube",
-                    "title": title,
-                    "artist": artist,
-                    "album": album,
-                    "url": metadata["webpage_url"],
-                    "albumart_url": metadata["thumbnail"],
-                    "duration": metadata["duration"],
-                    "id": metadata["id"]
-                })
+                results.append(cls.__ytdl_metadata_to_dict(query, metadata))
         return results
