@@ -15,7 +15,9 @@ def log_mpv(logger):
     """
 
     def f(loglevel, component: str, message: str):
-        logger('[python-mpv] {}: {}'.format(component, message.rstrip("\n")))
+        temp = "\n"
+        if message.strip():
+            logger(f"[python-mpv]({loglevel}) {component}: {message.rstrip(temp)}")
         # Sinon il y a un \n en trop :shrug:
 
     return f

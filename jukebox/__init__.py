@@ -88,7 +88,8 @@ class Jukebox(Flask):
             with app.mpv_lock:
                 if hasattr(self, 'mpv') and self.mpv:
                     del self.mpv
-                self.mpv = MyMPV(app.config, log_handler=app.logger.info)  # we start the track
+                self.mpv = MyMPV(app.config, log_handler=app.logger.info)
+                # we start the track
             with self.database_lock:
                 track = Track.import_from_url(app.config["DATABASE_PATH"], url)
                 if not is_repeating:
@@ -99,7 +100,7 @@ class Jukebox(Flask):
             # Sinon segfault
             # NB : un ancien maintainer a dit cela, mais on a encore des crashs du Core de MPV
             # d'où le try...except
-            # L'ancien maintainer avait proposé d'utililser les playlists mpv
+            # L'ancien maintainer avait proposé d'utiliser les playlists mpv
             # Mais de facto c'est compliqué si mpv crash...
 
             try:
@@ -113,7 +114,8 @@ class Jukebox(Flask):
 
                 # Les lignes pour relancer MPV que j'ai commenté:
                 # self.mpv.stop()
-                # self.mpv = MyMPV(None, log_handler=app.logger.info)
+                # del self.mpv
+                # self.mpv = MyMPV(app.config, log_handler=app.logger.info)
 
             with self.mpv_lock:
                 del self.mpv
