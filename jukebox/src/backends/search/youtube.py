@@ -72,6 +72,8 @@ class Search_engine(Search_engine):
             return_dict["artist"] = metadata["uploader"]
         if "album" in metadata:
             return_dict["album"] = metadata["album"]
+        else:
+            return_dict["album"] = None
         if "thumbnail" in metadata:
             return_dict["albumart_url"] = metadata["thumbnail"]
         if "duration" in metadata:
