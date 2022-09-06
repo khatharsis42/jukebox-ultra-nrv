@@ -7,7 +7,7 @@ from jukebox.src.util import *
 
 playlist = Blueprint('playlist', __name__)
 
-length: str
+length: int
 needs_to_update = True
 
 
@@ -144,27 +144,19 @@ def suggest():
     return jsonify(result)
 
 
-def get_length() -> str:
+def get_length() -> int:
     """
     Fonction qui renvoie une string représentant le temps restant dans la playlist.
     Pour des raisons de performances, utilise la variable `needs_to_update` afin de ne se mettre à jour que quand la playlist est modifiée.
 
-    :returns: String, sous la forme `{heures}h {minutes}m {secondes}s` la plus restreinte possible.
+    :returns: Nombre de secondes dans la playlist.
     """
     global length, needs_to_update
     if not needs_to_update:
         return length
     needs_to_update = False
     track: dict
-    sum = 0
+    length = 0
     for track in app.playlist[1:]:
-        sum += int(track['duration'])
-    if sum == 0:
-        length = ""
-    elif sum < 60:
-        length = f"{sum:02}s"
-    elif sum // 60 < 60:
-        length = f"{sum // 60}m{sum % 60:02d}s"
-    else:
-        length = f"{sum // 60 // 60}h{(sum // 60) % 60}m{sum % 60:02}s"
+        length += int(track['duration'])
     return length
