@@ -66,7 +66,7 @@ function toggle_recto_verso() {
  * @returns {jQuery|HTMLElement} : html for the tile
  */
 function generate_track_html(t) {
-    t["duration"] = secondsToString(t["duration"])
+    t["durationAsString"] = secondsToString(t["duration"])
     let track_html = $(template(track_template, t));
     track_html.data("track", t); // we add the serialized object as data to the tile
     track_html.find(".verso").hide();
@@ -135,7 +135,7 @@ track_template = `
         <div class="col-7 track-info centered">
             <span class="track-title">{title}</span>
             <span class="track-artist">{artist}</span>
-            <span class="track-duration">{duration}</span>
+            <span class="track-duration">{durationAsString}</span>
             <span class="track-user float-right">Added by {user}</span>
         </div>
         <div class="col-1">
