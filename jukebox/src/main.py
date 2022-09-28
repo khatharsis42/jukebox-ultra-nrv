@@ -172,6 +172,7 @@ def move_track():
         return "nok"
 
     index = None
+    app.logger.info("User %s asking to move a track with randomid %s", session["user"], action, randomid)
     with app.playlist_lock:
         for x in app.playlist:
             if str(x["randomid"]) == randomid:
@@ -366,6 +367,7 @@ def search():
     #     app.logger.info(f"Using the cache for request '{query}'")
     #     return jsonify(app.search_cache[query])
     used_search = False
+    app.logger.info("User %s searching for \"%d\"", session["user"], query)
     # Utilisé pour voir si on a utilisé la recherche, pour prévenir d'une erreur
     if re.match(regex_url, query) is not None:
         # Si ça ressemble à une URL
@@ -425,7 +427,7 @@ def search():
 def pause():
     """Met la musique en pause, ou bien la relance."""
     app.mpv.command('cycle', 'pause')
-    app.logger.info("Pausing or resuming, not sure which is which.")
+    app.logger.info("User %s pausing or resuming, not sure which is which.",session["user"])
     return "ok"
 
 
@@ -434,7 +436,7 @@ def rewind():
     """Remet la musique en arrière de 10 secondes."""
     app.currently_played["duration"] += 10
     app.mpv.command('seek', - 10, 'relative')
-    app.logger.info("Going backward in track by 10 seconds.")
+    app.logger.info("User %s going backward in track by 10 seconds.", session["user"])
     return "ok"
 
 
@@ -443,7 +445,7 @@ def advance():
     """Avance la musique de 10 secondes."""
     app.currently_played["duration"] -= 10
     app.mpv.command('seek', + 10, 'relative')
-    app.logger.info("Advancing track by 10 seconds.")
+    app.logger.info("User %s advancing track by 10 seconds.", session["user"])
     return "ok"
 
 
@@ -451,7 +453,7 @@ def advance():
 def jump():
     """Avance la musique jusqu'au timestamp fourni dans la requête."""
     timestamp = request.form["jump"]
-    app.logger.info(f"Jumping track to {timestamp}")
+    app.logger.info("User %s jumping track to %s", session["user"], timestamp)
     if timestamp.count(':') == 0:
         time = int(timestamp)
     elif timestamp.count(':') == 1:

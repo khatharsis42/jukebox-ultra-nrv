@@ -36,7 +36,7 @@ def add(ident: int = None):
         # Gotta serialize it for it to be a dict
     else:
         track_dict = request.form.to_dict()
-    app.logger.info("Adding track %s", track_dict["url"])
+    app.logger.info("User %s adding track %s", session["user"], track_dict["url"])
     track = check_track_in_database(track_dict)
     if track is not None and not track.obsolete and not track.blacklisted:
         app.logger.info(track)
@@ -84,6 +84,7 @@ def check_track_in_database(track_dict: dict) -> Track:
 def remove():
     """Supprime une track de la playlist. La track est identifiée par son ID et son RandomID, stockée dans la requête POST."""
     track = request.form
+    app.logger.info("User %s removing track %s", session["user"], track["url"])
     with app.playlist_lock:
         for track_p in app.playlist:
             if track_p["randomid"] == int(track["randomid"]):
@@ -105,6 +106,7 @@ def remove():
 @requires_auth
 def volume():
     """Setter pour la volume, la valeur est stockée dans la requête POST."""
+    app.logger.info("User %s adujsting volume", session["user"])
     if request.method == 'POST':
         set_volume(request.form["volume"])
         return "ok"
