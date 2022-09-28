@@ -381,13 +381,14 @@ let delay = (function(){
  * This is so that you can shift add tracks
  */
 var shiftKeyDown = false;
+const activationKeys = ['ShiftLeft', "ShiftRight", "ControlRight", "ControlLeft"]
 document.addEventListener("keyup", function(event) {
-    if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
+    if (activationKeys.includes(event.code)) {
         shiftKeyDown = false;
     }
 });
 document.addEventListener("keydown", function(event) {
-    if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
+    if (activationKeys.includes(event.code)) {
         shiftKeyDown = true;
     }
 });
