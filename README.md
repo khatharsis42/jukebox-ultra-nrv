@@ -1,4 +1,8 @@
 # Jukebox Ultra NRV mkV
+## New Repo
+The current repo is now on GitLab. It's better this way apparently.
+Here's the link: https://gitlab.com/club-jeux-int/jukebox-ultra-nrv
+
 ## Prerequisites
 
 This application assumes it runs on Linux using Alsa.
